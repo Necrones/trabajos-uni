@@ -1,4 +1,4 @@
 #backup files
 .bak*/
-*.c.+
+*.c.~*~
 *.html
