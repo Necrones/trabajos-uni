@@ -43,8 +43,8 @@ void    minuscula(int[DIM][DIM], int, int, int, int, int);
 int     sentido(int, int, int, int);
 
 int main() {
-  //srand(time(NULL));
-  srand(22);			//Cruce en coches
+  srand(time(NULL));
+  //srand(22);                  //Cruce en coches
   int     sopa[DIM][DIM];
   char    temas[N_TEMA][N_PAL][TCHAR];
   int     tema;
@@ -52,7 +52,7 @@ int main() {
   crearSopa(sopa);
   rellenaTemas(temas);
   colocaPalabras(sopa, temas, tema);
-  //rellenaMatriz(sopa);
+  rellenaMatriz(sopa);
   imprimirSopa(sopa);
   juego(sopa, temas, tema);
   return 0;
@@ -466,7 +466,7 @@ bool esPosibleColocarPalabra(int so[DIM][DIM], char p[TCHAR], int dir,
 }
 
 /**
- **Nombre: rellenaMatriz
+ *Nombre: rellenaMatriz
  *Descripción: los "0" restantes se convierten en un caracter entre A y Z
  *@param sopaLetras: la sopa de letras
  *@author: JoseluCross y Luis Pedrosa Ruiz
@@ -574,13 +574,15 @@ void coincidePal(int matrix[DIM][DIM],
 		 char palabras[N_TEMA][N_PAL][TCHAR], int t,
 		 int iF, int iC, int fF, int fC, bool find[N_PAL]) {
   int     i, j, k, dir, repair;	//Contadores y variables auxiliares
-  bool    rec = false;
+  bool    rec = false, norec = true;	//Variables de conrol
   char    pal[TCHAR];
 
   dir = sentido(iF, fF, iC, fC);
   repair = dir;
 
   switch (dir) {
+    case 0:			//Dirección equivocada
+      norec = false;
     case 1:			//Derecha
       for(i = iC, j = 0; i <= fC; ++i, ++j) {
 	pal[j] = (char)matrix[iF][i];
@@ -654,7 +656,7 @@ void coincidePal(int matrix[DIM][DIM],
       break;
   }
   //Comparamos buscando si conicide
-  for(i = 0; i < N_PAL && !rec; ++i) {
+  for(i = 0; i < N_PAL && !rec && norec; ++i) {
     //puts(pal);                        //debug
     if(strncmp(palabras[t][i], pal, (int)strlen(palabras[t][i])) == 0) {
       find[i] = true;
@@ -730,7 +732,7 @@ void minuscula(int m[DIM][DIM], int iF, int iC, int fF, int fC, int dir) {
       break;
     case 7:			//Abajo izquierda
       for(i = iF, j = iC; i <= fF; ++i, --j) {
-	if(m[i][j] < A_MINUS) {
+	if([i][j] < A_MINUS) {
 	  m[i][j] += (A_MINUS - A_MAYUS);
 	}
       }
@@ -748,44 +750,49 @@ void minuscula(int m[DIM][DIM], int iF, int iC, int fF, int fC, int dir) {
 /**
  *Title: sentido
  *Descripción: Dice en que sentido está las cordenadas especificadas
- *@param: iX = inicio del eje x 
- *@param: fX = final del eje x 
+ *@param: iX = inicio del eje x
+ *@param: fX = final del eje x
  *@param: iY = inicio del eje y
  *@param: fY = final del eje y
- *@return: sent 
+ *@return: sent
  *@author: JoseluCross y Luis Pedrosa Ruiz
  *@date: 26/04/2016
  */
 int sentido(int iX, int fX, int iY, int fY) {
   int     sent;
-  if(iX != fX) {
-    if(iY != fY) {		//Diagonales
+  if((iX - fX) == (iY - fY)) {
+    if(iX != fX) {
+      if(iY != fY) {		//Diagonales
+	if(fY >= iY) {
+	  if(fX >= iX) {
+	    sent = 5;		//Abajo y a la derecha
+	  } else {
+	    sent = 6;		//Arriba y a la derecha
+	  }
+	} else {
+	  if(fX >= iX) {
+	    sent = 7;		//Abajo y a la izquierda
+	  } else {
+	    sent = 8;		//Arriba y a la izquierda
+	  }
+	}
+      } else {			//Vertical
+	if(fX >= iX) {
+	  sent = 3;		//Abajo
+	} else {
+	  sent = 4;		//Arriba
+	}
+      }
+    } else {			//Horizontal
       if(fY >= iY) {
-	if(fX >= iX) {
-	  sent = 5;		//Abajo y a la derecha
-	} else {
-	  sent = 6;		//Arriba y a la derecha
-	}
+	sent = 1;		//Derecha
       } else {
-	if(fX >= iX) {
-	  sent = 7;		//Abajo y a la izquierda
-	} else {
-	  sent = 8;		//Arriba y a la izquierda
-	}
-      }
-    } else {			//Vertical
-      if(fX >= iX) {
-	sent = 3;		//Abajo
-      } else {
-	sent = 4;		//Arriba
+	sent = 2;		//Izquierda
       }
     }
-  } else {			//Horizontal
-    if(fY >= iY) {
-      sent = 1;			//Derecha
-    } else {
-      sent = 2;			//Izquierda
+  }else {
+      sent = 0;
     }
-  }
+
   return sent;
 }

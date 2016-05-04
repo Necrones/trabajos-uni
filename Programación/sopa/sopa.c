@@ -34,11 +34,10 @@ void    colocaPalabra(int[DIM][DIM], char[TCHAR], int);
 void    rellenaMatriz(int[DIM][DIM]);
 int     buscaAleatorio(int, int);
 bool    esPosibleColocarPalabra(int[DIM][DIM], char[TCHAR], int, int, int);
-void    rellenaMatriz(int[DIM][DIM]);
 void    introduceNum(int *);
 void    coincidePal(int[DIM][DIM], char[N_TEMA][N_PAL][TCHAR], int, int,
 		    int, int, int, bool[N_PAL]);
-void    juego(int[DIM][DIM], char[N_TEMA][N_PAL][TCHAR], int);
+void    juego(int[DIM][DIM], char[N_TEMA][N_PAL][TCHAR]);
 void    minuscula(int[DIM][DIM], int, int, int, int, int);
 int     sentido(int, int, int, int);
 
@@ -47,14 +46,9 @@ int main() {
   //srand(22);                  //Cruce en coches
   int     sopa[DIM][DIM];
   char    temas[N_TEMA][N_PAL][TCHAR];
-  int     tema;
-  tema = solicitaOpcionMenu();
-  crearSopa(sopa);
   rellenaTemas(temas);
-  colocaPalabras(sopa, temas, tema);
-  rellenaMatriz(sopa);
-  imprimirSopa(sopa);
-  juego(sopa, temas, tema);
+  system("clear");
+  juego(sopa, temas);
   return 0;
 }
 
@@ -69,6 +63,80 @@ int main() {
 int clean_stdin() {
   while(getchar() != '\n') ;
   return 1;
+}
+
+/**
+  *Nombre: juego
+  *Descripción: ejecuta el juego de la sopa de letras
+  *@param matriz: sopa de letra
+  *@param themes: temas de la sopa
+  *@author: Luis Pedrosa Ruiz y JoseluCross
+  *@date: 26/04/2016
+  */
+void juego(int matriz[DIM][DIM], char themes[N_TEMA][N_PAL][TCHAR]) {
+  int     ini_fila, ini_col, fin_fila, fin_col;	//Coordenadas
+  bool    palEncontrada[N_PAL];
+  int     i;			//Contador
+  int     respuestas;
+  bool    victoria = false, game = true;
+  int     partida, tema;
+  while(game) {
+    //Iniciamos el juego 
+    tema = solicitaOpcionMenu();
+    crearSopa(matriz);
+    colocaPalabras(matriz, themes, tema);
+    rellenaMatriz(matriz);
+    printf("Ha rellenado\n");
+    imprimirSopa(matriz);
+    //Inicializamos palEncontrada
+    for(i = 0; i < N_PAL; ++i) {
+      palEncontrada[i] = false;
+    }
+    do {
+      printf("Introduce la primera coordenada (fila): ");
+      introduceNum(&ini_fila);
+      printf("Introduce la primera coordenada (columna): ");
+      introduceNum(&ini_col);
+      printf("Introduce la segunda coordenada (fila): ");
+      introduceNum(&fin_fila);
+      printf("Introduce la segunda coordenada (columna): ");
+      introduceNum(&fin_col);
+      system("clear");
+      coincidePal(matriz, themes, tema, ini_fila - 1, ini_col - 1,
+		  fin_fila - 1, fin_col - 1, palEncontrada);
+      imprimirSopa(matriz);
+      for(i = 0, respuestas = 0; i < N_PAL; ++i) {
+	if(palEncontrada[i] == true) {
+	  ++respuestas;
+	}
+      }
+      if(respuestas == N_PAL) {
+	victoria = true;
+      }
+      printf("Quedan %i palabras\n", N_PAL - respuestas);
+      if(!victoria) {
+	printf
+	    ("¿Quiere seguir jugando? - No (ESC) - Si (cualquier tecla): ");
+	partida = getchar();
+	if(partida == 27) {
+	  printf("Gracias por jugar, vuelva cuando quiera\n");
+	  game = false;
+	}
+      }
+    }
+    while(!victoria && game);
+    if(game) {
+      printf("Felicidades, has ganado\n");
+      do {
+	printf("¿Quiere jugar una partida?, [Espacio]-Si [ESC]-No: ");
+	partida = getchar();
+	if(partida == 27) {
+	  printf("Adios\n");
+	  game = false;
+	}
+      } while(partida != 32 && partida != 27);
+    }
+  }
 }
 
 /**
@@ -466,7 +534,7 @@ bool esPosibleColocarPalabra(int so[DIM][DIM], char p[TCHAR], int dir,
 }
 
 /**
- **Nombre: rellenaMatriz
+ *Nombre: rellenaMatriz
  *Descripción: los "0" restantes se convierten en un caracter entre A y Z
  *@param sopaLetras: la sopa de letras
  *@author: JoseluCross y Luis Pedrosa Ruiz
@@ -509,54 +577,6 @@ void introduceNum(int *num) {
 }
 
 /**
-  *Nombre: juego
-  *Descripción: ejecuta el juego de la sopa de letras
-  *@param matriz: sopa de letra
-  *@param themes: temas de la sopa
-  *@param tema: tema escogido
-  *@author: Luis Pedrosa Ruiz y JoseluCross
-  *@date: 26/04/2016
-  */
-void juego(int matriz[DIM][DIM],
-	   char themes[N_TEMA][N_PAL][TCHAR], int tema) {
-  int     ini_fila, ini_col, fin_fila, fin_col;	//Coordenadas
-  bool    palEncontrada[N_PAL];
-  int     i;			//Contador
-  int     respuestas;
-  bool    victoria = false;
-  //Inicializamos palEncontrada
-  for(i = 0; i < N_PAL; ++i) {
-    palEncontrada[i] = false;
-  }
-  do {
-    printf("Introduce la primera coordenada (fila): ");
-    introduceNum(&ini_fila);
-    printf("Introduce la primera coordenada (columna): ");
-    introduceNum(&ini_col);
-    printf("Introduce la segunda coordenada (fila): ");
-    introduceNum(&fin_fila);
-    printf("Introduce la segunda coordenada (columna): ");
-    introduceNum(&fin_col);
-    system("clear");
-    coincidePal(matriz, themes, tema, ini_fila - 1, ini_col - 1,
-		fin_fila - 1, fin_col - 1, palEncontrada);
-    imprimirSopa(matriz);
-    for(i = 0, respuestas = 0; i < N_PAL; ++i) {
-      if(palEncontrada[i] == true) {
-	++respuestas;
-      }
-    }
-    if(respuestas == N_PAL) {
-      victoria = true;
-    }
-    printf("Quedan %i palabras\n", N_PAL - respuestas);
-  }
-  while(!victoria);
-  printf("Felicidades, has ganado\n");
-
-}
-
-/**
   *Nombre: coincidePal
   *Descripción: compara la cadena introducida por el usuario y compara con las cadenas
   *@param: matrix - sopa de letras
@@ -574,13 +594,15 @@ void coincidePal(int matrix[DIM][DIM],
 		 char palabras[N_TEMA][N_PAL][TCHAR], int t,
 		 int iF, int iC, int fF, int fC, bool find[N_PAL]) {
   int     i, j, k, dir, repair;	//Contadores y variables auxiliares
-  bool    rec = false;
+  bool    rec = false, norec = true;	//Variables de conrol
   char    pal[TCHAR];
 
   dir = sentido(iF, fF, iC, fC);
   repair = dir;
 
   switch (dir) {
+    case 0:			//Dirección equivocada
+      norec = false;
     case 1:			//Derecha
       for(i = iC, j = 0; i <= fC; ++i, ++j) {
 	pal[j] = (char)matrix[iF][i];
@@ -654,7 +676,7 @@ void coincidePal(int matrix[DIM][DIM],
       break;
   }
   //Comparamos buscando si conicide
-  for(i = 0; i < N_PAL && !rec; ++i) {
+  for(i = 0; i < N_PAL && !rec && norec; ++i) {
     //puts(pal);                        //debug
     if(strncmp(palabras[t][i], pal, (int)strlen(palabras[t][i])) == 0) {
       find[i] = true;
@@ -748,31 +770,48 @@ void minuscula(int m[DIM][DIM], int iF, int iC, int fF, int fC, int dir) {
 /**
  *Title: sentido
  *Descripción: Dice en que sentido está las cordenadas especificadas
- *@param: iX = inicio del eje x 
- *@param: fX = final del eje x 
+ *@param: iX = inicio del eje x
+ *@param: fX = final del eje x
  *@param: iY = inicio del eje y
  *@param: fY = final del eje y
- *@return: sent 
+ *@return: sent
  *@author: JoseluCross y Luis Pedrosa Ruiz
  *@date: 26/04/2016
  */
 int sentido(int iX, int fX, int iY, int fY) {
   int     sent;
   if(iX != fX) {
-    if(iY != fY) {		//Diagonales
-      if(fY >= iY) {
-	if(fX >= iX) {
-	  sent = 5;		//Abajo y a la derecha
+    if(iY != fY) {		//Diagonales     
+      if(fY > iY) {
+	if(fX > iX) {
+	  if((fX - iX) != (fY - iY)) {
+	    sent = 0;
+	  } else {
+	    sent = 5;		//Abajo y a la derecha
+	  }
 	} else {
-	  sent = 6;		//Arriba y a la derecha
+	  if((iX - fX) != (fY - iY)) {
+	    sent = 0;
+	  } else {
+	    sent = 6;		//Arriba y a la derecha
+	  }
 	}
       } else {
-	if(fX >= iX) {
-	  sent = 7;		//Abajo y a la izquierda
+	if(fX > iX) {
+	  if((fX - iX) != (iY - fY)) {
+	    sent = 0;
+	  } else {
+	    sent = 7;		//Abajo y a la izquierda
+	  }
 	} else {
-	  sent = 8;		//Arriba y a la izquierda
+	  if((iX - fX) != (iY - fY)) {
+	    sent = 0;
+	  } else {
+	    sent = 8;		//Arriba y a la izquierda
+	  }
 	}
       }
+
     } else {			//Vertical
       if(fX >= iX) {
 	sent = 3;		//Abajo
