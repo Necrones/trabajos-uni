@@ -17,12 +17,14 @@
 #define TCHAR 11
 #define N_TEMA 5
 #define N_PAL 8			//5 era muy mainstream
-#define CHAR_MIN 65
-#define CHAR_MAX 90
-#define ZERO 48
+#define CHAR_MIN 65		//A en ASCII
+#define CHAR_MAX 90		//Z en ASCII
+#define ZERO 48			//0 en ASCII
 #define A_MINUS 97		//a en ASCII
-#define A_MAYUS 65		//A en ASCII
-#define ESC 27			//ESCAPE en ASCII
+#define ESC 27			//Escape en ASCII
+#define ESP 32			//Espacio en ASCII
+#define DASH 45			//- en ASCII
+#define BARRA 124		//| en ASCII
 
 void    crearSopa(int[DIM][DIM]);
 void    imprimirSopa(int[DIM][DIM]);
@@ -78,63 +80,98 @@ void juego(int matriz[DIM][DIM], char themes[N_TEMA][N_PAL][TCHAR]) {
   bool    palEncontrada[N_PAL];
   int     i;			//Contador
   int     respuestas;
-  bool    victoria = false, game = true;
+  bool    victoria = false, game = true, salida;
   int     partida, tema;
   while(game) {
     //Iniciamos el juego 
     tema = solicitaOpcionMenu();
-    crearSopa(matriz);
-    colocaPalabras(matriz, themes, tema);
-    rellenaMatriz(matriz);
-    printf("Ha rellenado\n");
-    imprimirSopa(matriz);
-    //Inicializamos palEncontrada
-    for(i = 0; i < N_PAL; ++i) {
-      palEncontrada[i] = false;
-    }
-    do {
-      printf("Introduce la primera coordenada (fila): ");
-      introduceNum(&ini_fila);
-      printf("Introduce la primera coordenada (columna): ");
-      introduceNum(&ini_col);
-      printf("Introduce la segunda coordenada (fila): ");
-      introduceNum(&fin_fila);
-      printf("Introduce la segunda coordenada (columna): ");
-      introduceNum(&fin_col);
-      system("clear");
-      coincidePal(matriz, themes, tema, ini_fila - 1, ini_col - 1,
-		  fin_fila - 1, fin_col - 1, palEncontrada);
+    if(tema != -1) {
+      crearSopa(matriz);
+      colocaPalabras(matriz, themes, tema);
+      rellenaMatriz(matriz);
       imprimirSopa(matriz);
-      for(i = 0, respuestas = 0; i < N_PAL; ++i) {
-	if(palEncontrada[i] == true) {
-	  ++respuestas;
-	}
+      //Inicializamos palEncontrada
+      for(i = 0; i < N_PAL; ++i) {
+	palEncontrada[i] = false;
       }
-      if(respuestas == N_PAL) {
-	victoria = true;
-      }
-      printf("Quedan %i palabras\n", N_PAL - respuestas);
-      if(!victoria) {
-	printf
-	    ("¿Quiere seguir jugando? - No (ESC) - Si (cualquier tecla): ");
-	partida = getchar();
-	if(partida == 27) {
-	  printf("Gracias por jugar, vuelva cuando quiera\n");
-	  game = false;
-	}
-      }
-    }
-    while(!victoria && game);
-    if(game) {
-      printf("Felicidades, has ganado\n");
       do {
-	printf("¿Quiere jugar una partida?, [Espacio]-Si [ESC]-No: ");
-	partida = getchar();
-	if(partida == 27) {
-	  printf("Adios\n");
-	  game = false;
+	do {
+	  printf("Introduce la primera coordenada (fila): ");
+	  introduceNum(&ini_fila);
+	  if(ini_fila < 1 || ini_fila > DIM) {
+	    printf("Fuera de rango\n");
+	    salida = false;
+	  } else {
+	    salida = true;
+	  }
+	} while(!salida);
+	do {
+	  printf("Introduce la primera coordenada (columna): ");
+	  introduceNum(&ini_col);
+	  if(ini_col < 1 || ini_fila > DIM) {
+	    printf("Fuera de rango\n");
+	    salida = false;
+	  } else {
+	    salida = true;
+	  }
+	} while(!salida);
+	do {
+	  printf("Introduce la segunda coordenada (fila): ");
+	  introduceNum(&fin_fila);
+	  if(fin_fila < 1 || ini_fila > DIM) {
+	    printf("Fuera de rango\n");
+	    salida = false;
+	  } else {
+	    salida = true;
+	  }
+	} while(!salida);
+	do {
+	  printf("Introduce la segunda coordenada (columna): ");
+	  introduceNum(&fin_col);
+	  if(fin_col < 1 || ini_fila > DIM) {
+	    printf("Fuera de rango\n");
+	    salida = false;
+	  } else {
+	    salida = true;
+	  }
+	} while(!salida);
+	system("clear");
+	coincidePal(matriz, themes, tema, ini_fila - 1, ini_col - 1,
+		    fin_fila - 1, fin_col - 1, palEncontrada);
+	imprimirSopa(matriz);
+	for(i = 0, respuestas = 0; i < N_PAL; ++i) {
+	  if(palEncontrada[i] == true) {
+	    ++respuestas;
+	  }
 	}
-      } while(partida != 32 && partida != 27);
+	if(respuestas == N_PAL) {
+	  victoria = true;
+	}
+	printf("Quedan %i palabras\n", N_PAL - respuestas);
+	if(!victoria) {
+	  printf
+	      ("¿Quiere seguir jugando? - No (ESC) - Si (cualquier tecla): ");
+	  partida = getchar();
+	  if(partida == ESC) {
+	    printf("Gracias por jugar, vuelva cuando quiera\n");
+	    game = false;
+	  }
+	}
+      }
+      while(!victoria && game);
+      if(game) {
+	printf("Felicidades, has ganado\n");
+	do {
+	  printf("¿Quiere jugar una partida?, [Espacio]-Si [ESC]-No: ");
+	  partida = getchar();
+	  if(partida == ESC) {
+	    printf("Adios\n");
+	    game = false;
+	  }
+	} while(partida != ESP && partida != ESC);
+      }
+    } else {
+      game = false;
     }
   }
 }
@@ -149,7 +186,7 @@ void juego(int matriz[DIM][DIM], char themes[N_TEMA][N_PAL][TCHAR]) {
  */
 int solicitaOpcionMenu() {
   int     menu;
-  char    c;
+  bool    salida = false;
   do {
     printf("Elije un tema\n");
     printf("_____________\n");
@@ -159,15 +196,14 @@ int solicitaOpcionMenu() {
     printf("4 - Ciudades\n");
     printf("5 - Países\n");
     printf("0 - Salir\n");
-    if(scanf("%d%c", &menu, &c) != 2 || c != '\n') {
-      printf("Opción incorrecta\n");
-      clean_stdin();
-      menu = 6;
+    introduceNum(&menu);
+    if(menu < 0 || menu > 5) {
+      printf("Valor incorrecto\n");
+      salida = false;
+    } else {
+      salida = true;
     }
-    if(menu == 0) {
-      exit(0);
-    }
-  } while(menu < 0 || menu > 5);
+  } while(!salida);
   return menu - 1;
 }
 
@@ -183,7 +219,7 @@ void crearSopa(int mat[DIM][DIM]) {
   int     i, j;			//horizontal y vertical
   for(i = 0; i < DIM; i++) {
     for(j = 0; j < DIM; j++) {
-      mat[i][j] = 48;
+      mat[i][j] = ZERO;
     }
   }
 }
@@ -201,7 +237,7 @@ void imprimirSopa(int sop[DIM][DIM]) {
   //Se imprime la fila numeral superior
   for(i = 0; i <= DIM; i++) {
     if(i == 0) {
-      printf(" %3c", 32);
+      printf(" %3c", ESP);
     } else {
       printf("%3i", i);
     }
@@ -210,9 +246,9 @@ void imprimirSopa(int sop[DIM][DIM]) {
   //Se imprime la fila de guiones superior
   for(i = 0; i <= DIM; i++) {
     if(i == 0) {
-      printf(" %3c", 32);
+      printf(" %3c", ESP);
     } else {
-      printf("%3c", 45);
+      printf("%3c", DASH);
     }
   }
   printf("\n");
@@ -226,22 +262,22 @@ void imprimirSopa(int sop[DIM][DIM]) {
 	printf("\x1b[32m%3c\x1b[0m", sop[i][j]);
       }
     }
-    printf("%3c%i", 124, i + 1);
+    printf("%3c%i", BARRA, i + 1);
     printf("\n");
   }
   //Se imprime la fila de guiones inferior
   for(i = 0; i <= DIM; i++) {
     if(i == 0) {
-      printf(" %3c", 32);
+      printf(" %3c", ESP);
     } else {
-      printf("%3c", 45);
+      printf("%3c", DASH);
     }
   }
   printf("\n");
   //Se imprime la fila numeral inferior
   for(i = 0; i <= DIM; i++) {
     if(i == 0) {
-      printf(" %3c", 32);
+      printf(" %3c", ESP);
     } else {
       printf("%3i", i);
     }
@@ -545,7 +581,7 @@ void rellenaMatriz(int sopa[DIM][DIM]) {
   for(i = 0; i < DIM; i++) {
     for(j = 0; j < DIM; j++) {
       if(sopa[i][j] == ZERO) {
-	sopa[i][j] = buscaAleatorio(65, 90);
+	sopa[i][j] = buscaAleatorio(CHAR_MIN, CHAR_MAX);
       }
     }
   }
@@ -566,12 +602,7 @@ void introduceNum(int *num) {
       printf("Opción incorrecta. Introduzca un nuevo valor: ");
       clean_stdin();
     } else {
-      if(*num < 1 || *num > DIM) {
-	printf
-	    ("Valor fuera del rango, vuelva a introducir un valor correcto: ");
-      } else {
-	salida = true;
-      }
+      salida = true;
     }
   } while(!salida);
 }
@@ -607,7 +638,7 @@ void coincidePal(int matrix[DIM][DIM],
       for(i = iC, j = 0; i <= fC; ++i, ++j) {
 	pal[j] = (char)matrix[iF][i];
 	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - A_MAYUS);
+	  pal[j] -= (A_MINUS - CHAR_MAX);
 	}
       } pal[j + 1] = '\0';
       break;
@@ -615,7 +646,7 @@ void coincidePal(int matrix[DIM][DIM],
       for(i = iC, j = 0; i >= fC; --i, ++j) {
 	pal[j] = (char)matrix[iF][i];
 	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - A_MAYUS);
+	  pal[j] -= (A_MINUS - CHAR_MAX);
 	}
       }
       pal[j + 1] = '\0';
@@ -624,7 +655,7 @@ void coincidePal(int matrix[DIM][DIM],
       for(i = iF, j = 0; i <= fF; ++i, ++j) {
 	pal[j] = (char)matrix[i][iC];
 	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - A_MAYUS);
+	  pal[j] -= (A_MINUS - CHAR_MAX);
 	}
       }
       pal[j + 1] = '\0';
@@ -633,7 +664,7 @@ void coincidePal(int matrix[DIM][DIM],
       for(i = iF, j = 0; i >= fF; --i, ++j) {
 	pal[j] = (char)matrix[i][iC];
 	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - A_MAYUS);
+	  pal[j] -= (A_MINUS - CHAR_MAX);
 	}
       }
       pal[j + 1] = '\0';
@@ -642,7 +673,7 @@ void coincidePal(int matrix[DIM][DIM],
       for(i = iF, k = iC, j = 0; i <= fF; ++i, ++k, ++j) {
 	pal[j] = (char)matrix[i][k];
 	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - A_MAYUS);
+	  pal[j] -= (A_MINUS - CHAR_MAX);
 	}
       }
       pal[j + 1] = '\0';
@@ -651,7 +682,7 @@ void coincidePal(int matrix[DIM][DIM],
       for(i = iF, k = iC, j = 0; i >= fF; --i, ++k, ++j) {
 	pal[j] = (char)matrix[i][k];
 	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - A_MAYUS);
+	  pal[j] -= (A_MINUS - CHAR_MAX);
 	}
       }
       pal[j + 1] = '\0';
@@ -660,7 +691,7 @@ void coincidePal(int matrix[DIM][DIM],
       for(i = iF, k = iC, j = 0; i <= fF; ++i, --k, ++j) {
 	pal[j] = (char)matrix[i][k];
 	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - A_MAYUS);
+	  pal[j] -= (A_MINUS - CHAR_MAX);
 	}
       }
       pal[j + 1] = '\0';
@@ -669,7 +700,7 @@ void coincidePal(int matrix[DIM][DIM],
       for(i = iF, k = iC, j = 0; i >= fF; --i, --k, ++j) {
 	pal[j] = (char)matrix[i][k];
 	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - A_MAYUS);
+	  pal[j] -= (A_MINUS - CHAR_MAX);
 	}
       }
       pal[j + 1] = '\0';
@@ -711,56 +742,56 @@ void minuscula(int m[DIM][DIM], int iF, int iC, int fF, int fC, int dir) {
     case 1:			//Derecha
       for(i = iC; i <= fC; ++i) {
 	if(m[iF][i] < A_MINUS) {
-	  m[iF][i] += (A_MINUS - A_MAYUS);
+	  m[iF][i] += (A_MINUS - CHAR_MAX);
 	}
       }
       break;
     case 2:			//Izquierda
       for(i = iC; i >= fC; --i) {
 	if(m[iF][i] < A_MINUS) {
-	  m[iF][i] += (A_MINUS - A_MAYUS);
+	  m[iF][i] += (A_MINUS - CHAR_MAX);
 	}
       }
       break;
     case 3:			//Abajo
       for(i = iF; i <= fF; ++i) {
 	if(m[i][iC] < A_MINUS) {
-	  m[i][iC] += (A_MINUS - A_MAYUS);
+	  m[i][iC] += (A_MINUS - CHAR_MAX);
 	}
       }
       break;
     case 4:			//Arriba
       for(i = iF; i >= fF; --i) {
 	if(m[i][iC] < A_MINUS) {
-	  m[i][iC] += (A_MINUS - A_MAYUS);
+	  m[i][iC] += (A_MINUS - CHAR_MAX);
 	}
       }
       break;
     case 5:			//Abajo derecha
       for(i = iF, j = iC; i <= fF; ++i, ++j) {
 	if(m[i][j] < A_MINUS) {
-	  m[i][j] += (A_MINUS - A_MAYUS);
+	  m[i][j] += (A_MINUS - CHAR_MAX);
 	}
       }
       break;
     case 6:			//Arriba derecha
       for(i = iF, j = iC; i >= fF; --i, ++j) {
 	if(m[i][j] < A_MINUS) {
-	  m[i][j] += (A_MINUS - A_MAYUS);
+	  m[i][j] += (A_MINUS - CHAR_MAX);
 	}
       }
       break;
     case 7:			//Abajo izquierda
       for(i = iF, j = iC; i <= fF; ++i, --j) {
 	if(m[i][j] < A_MINUS) {
-	  m[i][j] += (A_MINUS - A_MAYUS);
+	  m[i][j] += (A_MINUS - CHAR_MAX);
 	}
       }
       break;
     case 8:			//Arriba izquierda
       for(i = iF, j = iC; i >= fF; --i, --j) {
 	if(m[i][j] < A_MINUS) {
-	  m[i][j] += (A_MINUS - A_MAYUS);
+	  m[i][j] += (A_MINUS - CHAR_MAX);
 	}
       }
       break;
@@ -781,7 +812,7 @@ void minuscula(int m[DIM][DIM], int iF, int iC, int fF, int fC, int dir) {
 int sentido(int iX, int fX, int iY, int fY) {
   int     sent;
   if(iX != fX) {
-    if(iY != fY) {		//Diagonales     
+    if(iY != fY) {		//Diagonales
       if(fY > iY) {
 	if(fX > iX) {
 	  if((fX - iX) != (fY - iY)) {
