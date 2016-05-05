@@ -3,7 +3,7 @@
  *Description: Hace una sopa de letras con varios temas
  *@Author: Luis Pedrosa Ruiz y José Luis Garrido Labrador (JoseluCross)
  *@organization: UBU
- *@Version: 1.0.0
+ *@Version: 2.0.0
  *@Date: 05/04/2016
  */
 
@@ -42,10 +42,11 @@ void    coincidePal(int[DIM][DIM], char[N_TEMA][N_PAL][TCHAR], int, int,
 void    juego(int[DIM][DIM], char[N_TEMA][N_PAL][TCHAR]);
 void    minuscula(int[DIM][DIM], int, int, int, int, int);
 int     sentido(int, int, int, int);
+size_t  stringlength(char[]);
 
 int main() {
   srand(time(NULL));
-  //srand(22);                  //Cruce en coches
+  //srand(22);			//Cruce en coches
   int     sopa[DIM][DIM];
   char    temas[N_TEMA][N_PAL][TCHAR];
   rellenaTemas(temas);
@@ -640,7 +641,7 @@ void coincidePal(int matrix[DIM][DIM],
 	if((int)pal[j] >= A_MINUS) {
 	  pal[j] -= (A_MINUS - CHAR_MAX);
 	}
-      } pal[j + 1] = '\0';
+      } pal[j] = '\0';
       break;
     case 2:			//Izquierda
       for(i = iC, j = 0; i >= fC; --i, ++j) {
@@ -649,7 +650,7 @@ void coincidePal(int matrix[DIM][DIM],
 	  pal[j] -= (A_MINUS - CHAR_MAX);
 	}
       }
-      pal[j + 1] = '\0';
+      pal[j] = '\0';
       break;
     case 3:			//Abajo
       for(i = iF, j = 0; i <= fF; ++i, ++j) {
@@ -658,7 +659,7 @@ void coincidePal(int matrix[DIM][DIM],
 	  pal[j] -= (A_MINUS - CHAR_MAX);
 	}
       }
-      pal[j + 1] = '\0';
+      pal[j] = '\0';
       break;
     case 4:			//Arriba
       for(i = iF, j = 0; i >= fF; --i, ++j) {
@@ -667,7 +668,7 @@ void coincidePal(int matrix[DIM][DIM],
 	  pal[j] -= (A_MINUS - CHAR_MAX);
 	}
       }
-      pal[j + 1] = '\0';
+      pal[j] = '\0';
       break;
     case 5:			//Abajo derecha
       for(i = iF, k = iC, j = 0; i <= fF; ++i, ++k, ++j) {
@@ -676,7 +677,7 @@ void coincidePal(int matrix[DIM][DIM],
 	  pal[j] -= (A_MINUS - CHAR_MAX);
 	}
       }
-      pal[j + 1] = '\0';
+      pal[j] = '\0';
       break;
     case 6:			//Arriba derecha
       for(i = iF, k = iC, j = 0; i >= fF; --i, ++k, ++j) {
@@ -685,7 +686,7 @@ void coincidePal(int matrix[DIM][DIM],
 	  pal[j] -= (A_MINUS - CHAR_MAX);
 	}
       }
-      pal[j + 1] = '\0';
+      pal[j] = '\0';
       break;
     case 7:			//Abajo izquierda
       for(i = iF, k = iC, j = 0; i <= fF; ++i, --k, ++j) {
@@ -694,7 +695,7 @@ void coincidePal(int matrix[DIM][DIM],
 	  pal[j] -= (A_MINUS - CHAR_MAX);
 	}
       }
-      pal[j + 1] = '\0';
+      pal[j] = '\0';
       break;
     case 8:			//Arriba izquierda
       for(i = iF, k = iC, j = 0; i >= fF; --i, --k, ++j) {
@@ -703,13 +704,14 @@ void coincidePal(int matrix[DIM][DIM],
 	  pal[j] -= (A_MINUS - CHAR_MAX);
 	}
       }
-      pal[j + 1] = '\0';
+      pal[j] = '\0';
       break;
   }
   //Comparamos buscando si conicide
   for(i = 0; i < N_PAL && !rec && norec; ++i) {
     //puts(pal);                        //debug
-    if(strncmp(palabras[t][i], pal, (int)strlen(palabras[t][i])) == 0) {
+    if(strncmp(palabras[t][i], pal, stringlength(pal))
+       == 0) {
       find[i] = true;
       rec = true;
       //printf("%i\n", i);//debug
@@ -742,56 +744,56 @@ void minuscula(int m[DIM][DIM], int iF, int iC, int fF, int fC, int dir) {
     case 1:			//Derecha
       for(i = iC; i <= fC; ++i) {
 	if(m[iF][i] < A_MINUS) {
-	  m[iF][i] += (A_MINUS - CHAR_MAX);
+	  m[iF][i] += (A_MINUS - CHAR_MIN);
 	}
       }
       break;
     case 2:			//Izquierda
       for(i = iC; i >= fC; --i) {
 	if(m[iF][i] < A_MINUS) {
-	  m[iF][i] += (A_MINUS - CHAR_MAX);
+	  m[iF][i] += (A_MINUS - CHAR_MIN);
 	}
       }
       break;
     case 3:			//Abajo
       for(i = iF; i <= fF; ++i) {
 	if(m[i][iC] < A_MINUS) {
-	  m[i][iC] += (A_MINUS - CHAR_MAX);
+	  m[i][iC] += (A_MINUS - CHAR_MIN);
 	}
       }
       break;
     case 4:			//Arriba
       for(i = iF; i >= fF; --i) {
 	if(m[i][iC] < A_MINUS) {
-	  m[i][iC] += (A_MINUS - CHAR_MAX);
+	  m[i][iC] += (A_MINUS - CHAR_MIN);
 	}
       }
       break;
     case 5:			//Abajo derecha
       for(i = iF, j = iC; i <= fF; ++i, ++j) {
 	if(m[i][j] < A_MINUS) {
-	  m[i][j] += (A_MINUS - CHAR_MAX);
+	  m[i][j] += (A_MINUS - CHAR_MIN);
 	}
       }
       break;
     case 6:			//Arriba derecha
       for(i = iF, j = iC; i >= fF; --i, ++j) {
 	if(m[i][j] < A_MINUS) {
-	  m[i][j] += (A_MINUS - CHAR_MAX);
+	  m[i][j] += (A_MINUS - CHAR_MIN);
 	}
       }
       break;
     case 7:			//Abajo izquierda
       for(i = iF, j = iC; i <= fF; ++i, --j) {
 	if(m[i][j] < A_MINUS) {
-	  m[i][j] += (A_MINUS - CHAR_MAX);
+	  m[i][j] += (A_MINUS - CHAR_MIN);
 	}
       }
       break;
     case 8:			//Arriba izquierda
       for(i = iF, j = iC; i >= fF; --i, --j) {
 	if(m[i][j] < A_MINUS) {
-	  m[i][j] += (A_MINUS - CHAR_MAX);
+	  m[i][j] += (A_MINUS - CHAR_MIN);
 	}
       }
       break;
@@ -858,4 +860,20 @@ int sentido(int iX, int fX, int iY, int fY) {
     }
   }
   return sent;
+}
+
+/**
+  *Title: stringlength
+  *Description: A implementation to calculate string length
+  *@param chain[] - string which will be calculate length
+  *@return i - a lenght of stringlenght
+  *@author: JoseluCross
+  *@date: 05/05/2016
+  *Licence: GPLv3
+*/
+size_t stringlength(char chain[]) {
+  //Usamos esta función porque no funciona bien strlen a la hora de pasar tamaño en strncmp
+  size_t  i;
+  for(i = 0; chain[i] != '\0'; ++i) ;
+  return i;
 }
