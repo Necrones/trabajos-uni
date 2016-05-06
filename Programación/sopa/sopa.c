@@ -42,7 +42,6 @@ void    coincidePal(int[DIM][DIM], char[N_TEMA][N_PAL][TCHAR], int, int,
 void    juego(int[DIM][DIM], char[N_TEMA][N_PAL][TCHAR]);
 void    minuscula(int[DIM][DIM], int, int, int, int, int);
 int     sentido(int, int, int, int);
-size_t  stringlength(char[]);
 
 int main() {
   srand(time(NULL));
@@ -84,7 +83,7 @@ void juego(int matriz[DIM][DIM], char themes[N_TEMA][N_PAL][TCHAR]) {
   bool    victoria = false, game = true, salida;
   int     partida, tema;
   while(game) {
-    //Iniciamos el juego 
+    //Iniciamos el juego
     tema = solicitaOpcionMenu();
     if(tema != -1) {
       crearSopa(matriz);
@@ -710,11 +709,13 @@ void coincidePal(int matrix[DIM][DIM],
   //Comparamos buscando si conicide
   for(i = 0; i < N_PAL && !rec && norec; ++i) {
     //puts(pal);                        //debug
-    if(strncmp(palabras[t][i], pal, stringlength(pal))
+    if(strlen(palabras[t][i])==strlen(pal)){
+    if(strncmp(palabras[t][i], pal, strlen(pal))
        == 0) {
       find[i] = true;
       rec = true;
       //printf("%i\n", i);//debug
+    }
     }
   }
   if(rec) {
@@ -860,20 +861,4 @@ int sentido(int iX, int fX, int iY, int fY) {
     }
   }
   return sent;
-}
-
-/**
-  *Title: stringlength
-  *Description: A implementation to calculate string length
-  *@param chain[] - string which will be calculate length
-  *@return i - a lenght of stringlenght
-  *@author: JoseluCross
-  *@date: 05/05/2016
-  *Licence: GPLv3
-*/
-size_t stringlength(char chain[]) {
-  //Usamos esta función porque no funciona bien strlen a la hora de pasar tamaño en strncmp
-  size_t  i;
-  for(i = 0; chain[i] != '\0'; ++i) ;
-  return i;
 }
