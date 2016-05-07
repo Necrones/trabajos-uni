@@ -44,8 +44,8 @@ void    minuscula(int[DIM][DIM], int, int, int, int, int);
 int     sentido(int, int, int, int);
 
 int main() {
-  srand(time(NULL));
-  //srand(22);			//Cruce en coches
+  //srand(time(NULL));
+  srand(22);			//Cruce en coches y colores
   int     sopa[DIM][DIM];
   char    temas[N_TEMA][N_PAL][TCHAR];
   rellenaTemas(temas);
@@ -167,6 +167,8 @@ void juego(int matriz[DIM][DIM], char themes[N_TEMA][N_PAL][TCHAR]) {
 	  if(partida == ESC) {
 	    printf("Adios\n");
 	    game = false;
+	  } else if(partida == ESP) {
+	    victoria = false;
 	  }
 	} while(partida != ESP && partida != ESC);
       }
@@ -581,7 +583,8 @@ void rellenaMatriz(int sopa[DIM][DIM]) {
   for(i = 0; i < DIM; i++) {
     for(j = 0; j < DIM; j++) {
       if(sopa[i][j] == ZERO) {
-	sopa[i][j] = buscaAleatorio(CHAR_MIN, CHAR_MAX);
+	//sopa[i][j] = buscaAleatorio(CHAR_MIN, CHAR_MAX);//Comportamiento normal
+	sopa[i][j] = ESP;	//Para una correción más fácil
       }
     }
   }
@@ -638,7 +641,7 @@ void coincidePal(int matrix[DIM][DIM],
       for(i = iC, j = 0; i <= fC; ++i, ++j) {
 	pal[j] = (char)matrix[iF][i];
 	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - CHAR_MAX);
+	  pal[j] -= (A_MINUS - CHAR_MIN);
 	}
       } pal[j] = '\0';
       break;
@@ -646,7 +649,7 @@ void coincidePal(int matrix[DIM][DIM],
       for(i = iC, j = 0; i >= fC; --i, ++j) {
 	pal[j] = (char)matrix[iF][i];
 	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - CHAR_MAX);
+	  pal[j] -= (A_MINUS - CHAR_MIN);
 	}
       }
       pal[j] = '\0';
@@ -655,7 +658,7 @@ void coincidePal(int matrix[DIM][DIM],
       for(i = iF, j = 0; i <= fF; ++i, ++j) {
 	pal[j] = (char)matrix[i][iC];
 	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - CHAR_MAX);
+	  pal[j] -= (A_MINUS - CHAR_MIN);
 	}
       }
       pal[j] = '\0';
@@ -664,7 +667,7 @@ void coincidePal(int matrix[DIM][DIM],
       for(i = iF, j = 0; i >= fF; --i, ++j) {
 	pal[j] = (char)matrix[i][iC];
 	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - CHAR_MAX);
+	  pal[j] -= (A_MINUS - CHAR_MIN);
 	}
       }
       pal[j] = '\0';
@@ -673,7 +676,7 @@ void coincidePal(int matrix[DIM][DIM],
       for(i = iF, k = iC, j = 0; i <= fF; ++i, ++k, ++j) {
 	pal[j] = (char)matrix[i][k];
 	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - CHAR_MAX);
+	  pal[j] -= (A_MINUS - CHAR_MIN);
 	}
       }
       pal[j] = '\0';
@@ -682,7 +685,7 @@ void coincidePal(int matrix[DIM][DIM],
       for(i = iF, k = iC, j = 0; i >= fF; --i, ++k, ++j) {
 	pal[j] = (char)matrix[i][k];
 	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - CHAR_MAX);
+	  pal[j] -= (A_MINUS - CHAR_MIN);
 	}
       }
       pal[j] = '\0';
@@ -691,7 +694,7 @@ void coincidePal(int matrix[DIM][DIM],
       for(i = iF, k = iC, j = 0; i <= fF; ++i, --k, ++j) {
 	pal[j] = (char)matrix[i][k];
 	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - CHAR_MAX);
+	  pal[j] -= (A_MINUS - CHAR_MIN);
 	}
       }
       pal[j] = '\0';
@@ -700,7 +703,7 @@ void coincidePal(int matrix[DIM][DIM],
       for(i = iF, k = iC, j = 0; i >= fF; --i, --k, ++j) {
 	pal[j] = (char)matrix[i][k];
 	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - CHAR_MAX);
+	  pal[j] -= (A_MINUS - CHAR_MIN);
 	}
       }
       pal[j] = '\0';
@@ -709,13 +712,13 @@ void coincidePal(int matrix[DIM][DIM],
   //Comparamos buscando si conicide
   for(i = 0; i < N_PAL && !rec && norec; ++i) {
     //puts(pal);                        //debug
-    if(strlen(palabras[t][i])==strlen(pal)){
-    if(strncmp(palabras[t][i], pal, strlen(pal))
-       == 0) {
-      find[i] = true;
-      rec = true;
-      //printf("%i\n", i);//debug
-    }
+    if(strlen(palabras[t][i]) == strlen(pal)) {
+      if(strncmp(palabras[t][i], pal, strlen(pal))
+	 == 0) {
+	find[i] = true;
+	rec = true;
+	//printf("%i\n", i);//debug
+      }
     }
   }
   if(rec) {
