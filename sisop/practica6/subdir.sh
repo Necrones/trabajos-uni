@@ -1,5 +1,5 @@
 #!/bin/bash
-SUBD=$(ls -d $1/*)
+SUBD=$(ls -1d $1/*)
 TOTAL=0
 
 for j in $SUBD
