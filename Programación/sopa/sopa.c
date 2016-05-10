@@ -6,13 +6,13 @@
  *@Version: 2.0.0
  *@Date: 05/04/2016
  */
-
+//Librerías
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
 #include <stdbool.h>
 #include <stdlib.h>
-
+//Constantes
 #define DIM 15
 #define TCHAR 11
 #define N_TEMA 5
@@ -25,21 +25,30 @@
 #define ESP 32			//Espacio en ASCII
 #define DASH 45			//- en ASCII
 #define BARRA 124		//| en ASCII
-
+//Registros
+typedef struct {
+  char    palabra[TCHAR];
+  int     fila_inicio;
+  int     columna_inicio;
+  int     fila_final;
+  int     columna_final;
+  int     direccion;
+} Palabra;
+//Prototipos
 void    crearSopa(int[DIM][DIM]);
 void    imprimirSopa(int[DIM][DIM]);
-void    rellenaTemas(char[N_TEMA][N_PAL][TCHAR]);
+void    rellenaTemas(Palabra[N_TEMA][N_PAL]);
 int     solicitaOpcionMenu(void);
 int     clean_stdin(void);
-void    colocaPalabras(int[DIM][DIM], char[N_TEMA][N_PAL][TCHAR], int);
-void    colocaPalabra(int[DIM][DIM], char[TCHAR], int);
+void    colocaPalabras(int[DIM][DIM], Palabra[N_PAL]);
+void    colocaPalabra(int[DIM][DIM], Palabra *, int);
 void    rellenaMatriz(int[DIM][DIM]);
 int     buscaAleatorio(int, int);
-bool    esPosibleColocarPalabra(int[DIM][DIM], char[TCHAR], int, int, int);
+bool    esPosibleColocarPalabra(int[DIM][DIM], Palabra, int, int);
 void    introduceNum(int *);
-void    coincidePal(int[DIM][DIM], char[N_TEMA][N_PAL][TCHAR], int, int,
+void    coincidePal(int[DIM][DIM], Palabra[N_PAL], int,
 		    int, int, int, bool[N_PAL]);
-void    juego(int[DIM][DIM], char[N_TEMA][N_PAL][TCHAR]);
+void    juego(int[DIM][DIM], Palabra[N_TEMA][N_PAL]);
 void    minuscula(int[DIM][DIM], int, int, int, int, int);
 int     sentido(int, int, int, int);
 
@@ -47,7 +56,7 @@ int main() {
   //srand(time(NULL));
   srand(22);			//Cruce en coches y colores
   int     sopa[DIM][DIM];
-  char    temas[N_TEMA][N_PAL][TCHAR];
+  Palabra temas[N_TEMA][N_PAL];
   rellenaTemas(temas);
   system("clear");
   juego(sopa, temas);
@@ -75,7 +84,7 @@ int clean_stdin() {
   *@author: Luis Pedrosa Ruiz y JoseluCross
   *@date: 26/04/2016
   */
-void juego(int matriz[DIM][DIM], char themes[N_TEMA][N_PAL][TCHAR]) {
+void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL]) {
   int     ini_fila, ini_col, fin_fila, fin_col;	//Coordenadas
   bool    palEncontrada[N_PAL];
   int     i;			//Contador
@@ -87,7 +96,7 @@ void juego(int matriz[DIM][DIM], char themes[N_TEMA][N_PAL][TCHAR]) {
     tema = solicitaOpcionMenu();
     if(tema != -1) {
       crearSopa(matriz);
-      colocaPalabras(matriz, themes, tema);
+      colocaPalabras(matriz, themes[tema]);
       rellenaMatriz(matriz);
       imprimirSopa(matriz);
       //Inicializamos palEncontrada
@@ -136,7 +145,7 @@ void juego(int matriz[DIM][DIM], char themes[N_TEMA][N_PAL][TCHAR]) {
 	  }
 	} while(!salida);
 	system("clear");
-	coincidePal(matriz, themes, tema, ini_fila - 1, ini_col - 1,
+	coincidePal(matriz, themes[tema], ini_fila - 1, ini_col - 1,
 		    fin_fila - 1, fin_col - 1, palEncontrada);
 	imprimirSopa(matriz);
 	for(i = 0, respuestas = 0; i < N_PAL; ++i) {
@@ -295,52 +304,52 @@ void imprimirSopa(int sop[DIM][DIM]) {
  *@date: 05/04/2016
  *@version: 1.0.0
  */
-void rellenaTemas(char tem[N_TEMA][N_PAL][TCHAR]) {
+void rellenaTemas(Palabra tem[N_TEMA][N_PAL]) {
   //Línea 0 es coches
-  strcpy(tem[0][0], "AUDI");
-  strcpy(tem[0][1], "MERCEDES");
-  strcpy(tem[0][2], "FORD");
-  strcpy(tem[0][3], "OPEL");
-  strcpy(tem[0][4], "RENAULT");
-  strcpy(tem[0][5], "PORSCHE");
-  strcpy(tem[0][6], "PEUGEOT");
-  strcpy(tem[0][7], "SEAT");
+  strcpy(tem[0][0].palabra, "AUDI");
+  strcpy(tem[0][1].palabra, "MERCEDES");
+  strcpy(tem[0][2].palabra, "FORD");
+  strcpy(tem[0][3].palabra, "OPEL");
+  strcpy(tem[0][4].palabra, "RENAULT");
+  strcpy(tem[0][5].palabra, "PORSCHE");
+  strcpy(tem[0][6].palabra, "PEUGEOT");
+  strcpy(tem[0][7].palabra, "SEAT");
   //Linea 1 es colores
-  strcpy(tem[1][0], "ROJO");
-  strcpy(tem[1][1], "VERDE");
-  strcpy(tem[1][2], "AZUL");
-  strcpy(tem[1][3], "AMARILLO");
-  strcpy(tem[1][4], "NARANJA");
-  strcpy(tem[1][5], "MAGENTA");
-  strcpy(tem[1][6], "MARRON");
-  strcpy(tem[1][7], "GRIS");
+  strcpy(tem[1][0].palabra, "ROJO");
+  strcpy(tem[1][1].palabra, "VERDE");
+  strcpy(tem[1][2].palabra, "AZUL");
+  strcpy(tem[1][3].palabra, "AMARILLO");
+  strcpy(tem[1][4].palabra, "NARANJA");
+  strcpy(tem[1][5].palabra, "MAGENTA");
+  strcpy(tem[1][6].palabra, "MARRON");
+  strcpy(tem[1][7].palabra, "GRIS");
   //Linea 2 es formas
-  strcpy(tem[2][0], "CIRCULO");
-  strcpy(tem[2][1], "TRIANGULO");
-  strcpy(tem[2][2], "CUADRADO");
-  strcpy(tem[2][3], "ROMBO");
-  strcpy(tem[2][4], "ELIPSE");
-  strcpy(tem[2][5], "PENTAGONO");
-  strcpy(tem[2][6], "RECTANGULO");
-  strcpy(tem[2][7], "TRAPECIO");
+  strcpy(tem[2][0].palabra, "CIRCULO");
+  strcpy(tem[2][1].palabra, "TRIANGULO");
+  strcpy(tem[2][2].palabra, "CUADRADO");
+  strcpy(tem[2][3].palabra, "ROMBO");
+  strcpy(tem[2][4].palabra, "ELIPSE");
+  strcpy(tem[2][5].palabra, "PENTAGONO");
+  strcpy(tem[2][6].palabra, "RECTANGULO");
+  strcpy(tem[2][7].palabra, "TRAPECIO");
   //Linea 3 es ciudades
-  strcpy(tem[3][0], "MADRID");
-  strcpy(tem[3][1], "BARCELONA");
-  strcpy(tem[3][2], "BILBAO");
-  strcpy(tem[3][3], "ZARAGOZA");
-  strcpy(tem[3][4], "BURGOS");
-  strcpy(tem[3][5], "FERROL");
-  strcpy(tem[3][6], "JAEN");
-  strcpy(tem[3][7], "CORDOBA");
+  strcpy(tem[3][0].palabra, "MADRID");
+  strcpy(tem[3][1].palabra, "BARCELONA");
+  strcpy(tem[3][2].palabra, "BILBAO");
+  strcpy(tem[3][3].palabra, "ZARAGOZA");
+  strcpy(tem[3][4].palabra, "BURGOS");
+  strcpy(tem[3][5].palabra, "FERROL");
+  strcpy(tem[3][6].palabra, "JAEN");
+  strcpy(tem[3][7].palabra, "CORDOBA");
   //Linea 4 es países
-  strcpy(tem[4][0], "INGLATERRA");
-  strcpy(tem[4][1], "ARGELIA");
-  strcpy(tem[4][2], "ITALIA");
-  strcpy(tem[4][3], "FRANCIA");
-  strcpy(tem[4][4], "MARRUECOS");
-  strcpy(tem[4][5], "CUBA");
-  strcpy(tem[4][6], "ECUADOR");
-  strcpy(tem[4][7], "RUSIA");
+  strcpy(tem[4][0].palabra, "INGLATERRA");
+  strcpy(tem[4][1].palabra, "ARGELIA");
+  strcpy(tem[4][2].palabra, "ITALIA");
+  strcpy(tem[4][3].palabra, "FRANCIA");
+  strcpy(tem[4][4].palabra, "MARRUECOS");
+  strcpy(tem[4][5].palabra, "CUBA");
+  strcpy(tem[4][6].palabra, "ECUADOR");
+  strcpy(tem[4][7].palabra, "RUSIA");
 }
 
 /**
@@ -365,11 +374,11 @@ int buscaAleatorio(int min, int max) {
  *@author: Luis Pedrosa Ruiz y JoseluCross
  *@date: 12/04/2016
  */
-void colocaPalabras(int sople[DIM][DIM], char palab[N_TEMA][N_PAL][TCHAR],
-		    int te) {
+void colocaPalabras(int sople[DIM][DIM], Palabra palab[N_PAL]) {
   int     i;
   for(i = 0; i < N_PAL; i++) {
-    colocaPalabra(sople, palab[te][i], buscaAleatorio(1, 8));
+    palab[i].direccion = buscaAleatorio(1, 8);
+    colocaPalabra(sople, &palab[i], palab[i].direccion);
   }
 }
 
@@ -382,62 +391,92 @@ void colocaPalabras(int sople[DIM][DIM], char palab[N_TEMA][N_PAL][TCHAR],
  *@author: Luis Pedrosa Ruiz y JoseluCross
  *@date: 12/04/2016
  */
-void colocaPalabra(int sopi[DIM][DIM], char pala[TCHAR], int direccion) {
+void colocaPalabra(int sopi[DIM][DIM], Palabra * pala, int direccion) {
   int     fila, columna, i, j = 0, k;
-  bool    e;
   do {
     fila = buscaAleatorio(0, DIM - 1);
     columna = buscaAleatorio(0, DIM - 1);
-    e = esPosibleColocarPalabra(sopi, pala, direccion, columna, fila);
-  } while(!e);
+  } while(!(esPosibleColocarPalabra(sopi, *pala, columna, fila)));
+  ((*pala)).fila_inicio = fila;
+  (*pala).columna_inicio = columna;
   switch (direccion) {
     case 1:			//derecha
-      for(i = columna; i < (columna + (int)strlen(pala)); i++) {
-	sopi[fila][i] = (int)pala[j];
+      for(i = (*pala).columna_inicio;
+	  i < ((*pala).columna_inicio + (int)strlen((*pala).palabra));
+	  i++) {
+	sopi[(*pala).fila_inicio][i] = (int)(*pala).palabra[j];
 	j++;
       }
+      (*pala).fila_final = (*pala).fila_inicio;
+      (*pala).columna_final = i - 1;
       break;
     case 2:			//izquierda
-      for(i = columna; i > (columna - (int)strlen(pala)); i--) {
-	sopi[fila][i] = (int)pala[j];
+      for(i = (*pala).columna_inicio;
+	  i > ((*pala).columna_inicio - (int)strlen((*pala).palabra));
+	  i--) {
+	sopi[(*pala).fila_inicio][i] = (int)(*pala).palabra[j];
 	j++;
       }
+      (*pala).fila_final = (*pala).fila_inicio;
+      (*pala).columna_final = i + 1;
       break;
     case 3:			//abajo
-      for(i = fila; i < (fila + (int)strlen(pala)); i++) {
-	sopi[i][columna] = (int)pala[j];
+      for(i = (*pala).fila_inicio;
+	  i < ((*pala).fila_inicio + (int)strlen((*pala).palabra)); i++) {
+	sopi[i][(*pala).columna_inicio] = (int)(*pala).palabra[j];
 	j++;
       }
+      (*pala).fila_final = i - 1;
+      (*pala).columna_final = (*pala).columna_inicio;
       break;
     case 4:			//arriba
-      for(i = fila; i > (fila - (int)strlen(pala)); i--) {
-	sopi[i][columna] = (int)pala[j];
+      for(i = (*pala).fila_inicio;
+	  i > ((*pala).fila_inicio - (int)strlen((*pala).palabra)); i--) {
+	sopi[i][(*pala).columna_inicio] = (int)(*pala).palabra[j];
 	j++;
       }
+      (*pala).fila_final = i + 1;
+      (*pala).columna_final = (*pala).columna_inicio;
       break;
     case 5:			//diagonal derecha abajo
-      for(i = fila, k = columna; i < (fila + (int)strlen(pala)); i++, k++) {
-	sopi[i][k] = (int)pala[j];
+      for(i = (*pala).fila_inicio, k = (*pala).columna_inicio;
+	  i < ((*pala).fila_inicio + (int)strlen((*pala).palabra));
+	  i++, k++) {
+	sopi[i][k] = (int)(*pala).palabra[j];
 	j++;
       }
+      (*pala).fila_final = i - 1;
+      (*pala).columna_final = k - 1;
       break;
     case 6:			//diagonal derecha arriba
-      for(i = fila, k = columna; i > (fila - (int)strlen(pala)); i--, k++) {
-	sopi[i][k] = (int)pala[j];
+      for(i = (*pala).fila_inicio, k = (*pala).columna_inicio;
+	  i > ((*pala).fila_inicio - (int)strlen((*pala).palabra));
+	  i--, k++) {
+	sopi[i][k] = (int)(*pala).palabra[j];
 	j++;
       }
+      (*pala).fila_final = i + 1;
+      (*pala).columna_final = k - 1;
       break;
     case 7:			//diagonal izquierda abajo
-      for(i = fila, k = columna; i < (fila + (int)strlen(pala)); i++, k--) {
-	sopi[i][k] = (int)pala[j];
+      for(i = (*pala).fila_inicio, k = (*pala).columna_inicio;
+	  i < ((*pala).fila_inicio + (int)strlen((*pala).palabra));
+	  i++, k--) {
+	sopi[i][k] = (int)(*pala).palabra[j];
 	j++;
       }
+      (*pala).fila_final = i - 1;
+      (*pala).columna_final = k + 1;
       break;
     case 8:			//diagonal izquierda arriba
-      for(i = fila, k = columna; i > (fila - (int)strlen(pala)); i--, k--) {
-	sopi[i][k] = (int)pala[j];
+      for(i = (*pala).fila_inicio, k = (*pala).columna_inicio;
+	  i > ((*pala).fila_inicio - (int)strlen((*pala).palabra));
+	  i--, k--) {
+	sopi[i][k] = (int)(*pala).palabra[j];
 	j++;
       }
+      (*pala).fila_final = i + 1;
+      (*pala).columna_final = k + 1;
       break;
   }
 }
@@ -454,18 +493,17 @@ void colocaPalabra(int sopi[DIM][DIM], char pala[TCHAR], int direccion) {
  *@author: Luis Pedrosa Ruiz JoseluCross
  *@date: 12/04/2016
  */
-bool esPosibleColocarPalabra(int so[DIM][DIM], char p[TCHAR], int dir,
-			     int col, int fil) {
+bool esPosibleColocarPalabra(int so[DIM][DIM], Palabra p, int col, int fil) {
   bool    error = true;
   int     i, j, k;
-  switch (dir) {
+  switch (p.direccion) {
     case 1:			//derecha
-      if(col + (int)strlen(p) > DIM) {
+      if(col + (int)strlen(p.palabra) > DIM) {
 	error = false;
       } else {
-	for(i = col, j = 0; i <= col + (int)strlen(p); i++, j++) {
+	for(i = col, j = 0; i <= col + (int)strlen(p.palabra); i++, j++) {
 	  if(so[fil][i] != ZERO) {
-	    if(p[j] != so[fil][i]) {
+	    if(p.palabra[j] != so[fil][i]) {
 	      error = false;
 	    }
 	  }
@@ -473,12 +511,12 @@ bool esPosibleColocarPalabra(int so[DIM][DIM], char p[TCHAR], int dir,
       }
       break;
     case 2:			//izquierda
-      if(col - (int)strlen(p) < 0) {
+      if(col - (int)strlen(p.palabra) < 0) {
 	error = false;
       } else {
-	for(i = col, j = 0; i >= col - (int)strlen(p); i--, j++) {
+	for(i = col, j = 0; i >= col - (int)strlen(p.palabra); i--, j++) {
 	  if(so[fil][i] != ZERO) {
-	    if(p[j] != so[fil][i]) {
+	    if(p.palabra[j] != so[fil][i]) {
 	      error = false;
 	    }
 	  }
@@ -486,12 +524,12 @@ bool esPosibleColocarPalabra(int so[DIM][DIM], char p[TCHAR], int dir,
       }
       break;
     case 3:			//abajo
-      if(fil + (int)strlen(p) > DIM) {
+      if(fil + (int)strlen(p.palabra) > DIM) {
 	error = false;
       } else {
-	for(i = fil, j = 0; i <= fil + (int)strlen(p); i++, j++) {
+	for(i = fil, j = 0; i <= fil + (int)strlen(p.palabra); i++, j++) {
 	  if(so[i][col] != ZERO) {
-	    if(p[j] != so[i][col]) {
+	    if(p.palabra[j] != so[i][col]) {
 	      error = false;
 	    }
 	  }
@@ -499,12 +537,12 @@ bool esPosibleColocarPalabra(int so[DIM][DIM], char p[TCHAR], int dir,
       }
       break;
     case 4:			//arriba
-      if(fil - (int)strlen(p) < 0) {
+      if(fil - (int)strlen(p.palabra) < 0) {
 	error = false;
       } else {
-	for(i = fil, j = 0; i >= fil - (int)strlen(p); i--, j++) {
+	for(i = fil, j = 0; i >= fil - (int)strlen(p.palabra); i--, j++) {
 	  if(so[i][col] != ZERO) {
-	    if(p[j] != so[i][col]) {
+	    if(p.palabra[j] != so[i][col]) {
 	      error = false;
 	    }
 	  }
@@ -512,13 +550,14 @@ bool esPosibleColocarPalabra(int so[DIM][DIM], char p[TCHAR], int dir,
       }
       break;
     case 5:			//Diagonal derecha abajo
-      if(fil + (int)strlen(p) > DIM || col + (int)strlen(p) > DIM) {
+      if(fil + (int)strlen(p.palabra) > DIM
+	 || col + (int)strlen(p.palabra) > DIM) {
 	error = false;
       } else {
 	for(i = fil, j = col, k = 0;
-	    i <= fil + (int)strlen(p); i++, j++, k++) {
+	    i <= fil + (int)strlen(p.palabra); i++, j++, k++) {
 	  if(so[i][j] != ZERO) {
-	    if(p[k] != so[i][j]) {
+	    if(p.palabra[k] != so[i][j]) {
 	      error = false;
 	    }
 	  }
@@ -526,13 +565,14 @@ bool esPosibleColocarPalabra(int so[DIM][DIM], char p[TCHAR], int dir,
       }
       break;
     case 6:			//Diagonal derecha arriba
-      if(fil - (int)strlen(p) < 0 || col + (int)strlen(p) > DIM) {
+      if(fil - (int)strlen(p.palabra) < 0
+	 || col + (int)strlen(p.palabra) > DIM) {
 	error = false;
       } else {
 	for(i = fil, j = col, k = 0;
-	    i >= fil - (int)strlen(p); i--, j++, k++) {
+	    i >= fil - (int)strlen(p.palabra); i--, j++, k++) {
 	  if(so[i][j] != ZERO) {
-	    if(p[k] != so[i][j]) {
+	    if(p.palabra[k] != so[i][j]) {
 	      error = false;
 	    }
 	  }
@@ -540,13 +580,14 @@ bool esPosibleColocarPalabra(int so[DIM][DIM], char p[TCHAR], int dir,
       }
       break;
     case 7:			//Diagonal izquierda abajo
-      if(fil + (int)strlen(p) > DIM || col - (int)strlen(p) < 0) {
+      if(fil + (int)strlen(p.palabra) > DIM
+	 || col - (int)strlen(p.palabra) < 0) {
 	error = false;
       } else {
 	for(i = fil, j = col, k = 0;
-	    i <= fil + (int)strlen(p); i++, j--, k++) {
+	    i <= fil + (int)strlen(p.palabra); i++, j--, k++) {
 	  if(so[i][j] != ZERO) {
-	    if(p[k] != so[i][j]) {
+	    if(p.palabra[k] != so[i][j]) {
 	      error = false;
 	    }
 	  }
@@ -554,13 +595,14 @@ bool esPosibleColocarPalabra(int so[DIM][DIM], char p[TCHAR], int dir,
       }
       break;
     case 8:			//Diagonal izquierda arriba
-      if(fil - (int)strlen(p) < 0 || col - (int)strlen(p) < 0) {
+      if(fil - (int)strlen(p.palabra) < 0
+	 || col - (int)strlen(p.palabra) < 0) {
 	error = false;
       } else {
 	for(i = fil, j = col, k = 0;
-	    i >= fil - (int)strlen(p); i--, j--, k++) {
+	    i >= fil - (int)strlen(p.palabra); i--, j--, k++) {
 	  if(so[i][j] != ZERO) {
-	    if(p[k] != so[i][j]) {
+	    if(p.palabra[k] != so[i][j]) {
 	      error = false;
 	    }
 	  }
@@ -625,109 +667,25 @@ void introduceNum(int *num) {
   *@date: 26/04/2016
   */
 void coincidePal(int matrix[DIM][DIM],
-		 char palabras[N_TEMA][N_PAL][TCHAR], int t,
+		 Palabra palabras[N_PAL],
 		 int iF, int iC, int fF, int fC, bool find[N_PAL]) {
-  int     i, j, k, dir, repair;	//Contadores y variables auxiliares
-  bool    rec = false, norec = true;	//Variables de conrol
-  char    pal[TCHAR];
-
-  dir = sentido(iF, fF, iC, fC);
-  repair = dir;
-
-  switch (dir) {
-    case 0:			//Dirección equivocada
-      norec = false;
-    case 1:			//Derecha
-      for(i = iC, j = 0; i <= fC; ++i, ++j) {
-	pal[j] = (char)matrix[iF][i];
-	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - CHAR_MIN);
-	}
-      } pal[j] = '\0';
-      break;
-    case 2:			//Izquierda
-      for(i = iC, j = 0; i >= fC; --i, ++j) {
-	pal[j] = (char)matrix[iF][i];
-	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - CHAR_MIN);
-	}
-      }
-      pal[j] = '\0';
-      break;
-    case 3:			//Abajo
-      for(i = iF, j = 0; i <= fF; ++i, ++j) {
-	pal[j] = (char)matrix[i][iC];
-	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - CHAR_MIN);
-	}
-      }
-      pal[j] = '\0';
-      break;
-    case 4:			//Arriba
-      for(i = iF, j = 0; i >= fF; --i, ++j) {
-	pal[j] = (char)matrix[i][iC];
-	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - CHAR_MIN);
-	}
-      }
-      pal[j] = '\0';
-      break;
-    case 5:			//Abajo derecha
-      for(i = iF, k = iC, j = 0; i <= fF; ++i, ++k, ++j) {
-	pal[j] = (char)matrix[i][k];
-	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - CHAR_MIN);
-	}
-      }
-      pal[j] = '\0';
-      break;
-    case 6:			//Arriba derecha
-      for(i = iF, k = iC, j = 0; i >= fF; --i, ++k, ++j) {
-	pal[j] = (char)matrix[i][k];
-	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - CHAR_MIN);
-	}
-      }
-      pal[j] = '\0';
-      break;
-    case 7:			//Abajo izquierda
-      for(i = iF, k = iC, j = 0; i <= fF; ++i, --k, ++j) {
-	pal[j] = (char)matrix[i][k];
-	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - CHAR_MIN);
-	}
-      }
-      pal[j] = '\0';
-      break;
-    case 8:			//Arriba izquierda
-      for(i = iF, k = iC, j = 0; i >= fF; --i, --k, ++j) {
-	pal[j] = (char)matrix[i][k];
-	if((int)pal[j] >= A_MINUS) {
-	  pal[j] -= (A_MINUS - CHAR_MIN);
-	}
-      }
-      pal[j] = '\0';
-      break;
-  }
-  //Comparamos buscando si conicide
-  for(i = 0; i < N_PAL && !rec && norec; ++i) {
-    //puts(pal);                        //debug
-    if(strlen(palabras[t][i]) == strlen(pal)) {
-      if(strncmp(palabras[t][i], pal, strlen(pal))
-	 == 0) {
-	find[i] = true;
-	rec = true;
-	//printf("%i\n", i);//debug
-      }
+  int     i;			//Contadores y variables auxiliares
+  bool    rec = false;		// norec = true;  //Variables de conrol
+  //char    pal[TCHAR];
+  for(i = 0; i < N_PAL && !rec; ++i) {
+    if(palabras[i].fila_inicio == iF && palabras[i].columna_inicio == iC
+       && palabras[i].fila_final == fF
+       && palabras[i].columna_final == fC) {
+      rec = true;
+      find[i] = true;
     }
   }
   if(rec) {
-    printf("Palabra %s correcta\n", palabras[t][i - 1]);
-    minuscula(matrix, iF, iC, fF, fC, dir);
+    printf("Palabra %s correcta\n", palabras[i - 1].palabra);
+    minuscula(matrix, iF, iC, fF, fC, palabras[i - 1].direccion);
   } else {
     printf("Palabra incorrecta\n");
   }
-
 }
 
 /**
