@@ -1,0 +1,171 @@
+
+
+*********************************************************************************************************
+					   SISTEMAS OPERATIVOS
+					PRACTICA DE CONTROL 14/15
+.Daniel Santidrian Alonso
+.David Zotes Gonzalez
+*********************************************************************************************************
+
+
+Introduzca el numero de procesos a ejecutar:
+¿Desea introducir los datos de forma manual? (s/n):
+n
+
+Leyendo Procesos
+ .  
+ .  
+ .  
+Procesos Leidos 
+
+--------------Resumen datos introducidos--------------------------
+
+Tamano de la memoria dinamica 	30 MB
+
+Numero de particiones fijas 	3
+
+Tamaño de las particiones 	4 10 16
+
+
+      Proceso         Tamano        Ejecución        Llegada
+*	T1	*	4	*	4	*	0	*
+*	T2	*	6	*	2	*	2	*
+*	T3	*	12	*	1	*	3	*
+*	T4	*	11	*	2	*	4	*
+*	T5	*	6	*	4	*	5	*
+*	T6	*	4	*	1	*	0	*
+*	T7	*	15	*	2	*	0	*
+*	T8	*	3	*	4 	*	0	*
+------------------------------------------------------------------
+
+--------------Cola a introducir en memoria------------------------
+
+T1:4:4:0
+T6:4:1:0
+T7:15:2:0
+T8:3:4:0
+T2:6:2:2
+T3:12:1:3
+T4:11:2:4
+T5:6:4:5
+------------------------------------------------------------------
+
+*******************************************************************************************************
+
+Elige una de las siguientes opciones
+***************************************
+
+1 - Asignacion contigua, particiones fijas y criterio que mejor se adapte	- FCFS
+2 - Asignacion contigua, particiones dinamicas y criterio que mejor se adapte	- FCFS
+3 - Asignacion contigua, particiones fijas y criterio que mejor se adapte	- SJF
+4 - Asignacion contigua, particiones dinamicas y criterio que mejor se adapte	- SJF
+2
+
+---------------------------------------------------------
+T - Memoria = 30MB
+---------------------------------------------------------
+
+
+DATOS:
+---------------------------------------------------------
+
+T1:4:4:0
+T6:4:1:0
+T7:15:2:0
+T8:3:4:0
+T2:6:2:2
+T3:12:1:3
+T4:11:2:4
+T5:6:4:5
+---------------------------------------------------------
+
+-------------------------------------------------------------
+Proceso que llega al sistema ->  T1:4:4:0
+
+Procesos pendientes de llegar ->  T6  T7  T8  T2  T3  T4  T5  
+-------------------------------------------------------------
+
+T1 T1 T1 T1 Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li    - 0
+
+-------------------------------------------------------------
+Proceso que llega al sistema ->  T6:4:1:0
+
+Procesos pendientes de llegar ->  T7  T8  T2  T3  T4  T5  
+-------------------------------------------------------------
+
+T1 T1 T1 T1 T6 T6 T6 T6 Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li    - 0
+
+-------------------------------------------------------------
+Proceso que llega al sistema ->  T7:15:2:0
+
+Procesos pendientes de llegar ->  T8  T2  T3  T4  T5  
+-------------------------------------------------------------
+
+T1 T1 T1 T1 T6 T6 T6 T6 T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 Li Li Li Li Li Li Li    - 0
+
+-------------------------------------------------------------
+Proceso que llega al sistema ->  T8:3:4:0
+
+Procesos pendientes de llegar ->  T2  T3  T4  T5  
+-------------------------------------------------------------
+
+T1 T1 T1 T1 T6 T6 T6 T6 T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 T8 T8 T8 Li Li Li Li    - 0
+
+T1 T1 T1 T1 T6 T6 T6 T6 T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 T8 T8 T8 Li Li Li Li    - 1
+
+T1 T1 T1 T1 Li Li Li Li T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 T7 T8 T8 T8 Li Li Li Li    - 2
+
+-------------------------------------------------------------
+Proceso que llega al sistema ->  T2:6:2:2
+
+Procesos pendientes de llegar ->  T3  T4  T5  
+-------------------------------------------------------------
+
+T1 T1 T1 T1 T2 T2 T2 T2 T2 T2 Li Li Li Li Li Li Li Li Li Li Li Li Li T8 T8 T8 Li Li Li Li    - 2
+
+-------------------------------------------------------------
+Proceso que llega al sistema ->  T3:12:1:3
+
+Procesos pendientes de llegar ->  T4  T5  
+-------------------------------------------------------------
+
+T1 T1 T1 T1 T2 T2 T2 T2 T2 T2 T3 T3 T3 T3 T3 T3 T3 T3 T3 T3 T3 T3 Li T8 T8 T8 Li Li Li Li    - 2
+
+T1 T1 T1 T1 T2 T2 T2 T2 T2 T2 T3 T3 T3 T3 T3 T3 T3 T3 T3 T3 T3 T3 Li T8 T8 T8 Li Li Li Li    - 3
+
+-------------------------------------------------------------
+Proceso que llega al sistema ->  T4:11:2:4
+
+Procesos pendientes de llegar ->  T5  
+-------------------------------------------------------------
+
+T1 T1 T1 T1 T2 T2 T2 T2 T2 T2 T4 T4 T4 T4 T4 T4 T4 T4 T4 T4 T4 Li Li T8 T8 T8 Li Li Li Li    - 3
+
+T1 T1 T1 T1 T2 T2 T2 T2 T2 T2 T4 T4 T4 T4 T4 T4 T4 T4 T4 T4 T4 Li Li T8 T8 T8 Li Li Li Li    - 4
+
+-------------------------------------------------------------
+Proceso que llega al sistema ->  T5:6:4:5
+
+Procesos pendientes de llegar ->  
+-------------------------------------------------------------
+
+T5 T5 T5 T5 T5 T5 Li Li Li Li T4 T4 T4 T4 T4 T4 T4 T4 T4 T4 T4 Li Li T8 T8 T8 Li Li Li Li    - 4
+
+T5 T5 T5 T5 T5 T5 Li Li Li Li T4 T4 T4 T4 T4 T4 T4 T4 T4 T4 T4 Li Li T8 T8 T8 Li Li Li Li    - 4
+
+T5 T5 T5 T5 T5 T5 Li Li Li Li T4 T4 T4 T4 T4 T4 T4 T4 T4 T4 T4 Li Li T8 T8 T8 Li Li Li Li    - 5
+
+T5 T5 T5 T5 T5 T5 Li Li Li Li T4 T4 T4 T4 T4 T4 T4 T4 T4 T4 T4 Li Li Li Li Li Li Li Li Li    - 6
+
+T5 T5 T5 T5 T5 T5 Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li    - 7
+
+T5 T5 T5 T5 T5 T5 Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li    - 8
+
+Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li    - 9
+
+
+ 			LEYENDA  
+			      _ En vertical  |  a la derecha. Espacio que ocupa la partición en el tiempo. 
+		 	      _ En horizontal _ Tamaño que ocupa la partición en memoria.
+			      _ Px Proceso, siendo x el número de proceso
+			      _ Li -> Espacio libre en la partición.
