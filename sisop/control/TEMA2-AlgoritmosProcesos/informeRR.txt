@@ -1,0 +1,25 @@
+############################################################
+#                     Creative Commons                     #
+#                                                          #
+#                   BY - Atribución (BY)                   #
+#                 NC - No uso Comercial (NC)               #
+#                SA - Compartir Igual (SA)                 #
+############################################################
+#######################################################################
+#                                                                     #
+#                         INFORME DE PRÁCTICA                        #
+#                         GESTIÓN DE PROCESOS                        #
+#             -------------------------------------------             #
+#     Antiguo alumno:                                          #
+#     Alumno: Mario Juez Gil                                          #
+#     Sistemas Operativos 2º Semestre                                #
+#     Grado en ingeniería informática (2012-2013)                   #
+#             -------------------------------------------             #
+#     Nuevos alumnos:                                          #
+#     Alumnos: Omar Santos Bernabé                                     #
+#     Sistemas Operativos 2º Semestre                                #
+#     Grado en ingeniería informática (2015-2016)                   #
+#                                                                     #
+#######################################################################
+
+	> ROUND ROBIN
