@@ -1,0 +1,16 @@
+proce P1 llegada 0 ejecucion 3                                             
+proce P2 llegada 2 ejecucion 1                                              
+proce P3 llegada 4 ejecucion 5                                              
+proce P4 llegada 5 ejecucion 15                                              
+proce P5 llegada 6 ejecucion 8                                              
+proce P6 llegada 0 ejecucion 2 
+proce P7 llegada 4 ejecucion 2 
+proce P8 llegada 8 ejecucion 3                                              
+proce P9 llegada 2 ejecucion 1                                              
+proce P10 llegada 1 ejecucion 5                                              
+proce P11 llegada 2 ejecucion 15                                              
+proce P12 llegada 3 ejecucion 8                                              
+proce P13 llegada 7 ejecucion 2 
+proce P14 llegada 0 ejecucion 1 
+
+
