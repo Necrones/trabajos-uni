@@ -34,17 +34,25 @@ echo " -----------------------------------------------"
 #Captura de datos
 proc=0
 quantum=0
-while [ \( "$proc" -le 0 \) ] 2> /dev/null ;do
-read -p "Introduzca un número de procesos: " proc
+j=0
+while [ $j -eq 0 ] 2> /dev/null ;do
+	read -p "Introduzca un número de procesos: " proc
+	if [ $proc -gt 0 -a $? -eq 0 ];then
+		j=1
+	fi
 done
-while [ "$quantum" -le 0 ] 2> /dev/null ;do
-read -p "Introduzca el quantum: " quantum
+j=0
+while [ $j -eq 0 ] 2> /dev/null ;do
+	read -p "Introduzca el quantum: " quantum
+	if [ $quantum -gt 0 -a $j -eq 0 ];then
+		j=1
+	fi
 done
 #Vectores de informacion
-declare proc_name[proc] #Nombre de cada proceso
-declare proc_arr[proc] #Turno de llegada del proceso
-declare proc_exe[proc] #Tiempo de ejecución o ráfaga; se reducirá según el quantum
-declare proc_order[proc] #Orden de la lista
+declare proc_name[$proc] #Nombre de cada proceso
+declare proc_arr[$proc] #Turno de llegada del proceso
+declare proc_exe[$proc] #Tiempo de ejecución o ráfaga; se reducirá según el quantum
+declare proc_order[$proc] #Orden de la lista
 clear
 i=1
 while [ $i -le $proc ];do
@@ -71,7 +79,7 @@ while [ $i -le $proc ];do
 			j=1
 		fi
 	done
-	echo "${proc_name[$(expr $i-1)]}, ${proc_arr[$(expr $i-1)]}, ${proc_exe[$(expr $i-1)]}"
+	#echo "${proc_name[$(expr $i-1)]}, ${proc_arr[$(expr $i-1)]}, ${proc_exe[$(expr $i-1)]}"
 	let i=i+1
 done
 #Inicializo el vector de orden
@@ -100,7 +108,37 @@ do
 	done
 	proc_order[$i]=$aux
 done
-for (( i=0; i<$proc; i++))
+#for (( i=0; i<$proc; i++))
+#do
+#echo "${proc_order[$i]}"
+#done
+#Declaro las ultimas variables
+declare proc_wait[$proc] #Tiempo de espera
+declare proc_ret[$proc] #Tiempo de retorno
+e=0 #e=0 aun no ha terminado, e=1 ya se terminó
+i=0 #Posición del porceso que se debe ejecutar ahora
+m=$(expr $proc - 1) #Cantidad de procesos que se han de ejecutar (empezando por 0)
+clock=0	#Tiempo de ejecución
+j=0
+#Comienza el agoritmo a funcionar
+while [ $e -eq 0 ]
 do
-echo "${proc_order[$i]}"
+	if [ $i -gt $m ];then #Si hemos llegado al final de la lista
+		i=0
+	fi
+	z=${proc_order[$i]}
+	if [ "${proc_exe[$z]}" -le $quantum ];then #El proceso termina en este tiempo
+		echo "${proc_name[$z]}($clock,0)"
+		let clock=clock+proc_exe[$z]
+		proc_exe[$z]=0
+	else 
+		let proc_exe[$z]=proc_exe[$z]-quantum
+		echo "${proc_name[$z]}($clock,${proc_exe[$z]})"
+		let clock=clock+quantum
+	fi
+	if [ $j -eq 15 ];then
+		e=1
+	fi
+	let j=j+1
+	let i=i+1
 done
