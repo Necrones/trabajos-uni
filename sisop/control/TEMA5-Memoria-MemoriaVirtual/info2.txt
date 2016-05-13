@@ -1,0 +1,7 @@
+
+Tamano de la memoria dinamica 	30 MB
+
+Numero de particiones fijas 	3
+
+Tamaño de las particiones 	4 10 16
+
