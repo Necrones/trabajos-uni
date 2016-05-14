@@ -1,0 +1,9 @@
+Proceso p1 Llegada 1 Ejecucion 15
+Proceso p2 Llegada 0 Ejecucion 20
+Proceso p3 Llegada 4 Ejecucion 2
+
+[0;33m     Proceso         Llegada        Ejecución         Espera        Respuesta   [0m
+[0;32m *	p2	*	0	*	20	*	0	*	20	* [0m
+[0;32m *	p1	*	1	*	15	*	20	*	35	* [0m
+[0;32m *	p3	*	4	*	2	*	35	*	37	* [0m
+[0;31m * T.espera medio: 18  -  * T.retorno medio: 30 [0m
