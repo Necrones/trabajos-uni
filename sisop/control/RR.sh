@@ -2,7 +2,7 @@
 #Author: José Luis Garrido Labrador
 #Organitation: Burgos University
 #School year: 2015/2016 - 2nd semester
-#Description: Simulation of Round Robin Algorithm
+#Description: Simulation of Round Robin Algorithm and memory management
 #Licence: CC-BY-SA (Documentation), GPLv3 (Source)
 
 #Funciones
@@ -31,6 +31,7 @@ function Informacion {
 	done
 	echo " -----------------------------------------------"
 }
+#Función InformacionPrint guarda en un fichero la informacion
 function InformacionPrint {
 	echo " -----------------------------------------------"  >> informe.txt
 	echo "|	Proceso	|	Llegada	|	Ráfaga	|"  >> informe.txt
@@ -41,7 +42,6 @@ function InformacionPrint {
 	done
 	echo " -----------------------------------------------"  >> informe.txt
 }
-#Función InformacionPrint guarda en un fichero la informacion
 #Función Fichero, lee datos de un fichero
 function Fichero {
 	x=0
@@ -62,18 +62,48 @@ function EspAcu() {
 		fi
 	done
 }
+#Función media; calcula la media de valores de un vector
+function media() {
+	local array=("${!1}")
+	media=0
+	for (( y=0; y<$proc; y++ ))
+	do
+		media=$(expr $media + ${array[$y]})
+	done
+	media=$(expr $media / $proc)
+	return $media
+}
+#Comienzo del programa
+clear
 #Header
 echo " -----------------------------------------------"
-echo "|		Simulación de		|"
-echo "|		Round Robin y		|"
-echo "|		Gestión de memoria	|"
-echo "|				|"
+echo "|		Simulación de			|"
+echo "|		Round Robin y			|"
+echo "|		Gestión de memoria		|"
+echo "|		Particiones dinámicas,		|"
+echo "|		Ajuste al mejor,		|"
+echo "|		Reubicable			|"
 echo "|		Creado por:			|"
 echo "|		José Luis Garrido Labrador	|"
+echo "|		Luis Pedrosa Ruiz		|"
 echo "|		Licencias:			|"
 echo "|		CC-BY-SA (Documentación)	|"
 echo "|		GPLv3 (Código)			|"
 echo " -----------------------------------------------"
+echo " -----------------------------------------------"  > informe.txt
+echo "|		Simulación de			|"  >> informe.txt
+echo "|		Round Robin y			|"  >> informe.txt
+echo "|		Gestión de memoria		|"  >> informe.txt
+echo "|		Particiones dinámicas,		|"  >> informe.txt
+echo "|		Ajuste al mejor,		|"  >> informe.txt
+echo "|		Reubicable			|"  >> informe.txt
+echo "|		Creado por:			|"  >> informe.txt
+echo "|		José Luis Garrido Labrador	|"  >> informe.txt
+echo "|		Luis Pedrosa Ruiz		|"  >> informe.txt
+echo "|		Licencias:			|"  >> informe.txt
+echo "|		CC-BY-SA (Documentación)	|"  >> informe.txt
+echo "|		GPLv3 (Código)			|"  >> informe.txt
+echo " -----------------------------------------------"  >> informe.txt
 #Captura de datos
 j=0
 while [ $j -eq 0 ] 2> /dev/null ;do
@@ -160,10 +190,6 @@ do
 	done
 	proc_order[$i]=$aux
 done
-#for (( i=0; i<$proc; i++))
-#do
-#echo "${proc_order[$i]}"
-#done
 #Declaro las ultimas variables
 declare proc_waitA[$proc] #Tiempo de espera acumulado
 declare proc_waitR[$proc] #Tiempo de espera real
@@ -174,6 +200,7 @@ do
 	proc_waitA[$i]=$clock
 done
 declare proc_ret[$proc] #Tiempo de retorno
+declare proc_retR[$proc] #Tiempo que ha estado el proceso desde entró hasta que terminó
 end=0 #Procesos terminados
 e=0 #e=0 aun no ha terminado, e=1 ya se terminó
 i=0 #Posición del porceso que se debe ejecutar ahora
@@ -198,8 +225,10 @@ do
 		if [ "${proc_exe[$z]}" -ne 0 ];then
 			if [ "${proc_exe[$z]}" -le $quantum ];then #El proceso termina en este tiempo
 				echo "${proc_name[$z]}($clock,0)"
+				echo "${proc_name[$z]}($clock,0)" >>informe.txt
 				let clock=clock+proc_exe[$z]
 				proc_ret[$z]=$clock	#El momento de retorno será igual al momento de salida en el reloj			
+				let proc_retR[$z]=proc_ret[$z]-proc_arr[$z]
 				let end=end+1
 				clock_time=${proc_exe[$z]} #Cuanto tiempo se ha estado ejecutando en este turno
 				EspAcu 0
@@ -212,6 +241,7 @@ do
 				let proc_exe[$z]=proc_exe[$z]-quantum
 				let exe=exe+1
 				echo "${proc_name[$z]}($clock,${proc_exe[$z]})"
+				echo "${proc_name[$z]}($clock,${proc_exe[$z]})" >>informe.txt
 			fi
 		fi
 	fi	
@@ -226,16 +256,24 @@ do
 	let proc_waitR[$y]=proc_waitA[$y]-proc_arr[$y]
 done
 #Imprimimos los resultados
-echo " ---------------------------------------------------------------"
-echo "|    Proceso    |     Esp A     |     Esp R     |    Retorno    |"
-echo " ---------------------------------------------------------------"  >> informe.txt
-echo "|    Proceso    |     Esp A     |     Esp R     |    Retorno    |"  >> informe.txt
+echo " -------------------------------------------------------------------------------- "
+echo "|    Proceso    |     Esp A     |     Esp R     |    Retorno A   |  Retorno Real |"
+echo " -------------------------------------------------------------------------------- "  >> informe.txt
+echo "|    Proceso    |     Esp A     |     Esp R     |    Retorno A   |  Retorno Real |"  >> informe.txt
 for (( y=0; y<$proc; y++ ))
 do
-	echo " ---------------------------------------------------------------"
-	echo "|	${proc_name[$y]}	|	${proc_waitA[$y]}	|	${proc_waitR[$y]}	|	${proc_ret[$y]}	|"
-	echo " ---------------------------------------------------------------"  >> informe.txt
-	echo "|	${proc_name[$y]}	|	${proc_waitA[$y]}	|	${proc_waitR[$y]}	|	${proc_ret[$y]}	|"  >> informe.txt
+	echo " -------------------------------------------------------------------------------- "
+	echo "|	${proc_name[$y]}	|	${proc_waitA[$y]}	|	${proc_waitR[$y]}	|	${proc_ret[$y]}	|	${proc_retR[$y]}	|"
+	echo " -------------------------------------------------------------------------------- "  >> informe.txt
+	echo "|	${proc_name[$y]}	|	${proc_waitA[$y]}	|	${proc_waitR[$y]}	|	${proc_ret[$y]}	|	${proc_retR[$y]}	|"  >> informe.txt
 done
-echo " ---------------------------------------------------------------"
-echo " ---------------------------------------------------------------"  >> informe.txt
+echo " -------------------------------------------------------------------------------- "
+echo " -------------------------------------------------------------------------------- "  >> informe.txt
+#Cáclulo de valores medios
+media 'proc_waitR[@]'
+media_wait=$?
+media 'proc_retR[@]'
+media_ret=$?
+echo "Los tiempos medio se calculan con los valores reales"
+echo "Tiempo de espera medio: $media_wait"
+echo "Tiempo de retorno medio: $media_ret"
