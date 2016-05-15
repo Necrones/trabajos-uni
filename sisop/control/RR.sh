@@ -5,7 +5,7 @@
 #Description: Simulation of Round Robin Algorithm and memory management
 #Licence: CC-BY-SA (Documentation), GPLv3 (Source)
 
-#Funciones
+##Funciones
 #Función SinRepetir - comprueba si se ha puesto el mismo nombre antes
 function SinRepetir {
 	if [ $i -ne 1 ];then
@@ -73,7 +73,7 @@ function media() {
 	media=$(expr $media / $proc)
 	return $media
 }
-#Comienzo del programa
+##Comienzo del programa
 clear
 #Header
 echo " -----------------------------------------------"
@@ -190,6 +190,7 @@ do
 	done
 	proc_order[$i]=$aux
 done
+read -p "Pulse cualquier tecla para ver la secuencia de procesos"
 #Declaro las ultimas variables
 declare proc_waitA[$proc] #Tiempo de espera acumulado
 declare proc_waitR[$proc] #Tiempo de espera real
@@ -235,13 +236,13 @@ do
 				proc_exe[$z]=0
 				let exe=exe+1
 			else 
-				let clock=clock+quantum
-				clock_time=$quantum #Cuanto tiempo se ha estado ejecutando en este turno
-				EspAcu 0
 				let proc_exe[$z]=proc_exe[$z]-quantum
-				let exe=exe+1
 				echo "${proc_name[$z]}($clock,${proc_exe[$z]})"
 				echo "${proc_name[$z]}($clock,${proc_exe[$z]})" >>informe.txt
+				let clock=clock+quantum
+				clock_time=$quantum #Cuanto tiempo se ha estado ejecutando en este turno
+				EspAcu 0				
+				let exe=exe+1			
 			fi
 		fi
 	fi	
@@ -255,21 +256,22 @@ for (( y=0; y<$proc; y++ ))
 do
 	let proc_waitR[$y]=proc_waitA[$y]-proc_arr[$y]
 done
+read -p "Pulsa cualquier tecla para ver resumen."
 #Imprimimos los resultados
-echo " -------------------------------------------------------------------------------- "
-echo "|    Proceso    |     Esp A     |     Esp R     |    Retorno A   |  Retorno Real |"
-echo " -------------------------------------------------------------------------------- "  >> informe.txt
-echo "|    Proceso    |     Esp A     |     Esp R     |    Retorno A   |  Retorno Real |"  >> informe.txt
+echo " ------------------------------------------------------------------------------- "
+echo "|    Proceso    |     Esp A     |     Esp R     |    Retorno A  |  Retorno Real |"
+echo " ------------------------------------------------------------------------------- "  >> informe.txt
+echo "|    Proceso    |     Esp A     |     Esp R     |    Retorno A  |  Retorno Real |"  >> informe.txt
 for (( y=0; y<$proc; y++ ))
 do
-	echo " -------------------------------------------------------------------------------- "
+	echo " ------------------------------------------------------------------------------- "
 	echo "|	${proc_name[$y]}	|	${proc_waitA[$y]}	|	${proc_waitR[$y]}	|	${proc_ret[$y]}	|	${proc_retR[$y]}	|"
-	echo " -------------------------------------------------------------------------------- "  >> informe.txt
+	echo " ------------------------------------------------------------------------------- "  >> informe.txt
 	echo "|	${proc_name[$y]}	|	${proc_waitA[$y]}	|	${proc_waitR[$y]}	|	${proc_ret[$y]}	|	${proc_retR[$y]}	|"  >> informe.txt
 done
-echo " -------------------------------------------------------------------------------- "
-echo " -------------------------------------------------------------------------------- "  >> informe.txt
-#Cáclulo de valores medios
+echo " ------------------------------------------------------------------------------- "
+echo " ------------------------------------------------------------------------------- "  >> informe.txt
+#Cálculo de valores medios
 media 'proc_waitR[@]'
 media_wait=$?
 media 'proc_retR[@]'
