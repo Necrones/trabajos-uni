@@ -76,7 +76,8 @@ function media() {
 }
 #Función OcuMem; llena la memoria del proceso pasado por parámetro. $1  nombre de proceso, $2 origen $3 memoria del proceso
 function OcuMem() {
-	for (( y=$2; y<$(expr $2 + $3) ; y++))
+	local tama=$(expr $2+$3)
+	for (( y=$2; y<$tama; y++ ))
 	do
 		mem[$y]=$1
 	done
@@ -84,9 +85,9 @@ function OcuMem() {
 }
 #Función DesOcuMem; libera la memoria de un determinado sitio. $1 origen $2 final
 function DesOcuMem() {
-	for (( y=$1; y<$2 ; y++))
+	for (( y=$1; y<=$2; y++ ))
 	do
-		mem[$y]=0
+		mem[$y]="Li"
 	done
 }
 #Función PartFree; calcula las distintas particiones libres, su tamaño y su posición
@@ -95,9 +96,12 @@ function PartFree {
 	do
 		partition[$y]=0
 	done
-	for (( y=0, part=0, h=0 ; y<${#mem[@]}; y++ ))
+	part=0
+	h=0
+	for (( y=0; y<${#mem[@]}; y++ ))
 	do
-		if [ ${mem[$y]} = "Li" ];then
+		value=${mem[$y]}
+		if [ $value == "Li" ];then
 			if [ $h -eq 0 ];then
 				part_init[$part]=$y
 				h=1
@@ -110,6 +114,43 @@ function PartFree {
 			fi
 		fi
 	done
+}
+#Función AsignaMem; asigna la memoria a los procesos
+function AsignaMem() {
+	auxiliar=0
+	for (( zed=0; zed<$proc; zed++ ))
+	do
+		if [ $1 -eq "${proc_arr_aux[$zed]}" ];then
+			if [ $mem_total -lt "${proc_mem[$zed]}" ];then
+				echo "El proceso ${proc_name[$zed]} necesita mas memoria que la total, nunca se ejecutará"
+				proc_stop[$zed]=1
+				let end=end+1
+			elif [ $mem_aux -lt ${proc_mem[$zed]} ];then
+				echo "El proceso ${proc_name[$zed]} necesita mas memoria de la disponible actualmente, se ejecutará más adelante"
+				let proc_arr_aux[$zed]=proc_arr_aux[$zed]+1
+				proc_stop[$zed]=1
+			else
+				PartFree
+				memoriaLibre=$MAX
+				#Ahora debo buscar la particion de memoria que menos esté ocupada 
+				for (( ex=0; ex<=$part; ex++ ))
+				do
+					if [ ${proc_mem[$zed]} -le ${partition[$ex]} ];then
+						if [ ${partition[$ex]} -lt $memoriaLibre ];then
+							memoriaLibre=${partition[$ex]}
+							proc_memI[$zed]=${part_init[$ex]}
+						fi
+					fi
+				done
+				OcuMem ${proc_name[$zed]} ${proc_memI[$zed]} ${proc_mem[$zed]}
+				proc_memF[$zed]=$?				
+				auxiliar=1
+				proc_stop[$zed]=0
+				let mem_aux=mem_aux-proc_mem[$zed]
+			fi
+		fi
+	done
+
 }
 ##Comienzo del programa
 clear
@@ -181,7 +222,13 @@ declare proc_name[$proc] #Nombre de cada proceso
 declare proc_arr[$proc] #Turno de llegada del proceso
 declare proc_exe[$proc] #Tiempo de ejecución o ráfaga; se reducirá según el quantum
 declare proc_mem[$proc] #Memoria que necesita cada proceso
+mem_total=$mem_aux 		#Memoria total de la que dispongo
 declare proc_order[$proc] #Orden de la lista
+declare proc_stop[$proc] #Procesos que no pueden ejecutarse porque no tienen memoria (1 = parado, 0 no parado)
+for (( y=0; y<$proc; y++ ))
+do
+	proc_stop[$y]=0
+done
 clear
 i=1
 if [ $manu = "S" ] 2>/dev/null || [ $manu = "s" ] 2>/dev/null;then
@@ -269,6 +316,11 @@ declare proc_waitR[$proc] #Tiempo de espera real
 declare proc_memI[$proc]  #Palabra inicial
 declare proc_memF[$proc]  #Palabra final
 declare partition[$MAX]	  #Tamaño de las distintas particiones libres
+declare proc_arr_aux[$proc] #Momento en el que el proceso puede ocupar memoria
+for (( y=0; y<$proc; y++ ))
+do
+	proc_arr_aux[$y]=${proc_arr[$y]}
+done
 min=${proc_order[0]}
 clock=${proc_arr[$min]}	#Tiempo de ejecución
 for (( i=0; i<$proc; i++ ))
@@ -286,22 +338,28 @@ i=0 #Posición del porceso que se debe ejecutar ahora
 #Comienza el agoritmo a funcionar
 while [ $e -eq 0 ]
 do
-	if [ $i -eq $proc ];then #Si hemos llegado al final del vector lista
-		if [ $exe -eq 0 ];then
-			let clock=clock+1 #Si no ha habido ninguna ejecución en la lista anterior ir al siguiente turno
-			EspAcu 1
-		fi
-		exe=0
-		i=0
-	fi
 	z=${proc_order[$i]}
+	while [ "${proc_exe[$z]}" -eq 0 -o "${proc_stop[$z]}" -eq 1 ]
+	do
+		if [ $i -eq $proc ];then #Si hemos llegado al final del vector lista
+			if [ $exe -eq 0 ];then
+				let clock=clock+1 #Si no ha habido ninguna ejecución en la lista anterior ir al siguiente turno
+				EspAcu 1
+			fi
+			exe=0
+			i=0
+		else
+			let i=i+1
+		fi
+		z=${proc_order[$i]}
+	done
 	AsignaMem $clock
+	echo "Turno $clock"
 	#Primera condición si la ejecución no es 0 (terminado), segunda si el momento de llegada es menor o igual al turno de reloj actual
 	if [ "${proc_arr[$z]}" -le $clock ];then 
-		if [ "${proc_exe[$z]}" -ne 0 ];then
+		if [ "${proc_exe[$z]}" -ne 0 -a "${proc_stop[$z]}" -eq 0 ];then
 			if [ $quantum_aux -eq $quantum ];then #Cambio de contexto
 				clock_time=$clock
-				OcuMem ${proc_name[$z]} 0 ${proc_mem[$z]}
 			fi
 			if [ $quantum_aux -gt 0 ];then #Pasa un ciclo
 				let clock=clock+1
@@ -314,7 +372,10 @@ do
 				proc_ret[$z]=$clock	#El momento de retorno será igual al momento de salida en el reloj			
 				let proc_retR[$z]=proc_ret[$z]-proc_arr[$z]
 				quantum_aux=0								
-				let end=end+1		
+				let end=end+1
+				DesOcuMem ${proc_memI[$z]} ${proc_memF[$z]}
+				echo "Proceso ${proc_name[$z]} terminado, liberando memoria"
+				let mem_aux=mem_aux+proc_mem[$z]
 			fi
 			if [ $quantum_aux -eq 0 ];then #Fin del uso de quantum del proceso
 				echo "|${proc_name[$z]}($clock_time,${proc_exe[$z]})|"
@@ -324,6 +385,10 @@ do
 		else
 			let i=i+1
 		fi
+		echo "Memoria libre actual $mem_aux"
+		echo "Distribución actual de la memoria"
+		echo "${mem[@]}"
+		read -p "Pulse cualquier tecla para continuar"
 	fi
 	if [ $end -eq $proc ];then #Si todos los procesos terminados son igual a los procesos introducidos
 		e=1
@@ -360,4 +425,3 @@ echo "Tiempo de retorno medio: $media_ret"
 echo "Los tiempos medio se calculan con los valores reales" >> informe.txt
 echo "Tiempo de espera medio: $media_wait" >> informe.txt
 echo "Tiempo de retorno medio: $media_ret" >> informe.txt
-echo "${mem[@]}"

@@ -53,8 +53,8 @@ void    minuscula(int[DIM][DIM], int, int, int, int, int);
 int     sentido(int, int, int, int);
 
 int main() {
-  //srand(time(NULL));
-  srand(22);			//Cruce en coches y colores
+  srand(time(NULL));
+  //srand(22);                  //Cruce en coches y colores
   int     sopa[DIM][DIM];
   Palabra temas[N_TEMA][N_PAL];
   rellenaTemas(temas);
@@ -625,8 +625,8 @@ void rellenaMatriz(int sopa[DIM][DIM]) {
   for(i = 0; i < DIM; i++) {
     for(j = 0; j < DIM; j++) {
       if(sopa[i][j] == ZERO) {
-	//sopa[i][j] = buscaAleatorio(CHAR_MIN, CHAR_MAX);//Comportamiento normal
-	sopa[i][j] = ESP;	//Para una correción más fácil
+	sopa[i][j] = buscaAleatorio(CHAR_MIN, CHAR_MAX);	//Comportamiento normal
+	//sopa[i][j] = ESP;     //Para una correción más fácil
       }
     }
   }
