@@ -7,6 +7,19 @@
 
 #Variables globales de ayuda
 MAX=9999 
+#Colores
+coffe='\e[0;33m'
+yellow='\e[1;33m'
+green='\e[1;32m'
+purple='\e[1;35m'
+red='\e[1;31m'
+cyan='\e[1;36m'
+cyan_back='\e[1;44m'
+black='\e[1;30m'
+blue='\e[1;34m'
+white='\e[0;39m'
+NC='\e[0m' # No Color
+Li="${cyan}Li${NC}"
 
 ##Funciones
 #Función SinRepetir - comprueba si se ha puesto el mismo nombre antes
@@ -87,7 +100,7 @@ function OcuMem() {
 function DesOcuMem() {
 	for (( y=$1; y<=$2; y++ ))
 	do
-		mem[$y]="Li"
+		mem[$y]=${Li}
 	done
 }
 #Función PartFree; calcula las distintas particiones libres, su tamaño y su posición
@@ -101,7 +114,7 @@ function PartFree {
 	for (( y=0; y<${#mem[@]}; y++ ))
 	do
 		value=${mem[$y]}
-		if [ $value == "Li" ];then
+		if [ $value == ${Li} ];then
 			if [ $h -eq 0 ];then
 				part_init[$part]=$y
 				h=1
@@ -147,9 +160,13 @@ function AsignaMem() {
 				auxiliar=1
 				proc_stop[$zed]=0
 				let mem_aux=mem_aux-proc_mem[$zed]
+				echo -e "${yellow}El proceso ${proc_name[$zed]} ha entrado en memoria${NC}"
 			fi
 		fi
 	done
+	if [ $fin -eq 1 ];then
+		auxiliar=1
+	fi
 
 }
 ##Comienzo del programa
@@ -216,7 +233,7 @@ read -p "Meter lo datos de manera manual? [s,N] " manu
 declare mem[$mem_aux] #Memoria de tamaño 1 MB por palabra
 for (( y=0; y<$mem_aux; y++ ))
 do
-	mem[$y]="Li" #Inicializo la memoria a libre
+	mem[$y]=${Li} #Inicializo la memoria a libre
 done
 declare proc_name[$proc] #Nombre de cada proceso
 declare proc_arr[$proc] #Turno de llegada del proceso
@@ -335,6 +352,7 @@ j=0
 exe=0	#Ejecuciones que ha habido en una vuelta de lista
 quantum_aux=$quantum #Quantum del que se dispone
 i=0 #Posición del porceso que se debe ejecutar ahora
+fin=0
 #Comienza el agoritmo a funcionar
 while [ $e -eq 0 ]
 do
@@ -353,13 +371,20 @@ do
 		fi
 		z=${proc_order[$i]}
 	done
+	clear
+	echo -e "${red}Turno $clock${NC}"
+    if [ $fin -eq 1 ];then
+    	DesOcuMem ${proc_memI[$proc_bef]} ${proc_memF[$proc_bef]}
+		echo -e "${blue}Proceso ${proc_name[$proc_bef]} terminado en el turno anterior, liberando memoria${NC}"
+	fi
 	AsignaMem $clock
-	echo "Turno $clock"
+	fin=0
 	#Primera condición si la ejecución no es 0 (terminado), segunda si el momento de llegada es menor o igual al turno de reloj actual
 	if [ "${proc_arr[$z]}" -le $clock ];then 
 		if [ "${proc_exe[$z]}" -ne 0 -a "${proc_stop[$z]}" -eq 0 ];then
 			if [ $quantum_aux -eq $quantum ];then #Cambio de contexto
 				clock_time=$clock
+				echo -e "${blue}El proceso ${proc_name[$z]} entra ahora en el procesador${NC}"
 			fi
 			if [ $quantum_aux -gt 0 ];then #Pasa un ciclo
 				let clock=clock+1
@@ -373,23 +398,33 @@ do
 				let proc_retR[$z]=proc_ret[$z]-proc_arr[$z]
 				quantum_aux=0								
 				let end=end+1
-				DesOcuMem ${proc_memI[$z]} ${proc_memF[$z]}
-				echo "Proceso ${proc_name[$z]} terminado, liberando memoria"
+				fin=1
+				proc_bef=$z
+				mot=1
 				let mem_aux=mem_aux+proc_mem[$z]
+				echo "El proceso ${proc_name[$z]} ha terminado"
 			fi
 			if [ $quantum_aux -eq 0 ];then #Fin del uso de quantum del proceso
-				echo "|${proc_name[$z]}($clock_time,${proc_exe[$z]})|"
+				if [ $mot -eq 0 ];then
+					echo "El proceso ${proc_name[$z]} agota su quantum en este tiempo, le quedan ${proc_exe[$z]} ráfagas"
+				else
+					mot=0
+				fi
+				echo -e "${cyan_back}|${proc_name[$z]}($clock_time,${proc_exe[$z]})|${NC}"
 				let i=i+1
 				quantum_aux=$quantum
 			fi
 		else
 			let i=i+1
 		fi
-		echo "Memoria libre actual $mem_aux"
-		echo "Distribución actual de la memoria"
-		echo "${mem[@]}"
-		read -p "Pulse cualquier tecla para continuar"
-	fi
+		if [ $auxiliar -eq 1 ];then
+			echo -e "${purple}Memoria libre actual $mem_aux MB${NC}"
+			echo "Distribución actual de la memoria"
+			echo -e "${mem[@]}"
+			auxiliar=0
+		fi
+	fi	
+	read -p "Pulse intro para continuar"
 	if [ $end -eq $proc ];then #Si todos los procesos terminados son igual a los procesos introducidos
 		e=1
 	fi
