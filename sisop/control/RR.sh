@@ -47,6 +47,7 @@ function Informacion {
 }
 #Función InformacionPrint guarda en un fichero la informacion
 function InformacionPrint {
+	echo "Los datos de los procesos son los siguientes" >> informe.txt
 	echo " --------------------------------------------------------------- "  >> informe.txt
 	echo "|    Proceso    |    Llegada    |     Ráfaga    |    Memoria    |"  >> informe.txt
 		for (( y=0; y<$i; y++))
@@ -144,6 +145,7 @@ function AsignaMem() {
 		if [ $1 -eq "${proc_arr_aux[$zed]}" ];then
 			if [ $mem_total -lt "${proc_mem[$zed]}" ];then
 				echo "El proceso ${proc_name[$zed]} necesita mas memoria que la total, nunca se ejecutará"
+				echo "El proceso ${proc_name[$zed]} necesita mas memoria que la total, nunca se ejecutará" >> informe.txt
 				proc_stop[$zed]=1
 				let end=end+1
 				proc_waitA[$zed]="NE"
@@ -152,6 +154,7 @@ function AsignaMem() {
 				proc_ret[$zed]="NE"
 			elif [ $mem_aux -lt ${proc_mem[$zed]} ];then
 				echo "El proceso ${proc_name[$zed]} necesita mas memoria de la disponible actualmente, se ejecutará más adelante"
+				echo "El proceso ${proc_name[$zed]} necesita mas memoria de la disponible actualmente, se ejecutará más adelante" >> informe.txt
 				let proc_arr_aux[$zed]=proc_arr_aux[$zed]+1
 				proc_stop[$zed]=1
 			else
@@ -178,6 +181,7 @@ function AsignaMem() {
 				proc_stop[$zed]=0
 				let mem_aux=mem_aux-proc_mem[$zed]
 				echo -e "${yellow}El proceso ${proc_name[$zed]} ha entrado en memoria${NC}"
+				echo "El proceso ${proc_name[$zed]} ha entrado en memoria" >> informe.txt
 			fi
 		fi
 		reubic=1
@@ -198,6 +202,7 @@ function reubicar {
 		elif [ $before -eq 1 -a ${mem_dir[$w]} -ne -1 ];then
 				aux=${mem_dir[$w]}
 				echo -e "${inverted}La memoria se ha reubicado${NC}"
+				echo "La memoria se ha reubicado" >> informe.txt
 				DesOcuMem ${proc_memI[$aux]} ${proc_memF[$aux]}
 				OcuMem ${proc_name[$aux]} $aux_init ${proc_mem[$aux]} $aux
 				proc_memF[$aux]=$?
@@ -208,6 +213,14 @@ function reubicar {
 	done
 	let ret=${proc_memF[$aux]}+1
 	return $ret
+}
+#Función SiNo; comprueba si se ha medito un si o un no
+function SiNo(){
+	local j=0
+	if [ $1 = "s" -o $1 = "S" -o $1 = "n" -o $1 = "N" ] 2> /dev/null ;then
+		j=1
+	fi
+	return $j
 }
 ##Comienzo del programa
 clear
@@ -241,6 +254,7 @@ echo "|		CC-BY-SA (Documentación)	|"  >> informe.txt
 echo "|		GPLv3 (Código)			|"  >> informe.txt
 echo " -----------------------------------------------"  >> informe.txt
 #Captura de datos
+mem_aux=100 #Memoria en Megas
 j=0
 while [ $j -eq 0 ] 2> /dev/null ;do
 	read -p "Introduzca un número de procesos: " proc
@@ -259,6 +273,7 @@ while [ $j -eq 0 ] 2> /dev/null ;do
 		echo "Dato incorrecto"
 	fi
 done
+echo "El quantum escogido es $quantum" >> informe.txt
 j=0
 while [ $j -eq 0 ] 2> /dev/null ;do
 	read -p "Introduzca al cantidad de memoria (MB) min 100: " mem_aux
@@ -268,7 +283,22 @@ while [ $j -eq 0 ] 2> /dev/null ;do
 		echo "Dato incorrecto"
 	fi
 done
-read -p "Meter lo datos de manera manual? [s,N] " manu
+read -p "Meter lo datos de manera manual? [s,n] " manu
+SiNo $manu
+while [ $? -eq 0 ];do
+	echo "Valor incorrecto"
+	read -p "Meter lo datos de manera manual? [s,n] " manu
+	SiNo $manu
+done
+read -p "Desea ejecutar la simulación automáticamente? [s,n] " auto
+SiNo $auto
+while [ $? -eq 0 ];do
+	echo "
+	Valor incorrecto"
+	read -p "Desea ejecutar la simulación automáticamente? [s,n] " auto
+	SiNo $auto
+done
+
 #Vectores de informacion
 declare mem[$mem_aux] #Memoria de tamaño 1 MB por palabra
 for (( y=0; y<$mem_aux; y++ ))
@@ -392,6 +422,7 @@ do
 done
 declare proc_ret[$proc] #Tiempo de retorno
 declare proc_retR[$proc] #Tiempo que ha estado el proceso desde entró hasta que terminó
+declare mem_print[$proc] #Memoria que se guardará en el fichero (sin colores)
 end=0 #Procesos terminados
 e=0 #e=0 aun no ha terminado, e=1 ya se terminó
 j=0
@@ -399,80 +430,97 @@ exe=0	#Ejecuciones que ha habido en una vuelta de lista
 quantum_aux=$quantum #Quantum del que se dispone
 i=0 #Posición del porceso que se debe ejecutar ahora
 fin=0
+mot=0
 #Comienza el agoritmo a funcionar
-while [ $e -eq 0 ]
-do
-	z=${proc_order[$i]}
-	while [ "${proc_exe[$z]}" -eq 0 -o "${proc_stop[$z]}" -eq 1 ]
-	do
-		if [ $i -eq $proc ];then #Si hemos llegado al final del vector lista
-			if [ $exe -eq 0 ];then
-				let clock=clock+1 #Si no ha habido ninguna ejecución en la lista anterior ir al siguiente turno
-				EspAcu 1
-			fi
-			exe=0
-			i=0
-		else
-			let i=i+1
-		fi
-		z=${proc_order[$i]}
-	done
-	clear
-	echo -e "${red}Turno $clock${NC}"
-    if [ $fin -eq 1 ];then
+while [ $e -eq 0 ];do
+	if [ $fin -eq 1 ];then
     	let mem_aux=mem_aux+proc_mem[$proc_bef]
     	DesOcuMem ${proc_memI[$proc_bef]} ${proc_memF[$proc_bef]}
-		echo -e "${blue}Proceso ${proc_name[$proc_bef]} terminado en el turno anterior, liberando memoria${NC}"
+		echo -e "${blue}El proceso ${proc_name[$proc_bef]} retornó en la ráfaga ${proc_ret[$proc_bef]}, la memoria asignada fue liberada${NC}"
+		echo "El proceso ${proc_name[$proc_bef]} retornó en la ráfaga ${proc_ret[$proc_bef]}, la memoria asignada fue liberada" >> informe.txt
+		let end=end+1
 	fi
-	AsignaMem $clock
-	fin=0
-	#Primera condición si la ejecución no es 0 (terminado), segunda si el momento de llegada es menor o igual al turno de reloj actual
-	if [ "${proc_arr[$z]}" -le $clock ];then 
-		if [ "${proc_exe[$z]}" -ne 0 -a "${proc_stop[$z]}" -eq 0 ];then
-			if [ $quantum_aux -eq $quantum ];then #Cambio de contexto
-				clock_time=$clock
-				echo -e "${blue}El proceso ${proc_name[$z]} entra ahora en el procesador${NC}"
-			fi
-			if [ $quantum_aux -gt 0 ];then #Pasa un ciclo
-				let clock=clock+1
-				let quantum_aux=quantum_aux-1
-				proc_exe[$z]=$(expr ${proc_exe[$z]} - 1)
-				EspAcu 0
-				exe=1
-			fi
-			if [ "${proc_exe[$z]}" -eq 0 ];then #El proceso termina en este tiempo
-				proc_ret[$z]=$clock	#El momento de retorno será igual al momento de salida en el reloj			
-				let proc_retR[$z]=proc_ret[$z]-proc_arr[$z]
-				quantum_aux=0								
-				let end=end+1
-				fin=1
-				proc_bef=$z
-				mot=1
-				echo "El proceso ${proc_name[$z]} ha terminado"
-			fi
-			if [ $quantum_aux -eq 0 ];then #Fin del uso de quantum del proceso
-				if [ $mot -eq 0 ];then
-					echo "El proceso ${proc_name[$z]} agota su quantum en este tiempo, le quedan ${proc_exe[$z]} ráfagas"
-				else
-					mot=0
+	if [ $end -ne $proc ];then
+		z=${proc_order[$i]}
+		while [ "${proc_exe[$z]}" -eq 0 ] || [ "${proc_stop[$z]}" -eq 1 ] || [ "${proc_arr[$z]}" -gt $clock ] 
+		do #El proceso esta parado, terminado o aun no ha llegado
+			if [ $i -eq $proc ];then #Si hemos llegado al final del vector lista
+				i=0
+				z=${proc_order[$i]}
+				if [ $exe -eq 0 ];then
+					let clock=clock+1 #Si no ha habido ninguna ejecución en la lista anterior ir al siguiente turno
+					EspAcu 1
 				fi
-				echo -e "${cyan_back}|${proc_name[$z]}($clock_time,${proc_exe[$z]})|${NC}"
+				exe=0
+			else
 				let i=i+1
-				quantum_aux=$quantum
+				z=${proc_order[$i]}
 			fi
+		done
+	fi
+	clear
+	echo -e "${red}Ráfaga $clock${NC}"
+	echo "" >> informe.txt
+	echo "Ráfaga $clock" >> informe.txt
+	AsignaMem $clock
+	fin=0 
+	if [ $quantum_aux -eq $quantum ] && [ $end -ne $proc ];then #Cambio de contexto
+		clock_time=$clock
+		echo -e "${blue}El proceso ${proc_name[$z]} entra ahora en el procesador${NC}"
+		echo "El proceso ${proc_name[$z]} entra ahora en el procesador" >> informe.txt
+	fi
+	if [ $quantum_aux -gt 0 ] && [ $end -ne $proc ];then #Pasa un ciclo
+		let clock=clock+1
+		let quantum_aux=quantum_aux-1
+		proc_exe[$z]=$(expr ${proc_exe[$z]} - 1)
+		EspAcu 0
+		exe=1
+	fi
+	if [ "${proc_exe[$z]}" -eq 0 ] && [ $end -ne $proc ];then #El proceso termina en este tiempo
+		proc_ret[$z]=$clock	#El momento de retorno será igual al momento de salida en el reloj			
+		let proc_retR[$z]=proc_ret[$z]-proc_arr[$z]
+		quantum_aux=0								
+		fin=1
+		proc_bef=$z
+		mot=1
+		echo "El proceso ${proc_name[$z]} termina en esta ráfaga"
+	fi
+	if [ $quantum_aux -eq 0 ] && [ $end -ne $proc ];then #Fin del uso de quantum del proceso
+		if [ $mot -eq 0 ];then
+			echo "El proceso ${proc_name[$z]} agota su quantum en este tiempo, le quedan ${proc_exe[$z]} ráfagas"
+			echo "El proceso ${proc_name[$z]} agota su quantum en este tiempo, le quedan ${proc_exe[$z]} ráfagas" >> informe.txt
 		else
-			let i=i+1
+			mot=0
 		fi
-		if [ $auxiliar -eq 1 ];then
-			echo -e "${purple}Memoria libre actual $mem_aux MB${NC}"
-			echo "Distribución actual de la memoria"
-			echo -e "${mem[@]}"
-			auxiliar=0
-		fi
-	fi	
-	read -p "Pulse intro para continuar"
+		echo -e "${cyan_back}|${proc_name[$z]}($clock_time,${proc_exe[$z]})|${NC}"
+		echo "|${proc_name[$z]}($clock_time,${proc_exe[$z]})|" >> informe.txt
+		let i=i+1
+		quantum_aux=$quantum
+	fi
+	if [ $auxiliar -eq 1 ];then
+		echo -e "${purple}Memoria libre actual $mem_aux MB${NC}"
+		echo -e "${gree}Distribución actual de la memoria${NC}"
+		echo -e "${mem[@]}"
+		echo "Memoria libre actual $mem_aux MB$" >> informe.txt
+		echo "Distribución actual de la memoria" >> informe.txt
+		for (( jk=0; jk<$mem_total; jk++ ))
+		do
+			if [ ${mem[$jk]} = "${Li}" ];then
+				mem_print[$jk]="Li"
+			else
+				mem_print[$jk]=${mem[$jk]}
+			fi
+		done
+		echo "${mem_print[@]}" >> informe.txt
+		auxiliar=0
+	fi
+	if [ $auto = "n" ] || [ $auto = "N" ];then
+		read -p "Pulse intro para continuar"
+	else
+		sleep 3
+	fi
 	if [ $end -eq $proc ];then #Si todos los procesos terminados son igual a los procesos introducidos
-		e=1
+			e=1
 	fi
 done
 #Damos valor a proc_waitR
