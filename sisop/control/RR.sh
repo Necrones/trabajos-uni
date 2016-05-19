@@ -73,8 +73,12 @@ function Fichero {
 function EspAcu() {
 	for (( y=0; y<$proc; y++ ))
 	do
-		if [ $y -ne $z -o $1 -eq 1 ] && [ "${proc_exe[$y]}" -ne 0 -a "${proc_stop[$y]}" -ne 1 ];then
-			let proc_waitA[$y]=proc_waitA[$y]+1
+		if [ "${proc_exe[$y]}" -ne 0 ];then
+			if [ $y -ne $z -o $1 -eq 1 ];then
+				if [ ${proc_waitA[$y]} != "NE" ] 2> /dev/null;then
+					let proc_waitA[$y]=proc_waitA[$y]+1
+				fi
+			fi
 		fi
 	done
 }
@@ -93,15 +97,13 @@ function media() {
 	media=$(expr $media / $tot)
 	return $media
 }
-#Función OcuMem; llena la memoria del proceso pasado por parámetro. $1  nombre de proceso, $2 origen $3 memoria del proceso
+#Función OcuMem; llena la memoria del proceso pasado por parámetro. $1  nombre de proceso, $2 origen $3 fin $4 identificador vectorial del proceso
 function OcuMem() {
-	local tama=$(expr $2+$3)
-	for (( y=$2; y<$tama; y++ ))
+	for (( y=$2; y<=$3; y++ ))
 	do
 		mem[$y]=$1
 		mem_dir[$y]=$4
 	done
-	return $(expr $y - 1)
 }
 #Función DesOcuMem; libera la memoria de un determinado sitio. $1 origen $2 final
 function DesOcuMem() {
@@ -175,8 +177,9 @@ function AsignaMem() {
 					reubicar
 					proc_memI[$zed]=$?
 				fi
-				OcuMem ${proc_name[$zed]} ${proc_memI[$zed]} ${proc_mem[$zed]} $zed
-				proc_memF[$zed]=$?				
+				let proc_memF[$zed]=proc_memI[$zed]+proc_mem[$zed]
+				let proc_memF[$zed]=proc_memF[$zed]-1
+				OcuMem ${proc_name[$zed]} ${proc_memI[$zed]} ${proc_memF[$zed]} $zed		
 				auxiliar=1
 				proc_stop[$zed]=0
 				let mem_aux=mem_aux-proc_mem[$zed]
@@ -194,6 +197,8 @@ function AsignaMem() {
 function reubicar {
 	before=0
 	local aux
+	local aux2=0
+	local ret
 	for (( w=0; w<$mem_total; w++))
 	do
 		if [ ${mem_dir[$w]} -eq -1 -a $before -eq 0 ];then
@@ -201,16 +206,20 @@ function reubicar {
 				aux_init=$w
 		elif [ $before -eq 1 -a ${mem_dir[$w]} -ne -1 ];then
 				aux=${mem_dir[$w]}
-				echo -e "${inverted}La memoria se ha reubicado${NC}"
-				echo "La memoria se ha reubicado" >> informe.txt
+				aux2=1
 				DesOcuMem ${proc_memI[$aux]} ${proc_memF[$aux]}
-				OcuMem ${proc_name[$aux]} $aux_init ${proc_mem[$aux]} $aux
-				proc_memF[$aux]=$?
 				proc_memI[$aux]=$aux_init
+				let proc_memF[$aux]=proc_memI[$aux]+proc_mem[$aux]
+				let proc_memF[$aux]=proc_memF[$aux]-1
+				OcuMem ${proc_name[$aux]} ${proc_memI[$aux]} ${proc_memF[$aux]} $aux
 				before=0
 				w=proc_memF[$aux]
 		fi
 	done
+	if [ $aux2 -eq 1 ];then
+		echo -e "${inverted}La memoria se ha reubicado${NC}"
+		echo "La memoria se ha reubicado" >> informe.txt
+	fi
 	let ret=${proc_memF[$aux]}+1
 	return $ret
 }
@@ -406,7 +415,7 @@ do
 	proc_arr_aux[$y]=${proc_arr[$y]}
 done
 min=${proc_order[0]}
-clock=${proc_arr[$min]}	#Tiempo de ejecución
+clock=${proc_arr[$min]}	#Ráfaga actual
 for (( i=0; i<$proc; i++ ))
 do
 	proc_waitA[$i]=$clock
@@ -433,15 +442,21 @@ fin=0
 mot=0
 #Comienza el agoritmo a funcionar
 while [ $e -eq 0 ];do
+	clear
+	echo -e "${red}Ráfaga $clock${NC}"
+	echo "" >> informe.txt
+	echo "Ráfaga $clock" >> informe.txt
 	if [ $fin -eq 1 ];then
     	let mem_aux=mem_aux+proc_mem[$proc_bef]
     	DesOcuMem ${proc_memI[$proc_bef]} ${proc_memF[$proc_bef]}
+		let end=end+1
 		echo -e "${blue}El proceso ${proc_name[$proc_bef]} retornó en la ráfaga ${proc_ret[$proc_bef]}, la memoria asignada fue liberada${NC}"
 		echo "El proceso ${proc_name[$proc_bef]} retornó en la ráfaga ${proc_ret[$proc_bef]}, la memoria asignada fue liberada" >> informe.txt
-		let end=end+1
 	fi
+	AsignaMem $clock
+	fin=0 
+	z=${proc_order[$i]}
 	if [ $end -ne $proc ];then
-		z=${proc_order[$i]}
 		while [ "${proc_exe[$z]}" -eq 0 ] || [ "${proc_stop[$z]}" -eq 1 ] || [ "${proc_arr[$z]}" -gt $clock ] 
 		do #El proceso esta parado, terminado o aun no ha llegado
 			if [ $i -eq $proc ];then #Si hemos llegado al final del vector lista
@@ -457,13 +472,7 @@ while [ $e -eq 0 ];do
 				z=${proc_order[$i]}
 			fi
 		done
-	fi
-	clear
-	echo -e "${red}Ráfaga $clock${NC}"
-	echo "" >> informe.txt
-	echo "Ráfaga $clock" >> informe.txt
-	AsignaMem $clock
-	fin=0 
+	fi	
 	if [ $quantum_aux -eq $quantum ] && [ $end -ne $proc ];then #Cambio de contexto
 		clock_time=$clock
 		echo -e "${blue}El proceso ${proc_name[$z]} entra ahora en el procesador${NC}"
@@ -487,8 +496,8 @@ while [ $e -eq 0 ];do
 	fi
 	if [ $quantum_aux -eq 0 ] && [ $end -ne $proc ];then #Fin del uso de quantum del proceso
 		if [ $mot -eq 0 ];then
-			echo "El proceso ${proc_name[$z]} agota su quantum en este tiempo, le quedan ${proc_exe[$z]} ráfagas"
-			echo "El proceso ${proc_name[$z]} agota su quantum en este tiempo, le quedan ${proc_exe[$z]} ráfagas" >> informe.txt
+			echo "El proceso ${proc_name[$z]} agota su quantum en este tiempo, ráfagas restantes: ${proc_exe[$z]}"
+			echo "El proceso ${proc_name[$z]} agota su quantum en este tiempo, ráfagas rstántes ${proc_exe[$z]}" >> informe.txt
 		else
 			mot=0
 		fi
