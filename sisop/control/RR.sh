@@ -18,6 +18,7 @@ cyan_back='\e[1;44m'
 black='\e[1;30m'
 blue='\e[1;34m'
 white='\e[0;39m'
+inverted='\e[7m'
 NC='\e[0m' # No Color
 Li="${cyan}Li${NC}"
 
@@ -71,7 +72,7 @@ function Fichero {
 function EspAcu() {
 	for (( y=0; y<$proc; y++ ))
 	do
-		if [ $y -ne $z -o $1 -eq 1 ] && [ "${proc_exe[$y]}" -ne 0 ];then
+		if [ $y -ne $z -o $1 -eq 1 ] && [ "${proc_exe[$y]}" -ne 0 -a "${proc_stop[$y]}" -ne 1 ];then
 			let proc_waitA[$y]=proc_waitA[$y]+1
 		fi
 	done
@@ -80,11 +81,15 @@ function EspAcu() {
 function media() {
 	local array=("${!1}")
 	media=0
+	tot=0
 	for (( y=0; y<$proc; y++ ))
 	do
-		media=$(expr $media + ${array[$y]})
+		if [ "${proc_stop[$y]}" -eq 0 ] 2> /dev/null ;then
+			media=$(expr $media + ${array[$y]})
+			let tot=tot+1
+		fi
 	done
-	media=$(expr $media / $proc)
+	media=$(expr $media / $tot)
 	return $media
 }
 #Función OcuMem; llena la memoria del proceso pasado por parámetro. $1  nombre de proceso, $2 origen $3 memoria del proceso
@@ -93,6 +98,7 @@ function OcuMem() {
 	for (( y=$2; y<$tama; y++ ))
 	do
 		mem[$y]=$1
+		mem_dir[$y]=$4
 	done
 	return $(expr $y - 1)
 }
@@ -101,6 +107,7 @@ function DesOcuMem() {
 	for (( y=$1; y<=$2; y++ ))
 	do
 		mem[$y]=${Li}
+		mem_dir[$y]=-1
 	done
 }
 #Función PartFree; calcula las distintas particiones libres, su tamaño y su posición
@@ -131,6 +138,7 @@ function PartFree {
 #Función AsignaMem; asigna la memoria a los procesos
 function AsignaMem() {
 	auxiliar=0
+	reubic=1
 	for (( zed=0; zed<$proc; zed++ ))
 	do
 		if [ $1 -eq "${proc_arr_aux[$zed]}" ];then
@@ -138,6 +146,10 @@ function AsignaMem() {
 				echo "El proceso ${proc_name[$zed]} necesita mas memoria que la total, nunca se ejecutará"
 				proc_stop[$zed]=1
 				let end=end+1
+				proc_waitA[$zed]="NE"
+				proc_waitR[$zed]="NE"
+				proc_retR[$zed]="NE"
+				proc_ret[$zed]="NE"
 			elif [ $mem_aux -lt ${proc_mem[$zed]} ];then
 				echo "El proceso ${proc_name[$zed]} necesita mas memoria de la disponible actualmente, se ejecutará más adelante"
 				let proc_arr_aux[$zed]=proc_arr_aux[$zed]+1
@@ -152,10 +164,15 @@ function AsignaMem() {
 						if [ ${partition[$ex]} -lt $memoriaLibre ];then
 							memoriaLibre=${partition[$ex]}
 							proc_memI[$zed]=${part_init[$ex]}
+							reubic=0
 						fi
 					fi
 				done
-				OcuMem ${proc_name[$zed]} ${proc_memI[$zed]} ${proc_mem[$zed]}
+				if [ $reubic -eq 1 ];then
+					reubicar
+					proc_memI[$zed]=$?
+				fi
+				OcuMem ${proc_name[$zed]} ${proc_memI[$zed]} ${proc_mem[$zed]} $zed
 				proc_memF[$zed]=$?				
 				auxiliar=1
 				proc_stop[$zed]=0
@@ -163,11 +180,34 @@ function AsignaMem() {
 				echo -e "${yellow}El proceso ${proc_name[$zed]} ha entrado en memoria${NC}"
 			fi
 		fi
+		reubic=1
 	done
 	if [ $fin -eq 1 ];then
 		auxiliar=1
 	fi
-
+}
+#Funcion reubicar; reubica la memoria desplazandola hacia la izquierda todos los programas
+function reubicar {
+	before=0
+	local aux
+	for (( w=0; w<$mem_total; w++))
+	do
+		if [ ${mem_dir[$w]} -eq -1 -a $before -eq 0 ];then
+				before=1
+				aux_init=$w
+		elif [ $before -eq 1 -a ${mem_dir[$w]} -ne -1 ];then
+				aux=${mem_dir[$w]}
+				echo -e "${inverted}La memoria se ha reubicado${NC}"
+				DesOcuMem ${proc_memI[$aux]} ${proc_memF[$aux]}
+				OcuMem ${proc_name[$aux]} $aux_init ${proc_mem[$aux]} $aux
+				proc_memF[$aux]=$?
+				proc_memI[$aux]=$aux_init
+				before=0
+				w=proc_memF[$aux]
+		fi
+	done
+	let ret=${proc_memF[$aux]}+1
+	return $ret
 }
 ##Comienzo del programa
 clear
@@ -242,10 +282,7 @@ declare proc_mem[$proc] #Memoria que necesita cada proceso
 mem_total=$mem_aux 		#Memoria total de la que dispongo
 declare proc_order[$proc] #Orden de la lista
 declare proc_stop[$proc] #Procesos que no pueden ejecutarse porque no tienen memoria (1 = parado, 0 no parado)
-for (( y=0; y<$proc; y++ ))
-do
-	proc_stop[$y]=0
-done
+
 clear
 i=1
 if [ $manu = "S" ] 2>/dev/null || [ $manu = "s" ] 2>/dev/null;then
@@ -344,6 +381,15 @@ for (( i=0; i<$proc; i++ ))
 do
 	proc_waitA[$i]=$clock
 done
+for (( y=0; y<$proc; y++ ))
+do
+	proc_stop[$y]=0
+done
+declare mem_dir[$mem_aux]
+for (( y=0; y<$mem_aux; y++ ))
+do
+	mem_dir[$y]=-1
+done
 declare proc_ret[$proc] #Tiempo de retorno
 declare proc_retR[$proc] #Tiempo que ha estado el proceso desde entró hasta que terminó
 end=0 #Procesos terminados
@@ -374,6 +420,7 @@ do
 	clear
 	echo -e "${red}Turno $clock${NC}"
     if [ $fin -eq 1 ];then
+    	let mem_aux=mem_aux+proc_mem[$proc_bef]
     	DesOcuMem ${proc_memI[$proc_bef]} ${proc_memF[$proc_bef]}
 		echo -e "${blue}Proceso ${proc_name[$proc_bef]} terminado en el turno anterior, liberando memoria${NC}"
 	fi
@@ -401,7 +448,6 @@ do
 				fin=1
 				proc_bef=$z
 				mot=1
-				let mem_aux=mem_aux+proc_mem[$z]
 				echo "El proceso ${proc_name[$z]} ha terminado"
 			fi
 			if [ $quantum_aux -eq 0 ];then #Fin del uso de quantum del proceso
@@ -432,7 +478,9 @@ done
 #Damos valor a proc_waitR
 for (( y=0; y<$proc; y++ ))
 do
-	let proc_waitR[$y]=proc_waitA[$y]-proc_arr[$y]
+	if [ "${proc_stop[$y]}" -eq 0 ] 2> /dev/null ;then
+		let proc_waitR[$y]=proc_waitA[$y]-proc_arr[$y]
+	fi
 done
 read -p "Pulsa cualquier tecla para ver resumen."
 #Imprimimos los resultados
