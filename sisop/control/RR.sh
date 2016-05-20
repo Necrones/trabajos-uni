@@ -142,8 +142,9 @@ function PartFree {
 function AsignaMem() {
 	auxiliar=0
 	reubic=1
-	for (( zed=0; zed<$proc; zed++ ))
+	for (( alpha=0; alpha<$proc; alpha++ ))
 	do
+		zed=${proc_order[$alpha]}
 		if [ $1 -eq "${proc_arr_aux[$zed]}" ];then
 			if [ $mem_total -lt "${proc_mem[$zed]}" ];then
 				echo "El proceso ${proc_name[$zed]} necesita mas memoria que la total, nunca se ejecutará"
@@ -155,10 +156,12 @@ function AsignaMem() {
 				proc_retR[$zed]="NE"
 				proc_ret[$zed]="NE"
 			elif [ $mem_aux -lt ${proc_mem[$zed]} ];then
-				echo "El proceso ${proc_name[$zed]} necesita mas memoria de la disponible actualmente, se ejecutará más adelante"
-				echo "El proceso ${proc_name[$zed]} necesita mas memoria de la disponible actualmente, se ejecutará más adelante" >> informe.txt
+				if [ ${proc_stop[$zed]} -eq 0 ];then
+					echo "El proceso ${proc_name[$zed]} necesita mas memoria de la disponible actualmente, se ejecutará más adelante"
+					echo "El proceso ${proc_name[$zed]} necesita mas memoria de la disponible actualmente, se ejecutará más adelante" >> informe.txt
+					proc_stop[$zed]=1
+				fi
 				let proc_arr_aux[$zed]=proc_arr_aux[$zed]+1
-				proc_stop[$zed]=1
 			else
 				PartFree
 				memoriaLibre=$MAX
@@ -189,9 +192,6 @@ function AsignaMem() {
 		fi
 		reubic=1
 	done
-	if [ $fin -eq 1 ];then
-		auxiliar=1
-	fi
 }
 #Funcion reubicar; reubica la memoria desplazandola hacia la izquierda todos los programas
 function reubicar {
@@ -403,7 +403,6 @@ do
 done
 read -p "Pulse cualquier tecla para ver la secuencia de procesos"
 #Declaro las ultimas variables
-declare proc_init[$proc]  #Posición de memoria dondé empieza 
 declare proc_waitA[$proc] #Tiempo de espera acumulado
 declare proc_waitR[$proc] #Tiempo de espera real
 declare proc_memI[$proc]  #Palabra inicial
@@ -446,15 +445,7 @@ while [ $e -eq 0 ];do
 	echo -e "${red}Ráfaga $clock${NC}"
 	echo "" >> informe.txt
 	echo "Ráfaga $clock" >> informe.txt
-	if [ $fin -eq 1 ];then
-    	let mem_aux=mem_aux+proc_mem[$proc_bef]
-    	DesOcuMem ${proc_memI[$proc_bef]} ${proc_memF[$proc_bef]}
-		let end=end+1
-		echo -e "${blue}El proceso ${proc_name[$proc_bef]} retornó en la ráfaga ${proc_ret[$proc_bef]}, la memoria asignada fue liberada${NC}"
-		echo "El proceso ${proc_name[$proc_bef]} retornó en la ráfaga ${proc_ret[$proc_bef]}, la memoria asignada fue liberada" >> informe.txt
-	fi
 	AsignaMem $clock
-	fin=0 
 	z=${proc_order[$i]}
 	if [ $end -ne $proc ];then
 		while [ "${proc_exe[$z]}" -eq 0 ] || [ "${proc_stop[$z]}" -eq 1 ] || [ "${proc_arr[$z]}" -gt $clock ] 
@@ -486,7 +477,7 @@ while [ $e -eq 0 ];do
 		exe=1
 	fi
 	if [ "${proc_exe[$z]}" -eq 0 ] && [ $end -ne $proc ];then #El proceso termina en este tiempo
-		proc_ret[$z]=$clock	#El momento de retorno será igual al momento de salida en el reloj			
+		let proc_ret[$z]=$clock-1	#El momento de retorno será igual al momento de salida en el reloj (este aumento antes por lo que vamos hacia atras)		
 		let proc_retR[$z]=proc_ret[$z]-proc_arr[$z]
 		quantum_aux=0								
 		fin=1
@@ -505,6 +496,16 @@ while [ $e -eq 0 ];do
 		echo "|${proc_name[$z]}($clock_time,${proc_exe[$z]})|" >> informe.txt
 		let i=i+1
 		quantum_aux=$quantum
+	fi
+	#Si el proceso se ha terminado
+	if [ $fin -eq 1 ];then
+    	let mem_aux=mem_aux+proc_mem[$proc_bef]
+    	DesOcuMem ${proc_memI[$proc_bef]} ${proc_memF[$proc_bef]}
+		let end=end+1
+		echo -e "${blue}El proceso ${proc_name[$z]} retorna al final de la ráfaga ${proc_ret[$z]}, la memoria asignada fue liberada${NC}"
+		echo "El proceso ${proc_name[$z]} retorna al final de la ráfaga ${proc_ret[$z]}, la memoria asignada fue liberada" >> informe.txt
+		auxiliar=1
+		fin=0
 	fi
 	if [ $auxiliar -eq 1 ];then
 		echo -e "${purple}Memoria libre actual $mem_aux MB${NC}"
@@ -542,9 +543,9 @@ done
 read -p "Pulsa cualquier tecla para ver resumen."
 #Imprimimos los resultados
 echo " ------------------------------------------------------------------------------- "
-echo "|    Proceso    |     Esp A     |     Esp R     |    Retorno A  |  Retorno Real |"
+echo "|    Proceso    |     Esp A     |     Esp R     |     Salida    |  Retorno Real |"
 echo " ------------------------------------------------------------------------------- "  >> informe.txt
-echo "|    Proceso    |     Esp A     |     Esp R     |    Retorno A  |  Retorno Real |"  >> informe.txt
+echo "|    Proceso    |     Esp A     |     Esp R     |     Salida    |  Retorno Real |"  >> informe.txt
 for (( y=0; y<$proc; y++ ))
 do
 	echo " ------------------------------------------------------------------------------- "
