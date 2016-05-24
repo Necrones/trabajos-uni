@@ -6,7 +6,7 @@
 #Licence: CC-BY-SA (Documentation), GPLv3 (Source)
 
 #Variables globales de ayuda
-MAX=9999 
+MAX=9999
 #Colores
 coffe='\e[0;33m'
 yellow='\e[1;33m'
@@ -32,7 +32,7 @@ function SinRepetir {
 				error=1
 			fi
 		done
-	fi	
+	fi
 }
 #Función Informacion que muestra al usuario la informacion de los datos introducidos
 function Informacion {
@@ -365,7 +365,7 @@ if [ $manu = "S" ] 2>/dev/null || [ $manu = "s" ] 2>/dev/null;then
 			fi
 		done
 		clear
-		Informacion		
+		Informacion
 		let i=i+1
 	done
 else
@@ -436,7 +436,7 @@ e=0 #e=0 aun no ha terminado, e=1 ya se terminó
 j=0
 exe=0	#Ejecuciones que ha habido en una vuelta de lista
 quantum_aux=$quantum #Quantum del que se dispone
-i=0 #Posición del porceso que se debe ejecutar ahora
+position=0 #Posición del porceso que se debe ejecutar ahora
 fin=0
 mot=0
 #Comienza el agoritmo a funcionar
@@ -446,24 +446,29 @@ while [ $e -eq 0 ];do
 	echo "" >> informe.txt
 	echo "Ráfaga $clock" >> informe.txt
 	AsignaMem $clock
-	z=${proc_order[$i]}
+	z=${proc_order[$position]}
 	if [ $end -ne $proc ];then
-		while [ "${proc_exe[$z]}" -eq 0 ] || [ "${proc_stop[$z]}" -eq 1 ] || [ "${proc_arr[$z]}" -gt $clock ] 
-		do #El proceso esta parado, terminado o aun no ha llegado
-			if [ $i -eq $proc ];then #Si hemos llegado al final del vector lista
-				i=0
-				z=${proc_order[$i]}
+		i=0
+		while [ $i -eq 0 ]
+		do
+			if [ $position -eq $proc ];then #Si hemos llegado al final del vector lista
+				position=0
+				z=${proc_order[$position]}
 				if [ $exe -eq 0 ];then
 					let clock=clock+1 #Si no ha habido ninguna ejecución en la lista anterior ir al siguiente turno
 					EspAcu 1
 				fi
 				exe=0
+			fi
+			if [ "${proc_exe[$z]}" -eq 0 ] || [ "${proc_stop[$z]}" -eq 1 ] || [ "${proc_arr[$z]}" -gt $clock ];then 
+				#El proceso esta parado, terminado o aun no ha llegado
+				let position=position+1
+				z=${proc_order[$position]}
 			else
-				let i=i+1
-				z=${proc_order[$i]}
+				i=1
 			fi
 		done
-	fi	
+	fi
 	if [ $quantum_aux -eq $quantum ] && [ $end -ne $proc ];then #Cambio de contexto
 		clock_time=$clock
 		echo -e "${blue}El proceso ${proc_name[$z]} entra ahora en el procesador${NC}"
@@ -479,7 +484,7 @@ while [ $e -eq 0 ];do
 	if [ "${proc_exe[$z]}" -eq 0 ] && [ $end -ne $proc ];then #El proceso termina en este tiempo
 		let proc_ret[$z]=$clock-1	#El momento de retorno será igual al momento de salida en el reloj (este aumento antes por lo que vamos hacia atras)		
 		let proc_retR[$z]=proc_ret[$z]-proc_arr[$z]
-		quantum_aux=0								
+		quantum_aux=0
 		fin=1
 		proc_bef=$z
 		mot=1
@@ -494,7 +499,7 @@ while [ $e -eq 0 ];do
 		fi
 		echo -e "${cyan_back}|${proc_name[$z]}($clock_time,${proc_exe[$z]})|${NC}"
 		echo "|${proc_name[$z]}($clock_time,${proc_exe[$z]})|" >> informe.txt
-		let i=i+1
+		let position=position+1
 		quantum_aux=$quantum
 	fi
 	#Si el proceso se ha terminado

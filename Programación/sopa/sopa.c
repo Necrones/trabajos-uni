@@ -25,6 +25,7 @@
 #define ESP 32			//Espacio en ASCII
 #define DASH 45			//- en ASCII
 #define BARRA 124		//| en ASCII
+#define TEMATAM 9		//Tamaño máximo del tema
 //Registros
 typedef struct {
   char    palabra[TCHAR];
@@ -37,8 +38,9 @@ typedef struct {
 //Prototipos
 void    crearSopa(int[DIM][DIM]);
 void    imprimirSopa(int[DIM][DIM]);
-void    rellenaTemas(Palabra[N_TEMA][N_PAL]);
-int     solicitaOpcionMenu(void);
+void    rellenaTemas(Palabra[N_TEMA][N_PAL], FILE *,
+		     char[N_TEMA][TEMATAM]);
+int     solicitaOpcionMenu(char[N_TEMA][TEMATAM]);
 int     clean_stdin(void);
 void    colocaPalabras(int[DIM][DIM], Palabra[N_PAL]);
 void    colocaPalabra(int[DIM][DIM], Palabra *, int);
@@ -48,7 +50,8 @@ bool    esPosibleColocarPalabra(int[DIM][DIM], Palabra, int, int);
 void    introduceNum(int *);
 void    coincidePal(int[DIM][DIM], Palabra[N_PAL], int,
 		    int, int, int, bool[N_PAL]);
-void    juego(int[DIM][DIM], Palabra[N_TEMA][N_PAL]);
+void    juego(int[DIM][DIM], Palabra[N_TEMA][N_PAL],
+	      char[N_TEMA][TEMATAM]);
 void    minuscula(int[DIM][DIM], int, int, int, int, int);
 int     sentido(int, int, int, int);
 
@@ -57,9 +60,18 @@ int main() {
   //srand(22);                  //Cruce en coches y colores
   int     sopa[DIM][DIM];
   Palabra temas[N_TEMA][N_PAL];
-  rellenaTemas(temas);
-  system("clear");
-  juego(sopa, temas);
+  char    tema[N_TEMA][TEMATAM];
+  FILE   *fil;
+  fil = fopen("sopa.txt", "r");
+  if(fil == NULL) {
+    printf
+	("El fichero sopa.txt no se ha podido abrir, comprueba que está en el mismo directorio que sopa\n");
+  } else {
+    rellenaTemas(temas, fil, tema);
+    fclose(fil);
+    system("clear");
+    juego(sopa, temas, tema);
+  }
   return 0;
 }
 
@@ -84,7 +96,8 @@ int clean_stdin() {
   *@author: Luis Pedrosa Ruiz y JoseluCross
   *@date: 26/04/2016
   */
-void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL]) {
+void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
+	   char te[N_TEMA][TEMATAM]) {
   int     ini_fila, ini_col, fin_fila, fin_col;	//Coordenadas
   bool    palEncontrada[N_PAL];
   int     i;			//Contador
@@ -93,7 +106,7 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL]) {
   int     partida, tema;
   while(game) {
     //Iniciamos el juego
-    tema = solicitaOpcionMenu();
+    tema = solicitaOpcionMenu(te);
     if(tema != -1) {
       crearSopa(matriz);
       colocaPalabras(matriz, themes[tema]);
@@ -195,17 +208,17 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL]) {
  *@date: 12/04/2016
  *@version: 1.0
  */
-int solicitaOpcionMenu() {
+int solicitaOpcionMenu(char t[N_TEMA][TEMATAM]) {
   int     menu;
   bool    salida = false;
   do {
     printf("Elije un tema\n");
     printf("_____________\n");
-    printf("1 - Coches\n");
-    printf("2 - Colores\n");
-    printf("3 - Formas\n");
-    printf("4 - Ciudades\n");
-    printf("5 - Países\n");
+    printf("1 - %s\n", t[0]);
+    printf("2 - %s\n", t[1]);
+    printf("3 - %s\n", t[2]);
+    printf("4 - %s\n", t[3]);
+    printf("5 - %s\n", t[4]);
     printf("0 - Salir\n");
     introduceNum(&menu);
     if(menu < 0 || menu > 5) {
@@ -304,52 +317,18 @@ void imprimirSopa(int sop[DIM][DIM]) {
  *@date: 05/04/2016
  *@version: 1.0.0
  */
-void rellenaTemas(Palabra tem[N_TEMA][N_PAL]) {
-  //Línea 0 es coches
-  strcpy(tem[0][0].palabra, "AUDI");
-  strcpy(tem[0][1].palabra, "MERCEDES");
-  strcpy(tem[0][2].palabra, "FORD");
-  strcpy(tem[0][3].palabra, "OPEL");
-  strcpy(tem[0][4].palabra, "RENAULT");
-  strcpy(tem[0][5].palabra, "PORSCHE");
-  strcpy(tem[0][6].palabra, "PEUGEOT");
-  strcpy(tem[0][7].palabra, "SEAT");
-  //Linea 1 es colores
-  strcpy(tem[1][0].palabra, "ROJO");
-  strcpy(tem[1][1].palabra, "VERDE");
-  strcpy(tem[1][2].palabra, "AZUL");
-  strcpy(tem[1][3].palabra, "AMARILLO");
-  strcpy(tem[1][4].palabra, "NARANJA");
-  strcpy(tem[1][5].palabra, "MAGENTA");
-  strcpy(tem[1][6].palabra, "MARRON");
-  strcpy(tem[1][7].palabra, "GRIS");
-  //Linea 2 es formas
-  strcpy(tem[2][0].palabra, "CIRCULO");
-  strcpy(tem[2][1].palabra, "TRIANGULO");
-  strcpy(tem[2][2].palabra, "CUADRADO");
-  strcpy(tem[2][3].palabra, "ROMBO");
-  strcpy(tem[2][4].palabra, "ELIPSE");
-  strcpy(tem[2][5].palabra, "PENTAGONO");
-  strcpy(tem[2][6].palabra, "RECTANGULO");
-  strcpy(tem[2][7].palabra, "TRAPECIO");
-  //Linea 3 es ciudades
-  strcpy(tem[3][0].palabra, "MADRID");
-  strcpy(tem[3][1].palabra, "BARCELONA");
-  strcpy(tem[3][2].palabra, "BILBAO");
-  strcpy(tem[3][3].palabra, "ZARAGOZA");
-  strcpy(tem[3][4].palabra, "BURGOS");
-  strcpy(tem[3][5].palabra, "FERROL");
-  strcpy(tem[3][6].palabra, "JAEN");
-  strcpy(tem[3][7].palabra, "CORDOBA");
-  //Linea 4 es países
-  strcpy(tem[4][0].palabra, "INGLATERRA");
-  strcpy(tem[4][1].palabra, "ARGELIA");
-  strcpy(tem[4][2].palabra, "ITALIA");
-  strcpy(tem[4][3].palabra, "FRANCIA");
-  strcpy(tem[4][4].palabra, "MARRUECOS");
-  strcpy(tem[4][5].palabra, "CUBA");
-  strcpy(tem[4][6].palabra, "ECUADOR");
-  strcpy(tem[4][7].palabra, "RUSIA");
+void rellenaTemas(Palabra tem[N_TEMA][N_PAL], FILE * f,
+		  char tema[N_TEMA][TEMATAM]) {
+  int     i;
+  for(i = 0; i < N_TEMA; ++i) {
+    fscanf(f, "%s", tema[i]);
+    while(fgetc(f) != '\n') ;
+    fscanf(f, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%s",
+	   tem[i][0].palabra, tem[i][1].palabra, tem[i][2].palabra,
+	   tem[i][3].palabra, tem[i][4].palabra, tem[i][5].palabra,
+	   tem[i][6].palabra, tem[i][7].palabra);
+    while(fgetc(f) != '\n') ;
+  }
 }
 
 /**

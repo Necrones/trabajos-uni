@@ -13,3 +13,126 @@
 |		GPLv3 (Código)			|
  -----------------------------------------------
 El quantum escogido es 3
+Los datos de los procesos son los siguientes
+ --------------------------------------------------------------- 
+|    Proceso    |    Llegada    |     Ráfaga    |    Memoria    |
+ --------------------------------------------------------------- 
+|	p1	|	3	|	2	|	25	|
+ --------------------------------------------------------------- 
+|	p2	|	0	|	2	|	1	|
+ --------------------------------------------------------------- 
+|	p3	|	1	|	6	|	25	|
+ --------------------------------------------------------------- 
+|	p4	|	2	|	25	|	200	|
+ --------------------------------------------------------------- 
+|	p5	|	3	|	4	|	20	|
+ --------------------------------------------------------------- 
+|	p6	|	0	|	4	|	65	|
+ --------------------------------------------------------------- 
+
+Ráfaga 0
+El proceso p2 ha entrado en memoria
+El proceso p6 ha entrado en memoria
+El proceso p2 entra ahora en el procesador
+Memoria libre actual 34 MB$
+Distribución actual de la memoria
+p2 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li
+
+Ráfaga 1
+El proceso p3 ha entrado en memoria
+|p2(0,0)|
+El proceso p2 retorna al final de la ráfaga 1, la memoria asignada fue liberada
+Memoria libre actual 10 MB$
+Distribución actual de la memoria
+Li p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 Li Li Li Li Li Li Li Li Li
+
+Ráfaga 2
+El proceso p4 necesita mas memoria que la total, nunca se ejecutará
+El proceso p6 entra ahora en el procesador
+
+Ráfaga 3
+El proceso p1 necesita mas memoria de la disponible actualmente, se ejecutará más adelante
+El proceso p5 necesita mas memoria de la disponible actualmente, se ejecutará más adelante
+
+Ráfaga 4
+El proceso p6 agota su quantum en este tiempo, ráfagas rstántes 1
+|p6(2,1)|
+
+Ráfaga 5
+El proceso p3 entra ahora en el procesador
+
+Ráfaga 6
+
+Ráfaga 7
+El proceso p3 agota su quantum en este tiempo, ráfagas rstántes 3
+|p3(5,3)|
+
+Ráfaga 8
+El proceso p6 entra ahora en el procesador
+|p6(8,0)|
+El proceso p6 retorna al final de la ráfaga 8, la memoria asignada fue liberada
+Memoria libre actual 75 MB$
+Distribución actual de la memoria
+Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 Li Li Li Li Li Li Li Li Li
+
+Ráfaga 9
+El proceso p1 ha entrado en memoria
+El proceso p5 ha entrado en memoria
+El proceso p3 entra ahora en el procesador
+Memoria libre actual 30 MB$
+Distribución actual de la memoria
+p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 Li Li Li Li Li Li Li Li Li
+
+Ráfaga 10
+
+Ráfaga 11
+|p3(9,0)|
+El proceso p3 retorna al final de la ráfaga 11, la memoria asignada fue liberada
+Memoria libre actual 55 MB$
+Distribución actual de la memoria
+p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li
+
+Ráfaga 12
+El proceso p1 entra ahora en el procesador
+
+Ráfaga 13
+|p1(12,0)|
+El proceso p1 retorna al final de la ráfaga 13, la memoria asignada fue liberada
+Memoria libre actual 80 MB$
+Distribución actual de la memoria
+Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li
+
+Ráfaga 14
+El proceso p5 entra ahora en el procesador
+
+Ráfaga 15
+
+Ráfaga 16
+El proceso p5 agota su quantum en este tiempo, ráfagas rstántes 1
+|p5(14,1)|
+
+Ráfaga 17
+El proceso p5 entra ahora en el procesador
+|p5(17,0)|
+El proceso p5 retorna al final de la ráfaga 17, la memoria asignada fue liberada
+Memoria libre actual 100 MB$
+Distribución actual de la memoria
+Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li
+ ------------------------------------------------------------------------------- 
+|    Proceso    |     Esp A     |     Esp R     |     Salida    |  Retorno Real |
+ ------------------------------------------------------------------------------- 
+|	p1	|	12	|	9	|	13	|	10	|
+ ------------------------------------------------------------------------------- 
+|	p2	|	0	|	0	|	1	|	1	|
+ ------------------------------------------------------------------------------- 
+|	p3	|	6	|	5	|	11	|	10	|
+ ------------------------------------------------------------------------------- 
+|	p4	|	NE	|	NE	|	NE	|	NE	|
+ ------------------------------------------------------------------------------- 
+|	p5	|	14	|	11	|	17	|	14	|
+ ------------------------------------------------------------------------------- 
+|	p6	|	5	|	5	|	8	|	8	|
+ ------------------------------------------------------------------------------- 
+Los tiempos medio se calculan con los valores reales
+Tiempo de espera medio: 6
+Tiempo de retorno medio: 8

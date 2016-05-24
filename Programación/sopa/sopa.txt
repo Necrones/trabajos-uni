@@ -1,0 +1,10 @@
+asesinos
+ezio,altair,connor,edward,desmond,pierre,jacob,aveline
+formas
+circulo,rombo,cuadrado,pentagono,rectangulo,trapecio,triangulo,elipse
+colores
+rojo,verde,amarillo,azul,magenta,naranja,marron,gris
+ciudades
+madrid,barcelona,bilbao,burgos,jaen,ferrol,zaragoza,cordoba
+paises
+inglaterra,argelia,italia,francia,cuba,ecuador,rusia,marruecos
