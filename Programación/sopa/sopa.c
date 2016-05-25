@@ -53,7 +53,7 @@ void    coincidePal(int[DIM][DIM], Palabra[N_PAL], int,
 void    juego(int[DIM][DIM], Palabra[N_TEMA][N_PAL],
 	      char[N_TEMA][TEMATAM]);
 void    minuscula(int[DIM][DIM], int, int, int, int, int);
-int     sentido(int, int, int, int);
+bool    rango(int,int,int);
 
 int main() {
   srand(time(NULL));
@@ -93,6 +93,7 @@ int clean_stdin() {
   *Descripción: ejecuta el juego de la sopa de letras
   *@param matriz: sopa de letra
   *@param themes: temas de la sopa
+  *@param te: matriz con los temas
   *@author: Luis Pedrosa Ruiz y JoseluCross
   *@date: 26/04/2016
   */
@@ -120,43 +121,19 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
 	do {
 	  printf("Introduce la primera coordenada (fila): ");
 	  introduceNum(&ini_fila);
-	  if(ini_fila < 1 || ini_fila > DIM) {
-	    printf("Fuera de rango\n");
-	    salida = false;
-	  } else {
-	    salida = true;
-	  }
-	} while(!salida);
+	} while(rango(1,DIM,ini_fila));
 	do {
 	  printf("Introduce la primera coordenada (columna): ");
 	  introduceNum(&ini_col);
-	  if(ini_col < 1 || ini_fila > DIM) {
-	    printf("Fuera de rango\n");
-	    salida = false;
-	  } else {
-	    salida = true;
-	  }
-	} while(!salida);
+	} while(rango(1,DIM,ini_col));
 	do {
 	  printf("Introduce la segunda coordenada (fila): ");
 	  introduceNum(&fin_fila);
-	  if(fin_fila < 1 || ini_fila > DIM) {
-	    printf("Fuera de rango\n");
-	    salida = false;
-	  } else {
-	    salida = true;
-	  }
-	} while(!salida);
+	} while(rango(1,DIM,fin_fila));
 	do {
 	  printf("Introduce la segunda coordenada (columna): ");
 	  introduceNum(&fin_col);
-	  if(fin_col < 1 || ini_fila > DIM) {
-	    printf("Fuera de rango\n");
-	    salida = false;
-	  } else {
-	    salida = true;
-	  }
-	} while(!salida);
+	} while(rango(1,DIM,fin_col));
 	system("clear");
 	coincidePal(matriz, themes[tema], ini_fila - 1, ini_col - 1,
 		    fin_fila - 1, fin_col - 1, palEncontrada);
@@ -189,7 +166,11 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
 	  if(partida == ESC) {
 	    printf("Adios\n");
 	    game = false;
-	  } else if(partida == ESP) {
+	  } else if(partida == ESP) {printf("1 - %s\n", t[0]);
+    printf("2 - %s\n", t[1]);
+    printf("3 - %s\n", t[2]);
+    printf("4 - %s\n", t[3]);
+    printf("5 - %s\n", t[4]);
 	    victoria = false;
 	  }
 	} while(partida != ESP && partida != ESC);
@@ -199,10 +180,31 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
     }
   }
 }
+/**
+ *Nombre: rango
+ *Description: determina si un nº está entre un rango
+ *@param min: valor mínimo 
+ *@param max: valor maximo
+ *@param value: valor que tiene que estar en el rango
+ *@return 1 si está fuera del rango, 0 si esta dentro
+ *@date: 25/05/2016
+ *@version: 1.0
+ */
+ bool rango(int min,int max, int value){
+   bool rang
+   if (value<min || value>max){
+     printf("Valor fuera de rango\n")
+     rang=true;
+   }else{
+     rang=false;
+   }
+   return rang;
+ }
 
 /**
  *Nombre: solicitaOpcionMenu
  *Description: Muestra el menú
+ *@param t: matriz con los temas
  *@return: opción elegida
  *@author: Luis Pedrosa Ruiz y JoseluCross
  *@date: 12/04/2016
@@ -211,14 +213,13 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
 int solicitaOpcionMenu(char t[N_TEMA][TEMATAM]) {
   int     menu;
   bool    salida = false;
+  int i;
   do {
     printf("Elije un tema\n");
     printf("_____________\n");
-    printf("1 - %s\n", t[0]);
-    printf("2 - %s\n", t[1]);
-    printf("3 - %s\n", t[2]);
-    printf("4 - %s\n", t[3]);
-    printf("5 - %s\n", t[4]);
+    for(i=0;i<N_TEMA;++i){
+      printf("%d - %s\n",i+1,t[i]);
+    }
     printf("0 - Salir\n");
     introduceNum(&menu);
     if(menu < 0 || menu > 5) {
@@ -312,7 +313,9 @@ void imprimirSopa(int sop[DIM][DIM]) {
 /**
  *Nombre: rellenaTemas
  *Description: asigna en una matriz las palabras
- *@param tem[DIM][DIM][TCHAR] - palabra asociada al tema
+ *@param tem[N_TEMA][N_PAL] - registro donde se guardarán las palabras
+ *@param f - archivo de origen de los datos
+ *@param tema - matriz donde se guardarán los temas
  *@author: Luis Pedrosa Ruiz y JoseluCross
  *@date: 05/04/2016
  *@version: 1.0.0
