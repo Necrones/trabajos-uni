@@ -23,6 +23,35 @@ NC='\e[0m' # No Color
 Li="${cyan}Li${NC}"
 
 ##Funciones
+#Función Orden; ordena el vector arr según orden de menor a mayor
+#Creación de la lista según llegada
+function Orden {
+	#Inicializo el vector de orden
+	for (( p=0; p<$i; p++ ))
+	do
+		proc_order[$p]=-1
+	done
+	for (( k=$(expr $i-1); k>=0; k-- ))
+	do
+		max=0
+		for (( jk=0; jk<$i; jk++ ))
+		do
+			for (( z=$k, coin=0; z<=$(expr $i-1); z++ ))
+			do
+				if [ $jk -eq "${proc_order[$z]}" ];then
+					coin=1
+				fi
+			done
+		if [ $coin -eq 0 ];then
+			if [ ${proc_arr[$jk]} -ge $max ];then
+				aux=$jk
+				max="${proc_arr[$jk]}"
+			fi
+		fi
+		done
+		proc_order[$k]=$aux
+	done
+}
 #Función SinRepetir - comprueba si se ha puesto el mismo nombre antes
 function SinRepetir {
 	if [ $i -ne 1 ];then
@@ -36,12 +65,14 @@ function SinRepetir {
 }
 #Función Informacion que muestra al usuario la informacion de los datos introducidos
 function Informacion {
+	Orden
 	echo " --------------------------------------------------------------- "
 	echo "|    Proceso    |    Llegada    |     Ráfaga    |    Memoria    |"
-		for (( y=0; y<$i; y++))
+	for (( y=0; y<$i; y++))
 	do
+		l=${proc_order[$y]}
 		echo " --------------------------------------------------------------- "
-		echo "|	${proc_name[$y]}	|	${proc_arr[$y]}	|	${proc_exe[$y]}	|	${proc_mem[$y]}	|"
+		echo "|	${proc_name[$l]}	|	${proc_arr[$l]}	|	${proc_exe[$l]}	|	${proc_mem[$l]}	|"
 	done
 	echo " --------------------------------------------------------------- "
 }
@@ -50,10 +81,11 @@ function InformacionPrint {
 	echo "Los datos de los procesos son los siguientes" >> informe.txt
 	echo " --------------------------------------------------------------- "  >> informe.txt
 	echo "|    Proceso    |    Llegada    |     Ráfaga    |    Memoria    |"  >> informe.txt
-		for (( y=0; y<$i; y++))
+		for (( y=0; y<$proc; y++))
 	do
+		l=${proc_order[$y]}
 		echo " --------------------------------------------------------------- "  >> informe.txt
-		echo "|	${proc_name[$y]}	|	${proc_arr[$y]}	|	${proc_exe[$y]}	|	${proc_mem[$y]}	|"  >> informe.txt
+		echo "|	${proc_name[$l]}	|	${proc_arr[$l]}	|	${proc_exe[$l]}	|	${proc_mem[$l]}	|"  >> informe.txt
 	done
 	echo " --------------------------------------------------------------- "  >> informe.txt
 }
@@ -62,12 +94,31 @@ function Fichero {
 	x=0
 	for y in $(cat InputRR.txt)
 	do
-		proc_name[$x]=$(echo $y | cut -f1 -d";")
-		proc_arr[$x]=$(echo $y | cut -f2 -d";")
-		proc_exe[$x]=$(echo $y | cut -f3 -d";")
-		proc_mem[$x]=$(echo $y | cut -f4 -d";")
+		case $x in
+		0)
+			mem_aux=$(echo $y)
+			echo "La memoria es de $mem_aux MB"
+			echo "La memoria es de $mem_aux MB" >> informe.txt
+			declare mem[$mem_aux] #Memoria de tamaño 1 MB por palabra
+			for (( y=0; y<$mem_aux; y++ ))
+			do
+				mem[$y]=${Li} #Inicializo la memoria a libre
+			done
+			;;
+		1)
+			quantum=$(echo $y)
+			echo "El quantum es $quantum"
+			echo "El quantum es $quantum" >> informe.txt
+			;;
+		*)
+			proc_name[$x]=$(echo $y | cut -f1 -d";")
+			proc_arr[$x]=$(echo $y | cut -f2 -d";")
+			proc_exe[$x]=$(echo $y | cut -f3 -d";")
+			proc_mem[$x]=$(echo $y | cut -f4 -d";")
+		esac
 		let x=x+1
 	done
+	proc=${#proc_name[@]}
 }
 #Función EspAcu; aumenta el tiempo de espera acumulado de cada proceso
 function EspAcu() {
@@ -75,9 +126,7 @@ function EspAcu() {
 	do
 		if [ "${proc_exe[$y]}" -ne 0 ];then
 			if [ $y -ne $z -o $1 -eq 1 ];then
-				if [ ${proc_waitA[$y]} != "NE" ] 2> /dev/null;then
-					let proc_waitA[$y]=proc_waitA[$y]+1
-				fi
+				let proc_waitA[$y]=proc_waitA[$y]+1
 			fi
 		fi
 	done
@@ -264,34 +313,6 @@ echo "|		GPLv3 (Código)			|"  >> informe.txt
 echo " -----------------------------------------------"  >> informe.txt
 #Captura de datos
 mem_aux=100 #Memoria en Megas
-j=0
-while [ $j -eq 0 ] 2> /dev/null ;do
-	read -p "Introduzca un número de procesos: " proc
-	if [ \( $proc -gt 0 \) -a \( $? -eq 0 \) ] 2> /dev/null;then
-		j=1
-	else
-		echo "Dato incorrecto"
-	fi
-done
-j=0
-while [ $j -eq 0 ] 2> /dev/null ;do
-	read -p "Introduzca el quantum: " quantum
-	if [ \( $quantum -gt 0 \) -a \( $j -eq 0 \) ] 2> /dev/null;then
-		j=1
-	else
-		echo "Dato incorrecto"
-	fi
-done
-echo "El quantum escogido es $quantum" >> informe.txt
-j=0
-while [ $j -eq 0 ] 2> /dev/null ;do
-	read -p "Introduzca al cantidad de memoria (MB) min 100: " mem_aux
-	if [ \( $mem_aux -ge 100 \) -a \( $? -eq 0 \) ] 2> /dev/null;then
-		j=1
-	else
-		echo "Dato incorrecto"
-	fi
-done
 read -p "Meter lo datos de manera manual? [s,n] " manu
 SiNo $manu
 while [ $? -eq 0 ];do
@@ -299,6 +320,33 @@ while [ $? -eq 0 ];do
 	read -p "Meter lo datos de manera manual? [s,n] " manu
 	SiNo $manu
 done
+if [ $manu = "s" -o $manu = "S" ];then
+	j=0
+	while [ $j -eq 0 ] 2> /dev/null ;do
+		read -p "Introduzca el quantum: " quantum
+		if [ \( $quantum -gt 0 \) -a \( $j -eq 0 \) ] 2> /dev/null;then
+			j=1
+		else
+			echo "Dato incorrecto"
+		fi
+	done
+	echo "El quantum escogido es $quantum" >> informe.txt
+	j=0
+	while [ $j -eq 0 ] 2> /dev/null ;do
+		read -p "Introduzca al cantidad de memoria (MB) min 100: " mem_aux
+		if [ \( $mem_aux -ge 100 \) -a \( $? -eq 0 \) ] 2> /dev/null;then
+			j=1
+			declare mem[$mem_aux] #Memoria de tamaño 1 MB por palabra
+			for (( y=0; y<$mem_aux; y++ ))
+			do
+				mem[$y]=${Li} #Inicializo la memoria a libre
+			done
+		else
+			echo "Dato incorrecto"
+		fi
+	
+	done
+fi
 read -p "Desea ejecutar la simulación automáticamente? [s,n] " auto
 SiNo $auto
 while [ $? -eq 0 ];do
@@ -309,30 +357,32 @@ while [ $? -eq 0 ];do
 done
 
 #Vectores de informacion
-declare mem[$mem_aux] #Memoria de tamaño 1 MB por palabra
-for (( y=0; y<$mem_aux; y++ ))
-do
-	mem[$y]=${Li} #Inicializo la memoria a libre
-done
-declare proc_name[$proc] #Nombre de cada proceso
-declare proc_arr[$proc] #Turno de llegada del proceso
-declare proc_exe[$proc] #Tiempo de ejecución o ráfaga; se reducirá según el quantum
-declare proc_mem[$proc] #Memoria que necesita cada proceso
-mem_total=$mem_aux 		#Memoria total de la que dispongo
-declare proc_order[$proc] #Orden de la lista
-declare proc_stop[$proc] #Procesos que no pueden ejecutarse porque no tienen memoria (1 = parado, 0 no parado)
-
+proc_name={} #Nombre de cada proceso
+proc_arr={} #Turno de llegada del proceso
+proc_exe={} #Tiempo de ejecución o ráfaga; se reducirá según el quantum
+proc_mem={} #Memoria que necesita cada proceso
+mem_total=$mem_aux 	#Memoria total de la que dispongo
+proc_order={} #Orden de la lista
+proc_stop={} #Procesos que no pueden ejecutarse porque no tienen memoria (1 = parado, 0 no parado)
 clear
 i=1
+t=0
 if [ $manu = "S" ] 2>/dev/null || [ $manu = "s" ] 2>/dev/null;then
-	while [ $i -le $proc ];do
+	while [ $t -eq 0 ];do
 		j=0
 		while [ $j -eq 0 ];do
 			error=0
-			read -p "Introduzca el nombre del proceso $i: " proc_name[$(expr $i-1)]
+			read -p "Introduzca el nombre del proceso $i (p$i): " proc_name[$(expr $i-1)]
 			SinRepetir
-			if [ "${proc_name[$(expr $i-1)]}" -a $error -eq 0 ] 2> /dev/null ;then
-				j=1;
+			if [ -z "${proc_name[$(expr $i-1)]}" ] 2> /dev/null ;then
+				proc_name[$(expr $i-1)]="p$i"
+				error=0
+				SinRepetir
+				if [ $error -eq 0 ];then
+					j=1
+				fi			
+			elif [ $error -eq 0 ] ;then
+				j=1
 			else
 				echo "Nombre incorrecto o ya utilizado"
 			fi
@@ -358,49 +408,43 @@ if [ $manu = "S" ] 2>/dev/null || [ $manu = "s" ] 2>/dev/null;then
 		j=0
 		while [ $j -eq 0 ];do
 			read -p "Introduzca la memoria (MB) que necesita ${proc_name[$(expr $i-1)]}: " proc_mem[$(expr $i-1)]
-			if [ "${proc_mem[$(expr $i-1)]}" -gt 0 ] 2> /dev/null ;then
+			if [ "${proc_mem[$(expr $i-1)]}" -le $mem_total -a "${proc_mem[$(expr $i-1)]}" -gt 0 ] 2> /dev/null ;then
 				j=1
 			else
 				echo "Dato incorrecto"
 			fi
 		done
+		j=0
+		while [ $j -eq 0 ];do
+			read -p "¿Quiere incluir más procesos [S]i,[n]o" p
+			if [ -z $p ] 2> /dev/null;then
+				p="s"
+				j=1
+			else
+				SiNo $p
+				if [ $? -eq 1 ];then
+					j=1
+				else
+					j=0
+				fi
+			fi
+		done
+		if [ $p = "n" -o $p = "N" ];then
+			t=1
+			proc=${#proc_name[@]}
+		fi	
 		clear
 		Informacion
 		let i=i+1
 	done
 else
-	i=$proc
-	Fichero
 	clear
+	Fichero
+	echo "${proc_arr[@]}"
+	i=$proc
 	Informacion
 fi
 InformacionPrint
-#Inicializo el vector de orden
-for (( i=0; i<$proc; i++ ))
-do
-	proc_order[$i]=-1
-done
-#Creación de la lista según llegada
-for (( i=$(expr $proc-1); i>=0; i-- ))
-do
-	max=0
-	for (( j=0; j<$proc; j++ ))
-	do
-		for (( z=$i, coin=0; z<=$(expr $proc-1); z++ ))
-		do
-			if [ $j -eq "${proc_order[$z]}" ];then
-				coin=1
-			fi
-		done
-	if [ $coin -eq 0 ];then
-		if [ "${proc_arr[$j]}" -ge $max ];then
-			aux=$j
-			max="${proc_arr[$j]}"
-		fi
-	fi
-	done
-	proc_order[$i]=$aux
-done
 read -p "Pulse cualquier tecla para ver la secuencia de procesos"
 #Declaro las ultimas variables
 declare proc_waitA[$proc] #Tiempo de espera acumulado
