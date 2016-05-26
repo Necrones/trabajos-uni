@@ -19,7 +19,7 @@ Los datos de los procesos son los siguientes
  --------------------------------------------------------------- 
 |	p1	|	3	|	2	|	25	|
  --------------------------------------------------------------- 
-|	p2	|	0	|	2	|	1	|
+|	p2	|	0	|	2	|	15	|
  --------------------------------------------------------------- 
 |	p3	|	1	|	6	|	25	|
  --------------------------------------------------------------- 
@@ -29,110 +29,276 @@ Los datos de los procesos son los siguientes
  --------------------------------------------------------------- 
 |	p6	|	0	|	4	|	65	|
  --------------------------------------------------------------- 
+|	p7	|	3	|	4	|	5	|
+ --------------------------------------------------------------- 
+|	p8	|	4	|	5	|	22	|
+ --------------------------------------------------------------- 
+|	p9	|	6	|	2	|	9	|
+ --------------------------------------------------------------- 
+|	p10	|	4	|	1	|	15	|
+ --------------------------------------------------------------- 
+|	p11	|	0	|	2	|	11	|
+ --------------------------------------------------------------- 
+|	p12	|	0	|	2	|	12	|
+ --------------------------------------------------------------- 
+|	p13	|	0	|	2	|	13	|
+ --------------------------------------------------------------- 
+|	p14	|	0	|	2	|	14	|
+ --------------------------------------------------------------- 
 
 Ráfaga 0
 El proceso p2 ha entrado en memoria
 El proceso p6 ha entrado en memoria
+El proceso p11 ha entrado en memoria
+El proceso p12 necesita mas memoria de la disponible actualmente, se ejecutará más adelante
+El proceso p13 necesita mas memoria de la disponible actualmente, se ejecutará más adelante
+El proceso p14 necesita mas memoria de la disponible actualmente, se ejecutará más adelante
 El proceso p2 entra ahora en el procesador
-Memoria libre actual 34 MB$
+Memoria libre actual 9 MB$
 Distribución actual de la memoria
-p2 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li
+p2 p2 p2 p2 p2 p2 p2 p2 p2 p2 p2 p2 p2 p2 p2 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p11 p11 p11 p11 p11 p11 p11 p11 p11 p11 p11 Li Li Li Li Li Li Li Li Li
 
 Ráfaga 1
-El proceso p3 ha entrado en memoria
+El proceso p3 necesita mas memoria de la disponible actualmente, se ejecutará más adelante
 |p2(0,0)|
 El proceso p2 retorna al final de la ráfaga 1, la memoria asignada fue liberada
-Memoria libre actual 10 MB$
+Memoria libre actual 24 MB$
 Distribución actual de la memoria
-Li p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 Li Li Li Li Li Li Li Li Li
+Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p11 p11 p11 p11 p11 p11 p11 p11 p11 p11 p11 Li Li Li Li Li Li Li Li Li
 
 Ráfaga 2
+El proceso p12 ha entrado en memoria
 El proceso p4 necesita mas memoria que la total, nunca se ejecutará
 El proceso p6 entra ahora en el procesador
+Memoria libre actual 12 MB$
+Distribución actual de la memoria
+p12 p12 p12 p12 p12 p12 p12 p12 p12 p12 p12 p12 Li Li Li p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p11 p11 p11 p11 p11 p11 p11 p11 p11 p11 p11 Li Li Li Li Li Li Li Li Li
 
 Ráfaga 3
 El proceso p1 necesita mas memoria de la disponible actualmente, se ejecutará más adelante
 El proceso p5 necesita mas memoria de la disponible actualmente, se ejecutará más adelante
+El proceso p7 ha entrado en memoria
+Memoria libre actual 7 MB$
+Distribución actual de la memoria
+p12 p12 p12 p12 p12 p12 p12 p12 p12 p12 p12 p12 Li Li Li p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p11 p11 p11 p11 p11 p11 p11 p11 p11 p11 p11 p7 p7 p7 p7 p7 Li Li Li Li
 
 Ráfaga 4
+El proceso p8 necesita mas memoria de la disponible actualmente, se ejecutará más adelante
+El proceso p10 necesita mas memoria de la disponible actualmente, se ejecutará más adelante
 El proceso p6 agota su quantum en este tiempo, ráfagas rstántes 1
 |p6(2,1)|
 
 Ráfaga 5
-El proceso p3 entra ahora en el procesador
+El proceso p11 entra ahora en el procesador
 
 Ráfaga 6
+El proceso p9 necesita mas memoria de la disponible actualmente, se ejecutará más adelante
+|p11(5,0)|
+El proceso p11 retorna al final de la ráfaga 6, la memoria asignada fue liberada
+Memoria libre actual 18 MB$
+Distribución actual de la memoria
+p12 p12 p12 p12 p12 p12 p12 p12 p12 p12 p12 p12 Li Li Li p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 Li Li Li Li Li Li Li Li Li Li Li p7 p7 p7 p7 p7 Li Li Li Li
 
 Ráfaga 7
-El proceso p3 agota su quantum en este tiempo, ráfagas rstántes 3
-|p3(5,3)|
+La memoria se ha reubicado
+El proceso p13 ha entrado en memoria
+El proceso p12 entra ahora en el procesador
+Memoria libre actual 5 MB$
+Distribución actual de la memoria
+p12 p12 p12 p12 p12 p12 p12 p12 p12 p12 p12 p12 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p7 p7 p7 p7 p7 p13 p13 p13 p13 p13 p13 p13 p13 p13 p13 p13 p13 p13 Li Li Li Li Li
 
 Ráfaga 8
-El proceso p6 entra ahora en el procesador
-|p6(8,0)|
-El proceso p6 retorna al final de la ráfaga 8, la memoria asignada fue liberada
-Memoria libre actual 75 MB$
+|p12(7,0)|
+El proceso p12 retorna al final de la ráfaga 8, la memoria asignada fue liberada
+Memoria libre actual 17 MB$
 Distribución actual de la memoria
-Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 Li Li Li Li Li Li Li Li Li
+Li Li Li Li Li Li Li Li Li Li Li Li p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p7 p7 p7 p7 p7 p13 p13 p13 p13 p13 p13 p13 p13 p13 p13 p13 p13 p13 Li Li Li Li Li
 
 Ráfaga 9
-El proceso p1 ha entrado en memoria
-El proceso p5 ha entrado en memoria
-El proceso p3 entra ahora en el procesador
-Memoria libre actual 30 MB$
+La memoria se ha reubicado
+El proceso p14 ha entrado en memoria
+El proceso p13 entra ahora en el procesador
+Memoria libre actual 3 MB$
 Distribución actual de la memoria
-p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 Li Li Li Li Li Li Li Li Li
+p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p7 p7 p7 p7 p7 p13 p13 p13 p13 p13 p13 p13 p13 p13 p13 p13 p13 p13 p14 p14 p14 p14 p14 p14 p14 p14 p14 p14 p14 p14 p14 p14 Li Li Li
 
 Ráfaga 10
+|p13(9,0)|
+El proceso p13 retorna al final de la ráfaga 10, la memoria asignada fue liberada
+Memoria libre actual 16 MB$
+Distribución actual de la memoria
+p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p7 p7 p7 p7 p7 Li Li Li Li Li Li Li Li Li Li Li Li Li p14 p14 p14 p14 p14 p14 p14 p14 p14 p14 p14 p14 p14 p14 Li Li Li
 
 Ráfaga 11
-|p3(9,0)|
-El proceso p3 retorna al final de la ráfaga 11, la memoria asignada fue liberada
-Memoria libre actual 55 MB$
+La memoria se ha reubicado
+El proceso p10 ha entrado en memoria
+El proceso p14 entra ahora en el procesador
+Memoria libre actual 1 MB$
 Distribución actual de la memoria
-p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li
+p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p7 p7 p7 p7 p7 p14 p14 p14 p14 p14 p14 p14 p14 p14 p14 p14 p14 p14 p14 p10 p10 p10 p10 p10 p10 p10 p10 p10 p10 p10 p10 p10 p10 p10 Li
 
 Ráfaga 12
-El proceso p1 entra ahora en el procesador
+|p14(11,0)|
+El proceso p14 retorna al final de la ráfaga 12, la memoria asignada fue liberada
+Memoria libre actual 15 MB$
+Distribución actual de la memoria
+p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p7 p7 p7 p7 p7 Li Li Li Li Li Li Li Li Li Li Li Li Li Li p10 p10 p10 p10 p10 p10 p10 p10 p10 p10 p10 p10 p10 p10 p10 Li
 
 Ráfaga 13
-|p1(12,0)|
-El proceso p1 retorna al final de la ráfaga 13, la memoria asignada fue liberada
-Memoria libre actual 80 MB$
+El proceso p9 ha entrado en memoria
+El proceso p7 entra ahora en el procesador
+Memoria libre actual 6 MB$
 Distribución actual de la memoria
-Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li
+p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p7 p7 p7 p7 p7 p9 p9 p9 p9 p9 p9 p9 p9 p9 Li Li Li Li Li p10 p10 p10 p10 p10 p10 p10 p10 p10 p10 p10 p10 p10 p10 p10 Li
 
 Ráfaga 14
-El proceso p5 entra ahora en el procesador
 
 Ráfaga 15
+El proceso p7 agota su quantum en este tiempo, ráfagas rstántes 1
+|p7(13,1)|
 
 Ráfaga 16
-El proceso p5 agota su quantum en este tiempo, ráfagas rstántes 1
-|p5(14,1)|
+El proceso p10 entra ahora en el procesador
+|p10(16,0)|
+El proceso p10 retorna al final de la ráfaga 16, la memoria asignada fue liberada
+Memoria libre actual 21 MB$
+Distribución actual de la memoria
+p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p7 p7 p7 p7 p7 p9 p9 p9 p9 p9 p9 p9 p9 p9 Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li
 
 Ráfaga 17
+El proceso p5 ha entrado en memoria
+El proceso p9 entra ahora en el procesador
+Memoria libre actual 1 MB$
+Distribución actual de la memoria
+p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p7 p7 p7 p7 p7 p9 p9 p9 p9 p9 p9 p9 p9 p9 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 Li
+
+Ráfaga 18
+|p9(17,0)|
+El proceso p9 retorna al final de la ráfaga 18, la memoria asignada fue liberada
+Memoria libre actual 10 MB$
+Distribución actual de la memoria
+p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p7 p7 p7 p7 p7 Li Li Li Li Li Li Li Li Li p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 Li
+
+Ráfaga 19
+El proceso p6 entra ahora en el procesador
+|p6(19,0)|
+El proceso p6 retorna al final de la ráfaga 19, la memoria asignada fue liberada
+Memoria libre actual 75 MB$
+Distribución actual de la memoria
+Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li p7 p7 p7 p7 p7 Li Li Li Li Li Li Li Li Li p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 Li
+
+Ráfaga 20
+El proceso p3 ha entrado en memoria
+El proceso p1 ha entrado en memoria
+La memoria se ha reubicado
+El proceso p8 ha entrado en memoria
+El proceso p3 entra ahora en el procesador
+Memoria libre actual 3 MB$
+Distribución actual de la memoria
+p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p7 p7 p7 p7 p7 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 Li Li Li
+
+Ráfaga 21
+
+Ráfaga 22
+El proceso p3 agota su quantum en este tiempo, ráfagas rstántes 3
+|p3(20,3)|
+
+Ráfaga 23
+El proceso p1 entra ahora en el procesador
+
+Ráfaga 24
+|p1(23,0)|
+El proceso p1 retorna al final de la ráfaga 24, la memoria asignada fue liberada
+Memoria libre actual 28 MB$
+Distribución actual de la memoria
+p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li p7 p7 p7 p7 p7 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 Li Li Li
+
+Ráfaga 25
 El proceso p5 entra ahora en el procesador
-|p5(17,0)|
-El proceso p5 retorna al final de la ráfaga 17, la memoria asignada fue liberada
+
+Ráfaga 26
+
+Ráfaga 27
+El proceso p5 agota su quantum en este tiempo, ráfagas rstántes 1
+|p5(25,1)|
+
+Ráfaga 28
+El proceso p7 entra ahora en el procesador
+|p7(28,0)|
+El proceso p7 retorna al final de la ráfaga 28, la memoria asignada fue liberada
+Memoria libre actual 33 MB$
+Distribución actual de la memoria
+p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 Li Li Li
+
+Ráfaga 29
+El proceso p8 entra ahora en el procesador
+
+Ráfaga 30
+
+Ráfaga 31
+El proceso p8 agota su quantum en este tiempo, ráfagas rstántes 2
+|p8(29,2)|
+
+Ráfaga 32
+El proceso p3 entra ahora en el procesador
+
+Ráfaga 33
+
+Ráfaga 34
+|p3(32,0)|
+El proceso p3 retorna al final de la ráfaga 34, la memoria asignada fue liberada
+Memoria libre actual 58 MB$
+Distribución actual de la memoria
+Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 Li Li Li
+
+Ráfaga 35
+El proceso p5 entra ahora en el procesador
+|p5(35,0)|
+El proceso p5 retorna al final de la ráfaga 35, la memoria asignada fue liberada
+Memoria libre actual 78 MB$
+Distribución actual de la memoria
+Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 Li Li Li
+
+Ráfaga 36
+El proceso p8 entra ahora en el procesador
+
+Ráfaga 37
+|p8(36,0)|
+El proceso p8 retorna al final de la ráfaga 37, la memoria asignada fue liberada
 Memoria libre actual 100 MB$
 Distribución actual de la memoria
 Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li
  ------------------------------------------------------------------------------- 
 |    Proceso    |     Esp A     |     Esp R     |     Salida    |  Retorno Real |
  ------------------------------------------------------------------------------- 
-|	p1	|	12	|	9	|	13	|	10	|
+|	p1	|	23	|	20	|	24	|	21	|
  ------------------------------------------------------------------------------- 
 |	p2	|	0	|	0	|	1	|	1	|
  ------------------------------------------------------------------------------- 
-|	p3	|	6	|	5	|	11	|	10	|
+|	p3	|	29	|	28	|	34	|	33	|
  ------------------------------------------------------------------------------- 
 |	p4	|	NE	|	NE	|	NE	|	NE	|
  ------------------------------------------------------------------------------- 
-|	p5	|	14	|	11	|	17	|	14	|
+|	p5	|	32	|	29	|	35	|	32	|
  ------------------------------------------------------------------------------- 
-|	p6	|	5	|	5	|	8	|	8	|
+|	p6	|	16	|	16	|	19	|	19	|
+ ------------------------------------------------------------------------------- 
+|	p7	|	25	|	22	|	28	|	25	|
+ ------------------------------------------------------------------------------- 
+|	p8	|	33	|	29	|	37	|	33	|
+ ------------------------------------------------------------------------------- 
+|	p9	|	17	|	11	|	18	|	12	|
+ ------------------------------------------------------------------------------- 
+|	p10	|	16	|	12	|	16	|	12	|
+ ------------------------------------------------------------------------------- 
+|	p11	|	5	|	5	|	6	|	6	|
+ ------------------------------------------------------------------------------- 
+|	p12	|	7	|	7	|	8	|	8	|
+ ------------------------------------------------------------------------------- 
+|	p13	|	9	|	9	|	10	|	10	|
+ ------------------------------------------------------------------------------- 
+|	p14	|	11	|	11	|	12	|	12	|
  ------------------------------------------------------------------------------- 
 Los tiempos medio se calculan con los valores reales
-Tiempo de espera medio: 6
-Tiempo de retorno medio: 8
+Tiempo de espera medio: 15
+Tiempo de retorno medio: 17
