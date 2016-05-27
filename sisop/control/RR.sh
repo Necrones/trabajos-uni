@@ -92,6 +92,7 @@ function InformacionPrint {
 #Función Fichero, lee datos de un fichero
 function Fichero {
 	x=0
+	r=0
 	for y in $(cat InputRR.txt)
 	do
 		case $x in
@@ -99,11 +100,6 @@ function Fichero {
 			mem_aux=$(echo $y)
 			echo "La memoria es de $mem_aux MB"
 			echo "La memoria es de $mem_aux MB" >> informe.txt
-			declare mem[$mem_aux] #Memoria de tamaño 1 MB por palabra
-			for (( y=0; y<$mem_aux; y++ ))
-			do
-				mem[$y]=${Li} #Inicializo la memoria a libre
-			done
 			;;
 		1)
 			quantum=$(echo $y)
@@ -111,10 +107,11 @@ function Fichero {
 			echo "El quantum es $quantum" >> informe.txt
 			;;
 		*)
-			proc_name[$x]=$(echo $y | cut -f1 -d";")
-			proc_arr[$x]=$(echo $y | cut -f2 -d";")
-			proc_exe[$x]=$(echo $y | cut -f3 -d";")
-			proc_mem[$x]=$(echo $y | cut -f4 -d";")
+			proc_name[$r]=$(echo $y | cut -f1 -d";")
+			proc_arr[$r]=$(echo $y | cut -f2 -d";")
+			proc_exe[$r]=$(echo $y | cut -f3 -d";")
+			proc_mem[$r]=$(echo $y | cut -f4 -d";")
+			let r=r+1
 		esac
 		let x=x+1
 	done
@@ -173,7 +170,7 @@ function PartFree {
 	for (( y=0; y<${#mem[@]}; y++ ))
 	do
 		value=${mem[$y]}
-		if [ $value == ${Li} ];then
+		if [ $value == $Li ];then
 			if [ $h -eq 0 ];then
 				part_init[$part]=$y
 				h=1
@@ -241,7 +238,7 @@ function AsignaMem() {
 		fi
 		reubic=1
 	done
-}
+}$t -eq 0
 #Funcion reubicar; reubica la memoria desplazandola hacia la izquierda todos los programas
 function reubicar {
 	before=0
@@ -280,37 +277,66 @@ function SiNo(){
 	fi
 	return $j
 }
+#Función Estado: dice para la ráfaga acual los datos actuales de los procesos
+function Estado {
+	local restante
+	local memIni
+	local memFin
+	echo ""
+	echo "" >> informe.txt
+	echo -e "${coffe}Al final de la ejecución de este tiempo los datos son:${NC}"
+	echo "Al final de la ejecución de este tiempo los datos son:" >> informe.txt
+	echo "|	Proceso	|	Tiempo esperado acumulado	|	Ejecución restante	|	Pos mem inicial	|	Pos mem final	|"
+	for (( zed=0; zed<$proc;zed++ ))
+	do
+		ex=${proc_order[$zed]}
+		if [ ${proc_exe[$ex]} -eq 0 ];then
+			restante="Finalizado"
+		else
+			restante=${proc_exe[$ex]}
+		fi
+		if [ $proc_memI -eq -1 ];then
+			memIni="No entrado"
+			memFin="No entrado"
+		elif [ ${proc_memI[$ex]} -eq -2 ];then
+			memIni="Finalizado"
+			memFin="Finalizado"
+		else
+			memIni=${proc_memI[$ex]}
+			memFin=${proc_memF[$ex]}
+		fi
+		echo "|	${proc_name[$ex]}	|		${proc_waitA[$ex]}		|	$restante	|	$memIni	|	$memFin	|"
+	done
+}
 ##Comienzo del programa
 clear
 #Header
-echo " -----------------------------------------------"
-echo "|		Simulación de			|"
-echo "|		Round Robin y			|"
-echo "|		Gestión de memoria		|"
-echo "|		Particiones dinámicas,		|"
-echo "|		Ajuste al mejor,		|"
-echo "|		Reubicable			|"
-echo "|		Creado por:			|"
-echo "|		José Luis Garrido Labrador	|"
-echo "|		Luis Pedrosa Ruiz		|"
-echo "|		Licencias:			|"
-echo "|		CC-BY-SA (Documentación)	|"
-echo "|		GPLv3 (Código)			|"
-echo " -----------------------------------------------"
-echo " -----------------------------------------------"  > informe.txt
-echo "|		Simulación de			|"  >> informe.txt
-echo "|		Round Robin y			|"  >> informe.txt
-echo "|		Gestión de memoria		|"  >> informe.txt
-echo "|		Particiones dinámicas,		|"  >> informe.txt
-echo "|		Ajuste al mejor,		|"  >> informe.txt
-echo "|		Reubicable			|"  >> informe.txt
-echo "|		Creado por:			|"  >> informe.txt
-echo "|		José Luis Garrido Labrador	|"  >> informe.txt
-echo "|		Luis Pedrosa Ruiz		|"  >> informe.txt
-echo "|		Licencias:			|"  >> informe.txt
-echo "|		CC-BY-SA (Documentación)	|"  >> informe.txt
-echo "|		GPLv3 (Código)			|"  >> informe.txt
-echo " -----------------------------------------------"  >> informe.txt
+echo " -------------------------------------------------------------------------------------------------- "
+echo "|		Práctica de Control - Sistemas Operativos - Grado en Ingeniería Informática	   |"
+echo "|                                               					       	   |"
+echo "|		   Round Robin con particiones dinámicas ajustada al mejor y reubicable	    	   |"
+echo "|                                                                                                  |"
+echo "|					    Programado por:					   |"
+echo "|			     José Luis Garrido Labrador <jgl0062@alu.ubu.es>			   |"
+echo "|				   Luis Pedrosa Ruiz <lpr0026@alu.ubu.es>		    	   |"
+echo "|                                                                                                  |"
+echo "|					      Licencias:					   |"
+echo "|				        CC-BY-SA (Documentación)				   |"
+echo "|					    GPLv3 (Código)					   |"
+echo " -------------------------------------------------------------------------------------------------- "
+echo " -------------------------------------------------------------------------------------------------- "  > informe.txt
+echo "|		Práctica de Control - Sistemas Operativos - Grado en Ingeniería Informática	   |" >> informe.txt
+echo "|                                               					       	   |"  >> informe.txt
+echo "|		   Round Robin con particiones dinámicas ajustada al mejor y reubicable	    	   |"  >> informe.txt
+echo "|                                                                                                  |"  >> informe.txt
+echo "|					    Programado por:					   |"  >> informe.txt
+echo "|			     José Luis Garrido Labrador <jgl0062@alu.ubu.es>			   |"  >> informe.txt
+echo "|				   Luis Pedrosa Ruiz <lpr0026@alu.ubu.es>		    	   |"  >> informe.txt
+echo "|                                                                                                  |"  >> informe.txt
+echo "|					      Licencias:					   |"  >> informe.txt
+echo "|				        CC-BY-SA (Documentación)				   |"  >> informe.txt
+echo "|					    GPLv3 (Código)					   |"  >> informe.txt
+echo " -------------------------------------------------------------------------------------------------- "  >> informe.txt
 #Captura de datos
 mem_aux=100 #Memoria en Megas
 read -p "Meter lo datos de manera manual? [s,n] " manu
@@ -324,7 +350,7 @@ if [ $manu = "s" -o $manu = "S" ];then
 	j=0
 	while [ $j -eq 0 ] 2> /dev/null ;do
 		read -p "Introduzca el quantum: " quantum
-		if [ \( $quantum -gt 0 \) -a \( $j -eq 0 \) ] 2> /dev/null;then
+		if [ \( $quantum -gt 0 \) -a \( $? -eq 0 \) ] 2> /dev/null;then
 			j=1
 		else
 			echo "Dato incorrecto"
@@ -336,11 +362,6 @@ if [ $manu = "s" -o $manu = "S" ];then
 		read -p "Introduzca al cantidad de memoria (MB) min 100: " mem_aux
 		if [ \( $mem_aux -ge 100 \) -a \( $? -eq 0 \) ] 2> /dev/null;then
 			j=1
-			declare mem[$mem_aux] #Memoria de tamaño 1 MB por palabra
-			for (( y=0; y<$mem_aux; y++ ))
-			do
-				mem[$y]=${Li} #Inicializo la memoria a libre
-			done
 		else
 			echo "Dato incorrecto"
 		fi
@@ -447,10 +468,23 @@ fi
 InformacionPrint
 read -p "Pulse cualquier tecla para ver la secuencia de procesos"
 #Declaro las ultimas variables
+declare mem[$mem_aux] #Memoria de tamaño 1 MB por palabra
+for (( y=0; y<$mem_aux; y++ ))
+do
+	mem[$y]=${Li} #Inicializo la memoria a libre
+done
 declare proc_waitA[$proc] #Tiempo de espera acumulado
 declare proc_waitR[$proc] #Tiempo de espera real
 declare proc_memI[$proc]  #Palabra inicial
 declare proc_memF[$proc]  #Palabra final
+for (( y=0; y<$proc; y++ ))
+do
+	proc_memI[$y]=-1
+done
+for (( y=0; y<$proc; y++ ))
+do
+	proc_memF[$y]=-1
+done
 declare partition[$MAX]	  #Tamaño de las distintas particiones libres
 declare proc_arr_aux[$proc] #Momento en el que el proceso puede ocupar memoria
 for (( y=0; y<$proc; y++ ))
@@ -564,7 +598,7 @@ while [ $e -eq 0 ];do
 		echo "Distribución actual de la memoria" >> informe.txt
 		for (( jk=0; jk<$mem_total; jk++ ))
 		do
-			if [ ${mem[$jk]} = "${Li}" ];then
+			if [ ${mem[$jk]} = $Li ];then
 				mem_print[$jk]="Li"
 			else
 				mem_print[$jk]=${mem[$jk]}
@@ -573,6 +607,7 @@ while [ $e -eq 0 ];do
 		echo "${mem_print[@]}" >> informe.txt
 		auxiliar=0
 	fi
+	Estado
 	if [ $auto = "n" ] || [ $auto = "N" ];then
 		read -p "Pulse intro para continuar"
 	else
@@ -591,19 +626,19 @@ do
 done
 read -p "Pulsa cualquier tecla para ver resumen."
 #Imprimimos los resultados
-echo " ------------------------------------------------------------------------------- "
-echo "|    Proceso    |     Esp A     |     Esp R     |     Salida    |  Retorno Real |"
-echo " ------------------------------------------------------------------------------- "  >> informe.txt
-echo "|    Proceso    |     Esp A     |     Esp R     |     Salida    |  Retorno Real |"  >> informe.txt
+echo " --------------------------------------------------------------------------------------------------------------- "
+echo "|    Proceso    |        Tiempo Espera Acu      |       Tiempo Espera Real      |     Salida    |  Retorno Real |"
+echo " --------------------------------------------------------------------------------------------------------------- "  >> informe.txt
+echo "|    Proceso    |        Tiempo Espera Acu      |       Tiempo Espera Real      |     Salida    |  Retorno Real |"  >> informe.txt
 for (( y=0; y<$proc; y++ ))
 do
-	echo " ------------------------------------------------------------------------------- "
-	echo "|	${proc_name[$y]}	|	${proc_waitA[$y]}	|	${proc_waitR[$y]}	|	${proc_ret[$y]}	|	${proc_retR[$y]}	|"
-	echo " ------------------------------------------------------------------------------- "  >> informe.txt
-	echo "|	${proc_name[$y]}	|	${proc_waitA[$y]}	|	${proc_waitR[$y]}	|	${proc_ret[$y]}	|	${proc_retR[$y]}	|"  >> informe.txt
+	echo " --------------------------------------------------------------------------------------------------------------- "
+	echo "|	${proc_name[$y]}	|		${proc_waitA[$y]}		|		${proc_waitR[$y]}		|	${proc_ret[$y]}	|	${proc_retR[$y]}	|"
+	echo " --------------------------------------------------------------------------------------------------------------- "  >> informe.txt
+	echo "|	${proc_name[$y]}	|		${proc_waitA[$y]}		|		${proc_waitR[$y]}		|	${proc_ret[$y]}	|	${proc_retR[$y]}	|"  >> informe.txt
 done
-echo " ------------------------------------------------------------------------------- "
-echo " ------------------------------------------------------------------------------- "  >> informe.txt
+echo " --------------------------------------------------------------------------------------------------------------- "
+echo " --------------------------------------------------------------------------------------------------------------- "  >> informe.txt
 #Cálculo de valores medios
 media 'proc_waitR[@]'
 media_wait=$?
