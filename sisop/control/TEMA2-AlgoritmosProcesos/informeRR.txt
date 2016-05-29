@@ -7,96 +7,47 @@
 ############################################################
 #######################################################################
 #                                                                     #
-#                         INFORME DE PRÁCTICA                        #
-#                         GESTIÓN DE PROCESOS                        #
+#                         INFORME DE PRÁCTICA                         #
+#                         GESTIÓN DE PROCESOS                         #
 #             -------------------------------------------             #
-#     Antiguo alumno:                                          #
+#     Antiguo alumno:                                                 #
 #     Alumno: Mario Juez Gil                                          #
-#     Sistemas Operativos 2º Semestre                                #
-#     Grado en ingeniería informática (2012-2013)                   #
+#     Sistemas Operativos 2º Semestre                                 #
+#     Grado en ingeniería informática (2012-2013)                     #
 #             -------------------------------------------             #
-#     Nuevos alumnos:                                          #
-#     Alumnos: Omar Santos Bernabé                                     #
-#     Sistemas Operativos 2º Semestre                                #
-#     Grado en ingeniería informática (2015-2016)                   #
+#     Nuevos alumnos:                                                 #
+#     Alumno Original: Omar Santos Bernabé                            #
+#     Sistemas Operativos 2º Semestre                                 #
+#     Grado en ingeniería informática (2015-2016)                     #
+#                                                                     #
+#     Alumno modificador: José Luis Garrido Labrador                  #
+#     Sistemas Operativos 2º Semestre                                 #
+#     Grado en ingeniería informática (2015-2016)                     #
+#                                                                     #
+#     Alumno modificador: Luis Pedrosa Ruiz                           #
+#     Sistemas Operativos 2º Semestre                                 #
+#     Grado en ingeniería informática (2015-2016)                     #
+#             -------------------------------------------             #
 #                                                                     #
 #######################################################################
 
-	> ROUND ROBIN VIRTUAL
+	> ROUND ROBIN
 		>> Quantum de tiempo: 3
 		>> 3 procesos.
 		>> Procesos y sus datos:
-		-----------------------------------------
-		  PRO | LLEGADA | RAFAGA | E/S | TP_E/S  
-		-----------------------------------------
-		  1   | 2       | 4      | 2   | 8
-		-----------------------------------------
-		  2   | 1       | 9      | 7   | 1
-		-----------------------------------------
-		  3   | 1       | 2      | 1   | 2
-		-----------------------------------------
+		--------------------------
+		  PRO| LLEGADA | RAFAGA  
+		--------------------------
+		  1   | 0       | 6
+		--------------------------
+		  2   | 2       | 8
+		--------------------------
+		  3   | 1       | 7
+		--------------------------
 
 		>> Tiempo de ejecución de los procesos:
 		----------------
 		  PRO | TIEMPO  
 		----------------
-		  3   | 6
+		  1   | 6
 		----------------
-		  2   | 16
-		----------------
-		  1   | 16
-		----------------
-		>> Tiempo total de ejecución de los 3 procesos: 18
-
-		>> Gráfico de entrada de procesos:
-		| P2 (1, 6) | P3 (4, 1) | P1 (5, 2) | P3 (7, 0) | P2 (8, 3) | P2 (11, 2) | P1 (15, 1) | P2 (16, 0) | P1 (18, 0) |  
-
-		>> Log de entrada y salida:
-	* Entra a ejecutarse P2 en el momento 1
-			* Sale de ejecutarse P2 (Quantum consumido: 3). 
-				- Ráfaga restante de P2: 6
-				- Tiempo empleado hasta el momento: 3
-
-	* Entra a ejecutarse P3 en el momento 4
-			* P3 bloqueado (Momento 1 del quantum). 
-				- Ráfaga restante de P3: 1
-				- Tiempo empleado hasta el momento: 4
-
-	* Entra a ejecutarse P1 en el momento 5
-			* P1 bloqueado (Momento 2 del quantum). 
-				- Ráfaga restante de P1: 2
-				- Tiempo empleado hasta el momento: 6
-
-			* P3 desbloqueado (Se ejecutará a continuación). 
-				- Momento de finalización de E/S: 6
-
-	* Entra a ejecutarse P3 en el momento 7
-			* Termina su ejecución P3 con un tiempo final: 7
-
-	* Entra a ejecutarse P2 en el momento 8
-			* Sale de ejecutarse P2 (Quantum consumido: 3). 
-				- Ráfaga restante de P2: 3
-				- Tiempo empleado hasta el momento: 10
-
-	* Entra a ejecutarse P2 en el momento 11
-			* P2 bloqueado (Momento 1 del quantum). 
-				- Ráfaga restante de P2: 2
-				- Tiempo empleado hasta el momento: 11
-
-			* P1 desbloqueado (Se ejecutará a continuación). 
-				- Momento de finalización de E/S: 14
-
-	* Entra a ejecutarse P1 en el momento 15
-			* Sale de ejecutarse P1 (Quantum consumido: 1). 
-				- Ráfaga restante de P1: 1
-				- Tiempo empleado hasta el momento: 15
-
-			* P2 desbloqueado (Se ejecutará a continuación). 
-				- Momento de finalización de E/S: 15
-
-	* Entra a ejecutarse P2 en el momento 16
-			* Termina su ejecución P2 con un tiempo final: 17
-
-	* Entra a ejecutarse P1 en el momento 18
-			* Termina su ejecución P1 con un tiempo final: 18
-

@@ -53,10 +53,14 @@ void    coincidePal(int[DIM][DIM], Palabra[N_PAL], int,
 void    juego(int[DIM][DIM], Palabra[N_TEMA][N_PAL],
 	      char[N_TEMA][TEMATAM]);
 void    minuscula(int[DIM][DIM], int, int, int, int, int);
-bool    rango(int,int,int);
-
+bool    rango(int, int, int);
+void    salidaPal(char[TCHAR]);
+void    Int2Str(int, char[]);
+//Variable global
+unsigned int seed;		//Semilla
 int main() {
-  srand(time(NULL));
+  seed = time(NULL);
+  srand(seed);
   //srand(22);                  //Cruce en coches y colores
   int     sopa[DIM][DIM];
   Palabra temas[N_TEMA][N_PAL];
@@ -121,19 +125,19 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
 	do {
 	  printf("Introduce la primera coordenada (fila): ");
 	  introduceNum(&ini_fila);
-	} while(rango(1,DIM,ini_fila));
+	} while(rango(1, DIM, ini_fila));
 	do {
 	  printf("Introduce la primera coordenada (columna): ");
 	  introduceNum(&ini_col);
-	} while(rango(1,DIM,ini_col));
+	} while(rango(1, DIM, ini_col));
 	do {
 	  printf("Introduce la segunda coordenada (fila): ");
 	  introduceNum(&fin_fila);
-	} while(rango(1,DIM,fin_fila));
+	} while(rango(1, DIM, fin_fila));
 	do {
 	  printf("Introduce la segunda coordenada (columna): ");
 	  introduceNum(&fin_col);
-	} while(rango(1,DIM,fin_col));
+	} while(rango(1, DIM, fin_col));
 	system("clear");
 	coincidePal(matriz, themes[tema], ini_fila - 1, ini_col - 1,
 		    fin_fila - 1, fin_col - 1, palEncontrada);
@@ -166,11 +170,12 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
 	  if(partida == ESC) {
 	    printf("Adios\n");
 	    game = false;
-	  } else if(partida == ESP) {printf("1 - %s\n", t[0]);
-    printf("2 - %s\n", t[1]);
-    printf("3 - %s\n", t[2]);
-    printf("4 - %s\n", t[3]);
-    printf("5 - %s\n", t[4]);
+	  } else if(partida == ESP) {
+	    printf("1 - %s\n", te[0]);
+	    printf("2 - %s\n", te[1]);
+	    printf("3 - %s\n", te[2]);
+	    printf("4 - %s\n", te[3]);
+	    printf("5 - %s\n", te[4]);
 	    victoria = false;
 	  }
 	} while(partida != ESP && partida != ESC);
@@ -180,6 +185,7 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
     }
   }
 }
+
 /**
  *Nombre: rango
  *Description: determina si un nº está entre un rango
@@ -190,16 +196,16 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
  *@date: 25/05/2016
  *@version: 1.0
  */
- bool rango(int min,int max, int value){
-   bool rang
-   if (value<min || value>max){
-     printf("Valor fuera de rango\n")
-     rang=true;
-   }else{
-     rang=false;
-   }
-   return rang;
- }
+bool rango(int min, int max, int value) {
+  bool    rang;
+  if(value < min || value > max) {
+    printf("Valor fuera de rango\n");
+    rang = true;
+  } else {
+    rang = false;
+  }
+  return rang;
+}
 
 /**
  *Nombre: solicitaOpcionMenu
@@ -213,12 +219,12 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
 int solicitaOpcionMenu(char t[N_TEMA][TEMATAM]) {
   int     menu;
   bool    salida = false;
-  int i;
+  int     i;
   do {
     printf("Elije un tema\n");
     printf("_____________\n");
-    for(i=0;i<N_TEMA;++i){
-      printf("%d - %s\n",i+1,t[i]);
+    for(i = 0; i < N_TEMA; ++i) {
+      printf("%d - %s\n", i + 1, t[i]);
     }
     printf("0 - Salir\n");
     introduceNum(&menu);
@@ -660,6 +666,7 @@ void coincidePal(int matrix[DIM][DIM],
        && palabras[i].columna_final == fC) {
       rec = true;
       find[i] = true;
+      salidaPal(palabras[i].palabra);
     }
   }
   if(rec) {
@@ -741,5 +748,60 @@ void minuscula(int m[DIM][DIM], int iF, int iC, int fF, int fC, int dir) {
 	}
       }
       break;
+  }
+}
+
+/**
+ *Title: salida
+ *Descripción: Crea un fichero de salida con las palabras encontradas
+ *@param pal : palabra encontrada
+ *@author: JoseluCross
+ *@date: 28/05/2016
+ */
+void salidaPal(char pal[TCHAR]) {
+  char    fecha[8];
+  Int2Str(seed, fecha);
+  FILE   *salida;
+  salida = fopen(fecha, "w");
+  fprintf(salida, "%s\n", pal);
+  fclose(salida);
+}
+
+ /**
+  *Title: Int2Str
+  *Descripción: convierte un nº en una cadena
+  *@param num: número a convertir
+  *@param cad: cadena donde se va a poner
+  *author: JoseluCross
+  *@date: 28/05/2016
+  */
+void Int2Str(int num, char cad[8]) {
+  int     aux;
+  int     i;
+  for(i = 8 - 1; i >= 0; --i) {
+    aux = num % 10;
+    num = num / 10;
+    switch (aux) {
+      case 0:
+	cad[i] = '0';
+      case 1:
+	cad[i] = '1';
+      case 2:
+	cad[i] = '2';
+      case 3:
+	cad[i] = '3';
+      case 4:
+	cad[i] = '4';
+      case 5:
+	cad[i] = '5';
+      case 6:
+	cad[i] = '6';
+      case 7:
+	cad[i] = '7';
+      case 8:
+	cad[i] = '8';
+      case 9:
+	cad[i] = '9';
+    }
   }
 }

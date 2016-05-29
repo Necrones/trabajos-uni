@@ -46,20 +46,55 @@ echo "############################################################" >> informeRR
 min=9999
 tamano=();
 # Nos permite saber si el parámetro pasado es entero positivo.
+# Esta función no es necesaria ya que el propio bash solo lee nº enteros (anotación de José Luis Garrido Labrador)
 es_entero() {
     [ "$1" -eq "$1" -a "$1" -ge "0" ] > /dev/null 2>&1  # En caso de error, sentencia falsa (Compara variables como enteros)
     return $?                           				# Retorna si la sentencia anterior fue verdadera
 }
-
+#Orden
+function Orden {
+	#Inicializo el vector de orden
+	for (( p=0; p<$num_proc; p++ ))
+	do
+		proc_order[$p]=-1
+	done
+	for (( k=$(expr $num_proc-1); k>=0; k-- ))
+	do
+		max=0
+		for (( jk=0; jk<$num_proc; jk++ ))
+		do
+			for (( z=$k, coin=0; z<=$(expr $num_proc-1); z++ ))
+			do
+				if [ $jk -eq "${proc_order[$z]}" ];then
+					coin=1
+				fi
+			done
+		if [ $coin -eq 0 ];then
+			if [ ${T_ENTRADA[$jk]} -ge $max ];then
+				aux=$jk
+				max=${T_ENTRADA[$jk]}
+			fi
+		fi
+		done
+		proc_order[$k]=$aux
+	done
+}
 # Nos permite saber si el parámetro pasado es entero mayor que 0.
 mayor_cero() {
     [ "$1" -eq "$1" -a "$1" -gt "0" ] > /dev/null 2>&1  # En caso de error, sentencia falsa (Compara variables como enteros)
     return $?                           				# Retorna si la sentencia anterior fue verdadera
 }
+#Función que comprueba si se ha añadido un S o un N por parte del usuario ( añadido por José Luis Garrido Labrador)
+function SiNo(){
+	local j=0
+	if [ $1 = "s" -o $1 = "S" -o $1 = "n" -o $1 = "N" ] 2> /dev/null ;then
+		j=1
+	fi
+	return $j
+}
 
 # Comprobación para saber si el momento de E/S introducido es válido.
 comprueba_momentos() {
-	
 	if mayor_cero $momento
 		then
 		if [ "$momento" -gt "$momentofinal" ]
@@ -238,13 +273,14 @@ lectura_datprocesos() {
 	procesos_ejecutables=`expr 0`
 
 	# COMENZAMOS A LEER RAFAGAS DE LOS PROCESOS
-	i=`expr 0`
-	while [ $i -lt $num_proc ]
+	i=0
+	j=0
+	while [ $j -eq 0 ]
 	do
         proc=`expr $i + 1`    # PROCESO ACTUAL
         
         # LECTURA DE RAFAGA
-        read -p "Introduce el momento de llegada a CPU del proceso $proc:" entrada
+        read -p "Introduce el momento de llegada a CPU del proceso P$proc: " entrada
         
         if [ -z $entrada ] # Si la entrada está vacía, valor por defecto 0
         	then
@@ -255,7 +291,7 @@ lectura_datprocesos() {
 	        do
 	        	clear
 	        	echo "Entrada no válida"
-	        	read -p "Introduce el momento de llegada a CPU del proceso $proc:" entrada
+	        	read -p "Introduce el momento de llegada a CPU del proceso P$proc: " entrada
 	        	if [ -z $entrada ] # Si la entrada está vacía, valor por defecto 0
 	        		then
 	        		entrada=`expr 0`
@@ -277,7 +313,7 @@ lectura_datprocesos() {
 	    echo ${EN_ESPERA[$i]} >> archivo.temp
 
         # LECTURA DE RAFAGA
-        read -p "Introduce la ráfaga de CPU del proceso $proc:" rafaga
+        read -p "Introduce la ráfaga de CPU del proceso P$proc: " rafaga
  	# LECTURA DEL TAMAÑO DE MEMORIA
 #read -p "Introduce el tamaño de memoria del proceso $proc:" tamano[$proc]
         # COMPROBACIÓN DE LECTURA
@@ -285,7 +321,7 @@ lectura_datprocesos() {
         do
         	clear
         	echo "Entrada no válida"
-        	read -p "Introduce la ráfaga de CPU del proceso $proc:" rafaga
+        	read -p "Introduce la ráfaga de CPU del proceso P$proc: " rafaga
         done
 
         #Almacenamiento de datos en un archivo temporal
@@ -357,6 +393,27 @@ lectura_datprocesos() {
 				pos=$i
 		fi
 		i=`expr $i + 1`
+		k=0
+		while [ $k -eq 0 ];do
+			read -p "¿Quiere incluir más procesos [S]i,[n]o " p
+			if [ -z $p ] 2> /dev/null;then
+				j=0
+				k=1
+			else
+				SiNo $p
+				if [ $? -eq 1 ];then
+					if [ $p = "S" -o $p = "s" ];then 
+						j=0
+					else
+						j=1
+					fi
+					k=1
+				else
+					k=1
+				fi
+			fi
+			num_proc=$proc
+		done
 	done
 	if [ $procesos_ejecutables -eq 0 ]
 		then
@@ -414,13 +471,13 @@ cabecera_solucion() {
 lee_datos() {
 
 	# Lectura del quantum.
-	read -p "Introduce el quantum de ejecución:" quantum
+	read -p "Introduce el quantum de ejecución: " quantum
 
 	while ! mayor_cero $quantum
 	do
 		clear
 		echo "Entrada no válida"
-		read -p "Introduce el quantum de ejecución:" quantum
+		read -p "Introduce el quantum de ejecución: " quantum
 	done
 	echo "		>> Quantum de tiempo: $quantum" >> informeRR.txt
 
@@ -464,16 +521,7 @@ lee_datos() {
 		lectura_fichero # Leemos los datos del fichero
 		rm -r listado.temp # Borra el temporal
 	else
-		# Lectura del número de procesos
-		read -p "Introduce el número de procesos:" num_proc
-
-		while ! mayor_cero $num_proc
-		do
-			clear
-			echo "Entrada no válida"
-			read -p "Introduce el número de procesos:" num_proc
-		done
-		# Leemos los datos concretos de los procesos.
+		#La cantidad de procesos se hará de manera continua sin limites predefinidos (Anotación de José Luis Garrido Labrador)
 		lectura_datprocesos
 
 	fi
@@ -562,12 +610,16 @@ algoritmo() {
 	procesos_colaauxiliar=`expr 0` 	# Número de procesos en la cola auxiliar
 	cadena="| "					 	# Cadena que guarda el gráfico de la solución
 	contador=0
-
+	num=0							#Proceso actual
+	Orden
 
 	# Mientras los procesos terminados < procesos totales
 	while [ $procesos_terminados -lt $num_proc ]
 	do
-        proc_actual=`expr 0`					# Inicialmente se ejecuta el P0
+        if [ $num -eq $num_proc ];then
+        	num=0
+        fi
+        proc_actual=${proc_order[$num]}					# Inicialmente se ejecuta el P0
 
         while [ $proc_actual -lt $num_proc ]	# Recorremos los procesos
         do
@@ -745,7 +797,7 @@ algoritmo() {
 			# Si el actual = temporal -> no se terminó de ejecutar ningun proceso de la cola auxiliar
 			if [ "$proc_actual" -eq "$proc_temporal" ]
 				then
-            	proc_actual=`expr $proc_actual + 1` # Aumento del índice del proceso ejecutandose actualmente
+            	let num=num+1 # Aumento del índice del proceso ejecutandose actualmente
             else
 				proc_actual=$proc_temporal # El siguiente proceso será el que tocaba ahora
 			fi
@@ -759,18 +811,27 @@ algoritmo() {
 clear
 echo "#######################################################################" >> informeRR.txt
 echo "#                                                                     #" >> informeRR.txt
-echo "#                         INFORME DE PRÁCTICA                        #" >> informeRR.txt
-echo "#                         GESTIÓN DE PROCESOS                        #" >> informeRR.txt
+echo "#                         INFORME DE PRÁCTICA                         #" >> informeRR.txt
+echo "#                         GESTIÓN DE PROCESOS                         #" >> informeRR.txt
 echo "#             -------------------------------------------             #" >> informeRR.txt
-echo "#     Antiguo alumno:                                          #" >> informeRR.txt
+echo "#     Antiguo alumno:                                                 #" >> informeRR.txt
 echo "#     Alumno: Mario Juez Gil                                          #" >> informeRR.txt
-echo "#     Sistemas Operativos 2º Semestre                                #" >> informeRR.txt
-echo "#     Grado en ingeniería informática (2012-2013)                   #" >> informeRR.txt
+echo "#     Sistemas Operativos 2º Semestre                                 #" >> informeRR.txt
+echo "#     Grado en ingeniería informática (2012-2013)                     #" >> informeRR.txt
 echo "#             -------------------------------------------             #" >> informeRR.txt
-echo "#     Nuevos alumnos:                                          #" >> informeRR.txt
-echo "#     Alumnos: Omar Santos Bernabé                                     #" >> informeRR.txt
-echo "#     Sistemas Operativos 2º Semestre                                #" >> informeRR.txt
-echo "#     Grado en ingeniería informática (2015-2016)                   #" >> informeRR.txt
+echo "#     Nuevos alumnos:                                                 #" >> informeRR.txt
+echo "#     Alumno Original: Omar Santos Bernabé                            #" >> informeRR.txt
+echo "#     Sistemas Operativos 2º Semestre                                 #" >> informeRR.txt
+echo "#     Grado en ingeniería informática (2015-2016)                     #" >> informeRR.txt
+echo "#                                                                     #" >> informeRR.txt
+echo "#     Alumno modificador: José Luis Garrido Labrador                  #" >> informeRR.txt
+echo "#     Sistemas Operativos 2º Semestre                                 #" >> informeRR.txt
+echo "#     Grado en ingeniería informática (2015-2016)                     #" >> informeRR.txt
+echo "#                                                                     #" >> informeRR.txt
+echo "#     Alumno modificador: Luis Pedrosa Ruiz                           #" >> informeRR.txt
+echo "#     Sistemas Operativos 2º Semestre                                 #" >> informeRR.txt
+echo "#     Grado en ingeniería informática (2015-2016)                     #" >> informeRR.txt
+echo "#             -------------------------------------------             #" >> informeRR.txt
 echo "#                                                                     #" >> informeRR.txt
 echo "#######################################################################" >> informeRR.txt
 echo "" >> informeRR.txt
