@@ -14,3 +14,37 @@
 	* Entra a ejecutarse P1 en el momento 3
 			* Termina su ejecución P1 con un tiempo final: 6
 
+	* Entra a ejecutarse P1 en el momento 0
+			* Sale de ejecutarse P1 (Quantum consumido: 3). 
+				- Ráfaga restante de P1: 3
+				- Tiempo empleado hasta el momento: 3
+
+	* Entra a ejecutarse P3 en el momento 3
+			* Sale de ejecutarse P3 (Quantum consumido: 3). 
+				- Ráfaga restante de P3: 4
+				- Tiempo empleado hasta el momento: 6
+
+	* Entra a ejecutarse P1 en el momento 6
+			* Termina su ejecución P1 con un tiempo final: 9
+
+	* Entra a ejecutarse P2 en el momento 9
+			* Sale de ejecutarse P2 (Quantum consumido: 3). 
+				- Ráfaga restante de P2: 5
+				- Tiempo empleado hasta el momento: 12
+
+	* Entra a ejecutarse P3 en el momento 12
+			* Sale de ejecutarse P3 (Quantum consumido: 3). 
+				- Ráfaga restante de P3: 1
+				- Tiempo empleado hasta el momento: 15
+
+	* Entra a ejecutarse P2 en el momento 15
+			* Sale de ejecutarse P2 (Quantum consumido: 3). 
+				- Ráfaga restante de P2: 2
+				- Tiempo empleado hasta el momento: 18
+
+	* Entra a ejecutarse P3 en el momento 18
+			* Termina su ejecución P3 con un tiempo final: 19
+
+	* Entra a ejecutarse P2 en el momento 19
+			* Termina su ejecución P2 con un tiempo final: 21
+

@@ -51,34 +51,6 @@ es_entero() {
     [ "$1" -eq "$1" -a "$1" -ge "0" ] > /dev/null 2>&1  # En caso de error, sentencia falsa (Compara variables como enteros)
     return $?                           				# Retorna si la sentencia anterior fue verdadera
 }
-#Orden
-function Orden {
-	#Inicializo el vector de orden
-	for (( p=0; p<$num_proc; p++ ))
-	do
-		proc_order[$p]=-1
-	done
-	for (( k=$(expr $num_proc-1); k>=0; k-- ))
-	do
-		max=0
-		for (( jk=0; jk<$num_proc; jk++ ))
-		do
-			for (( z=$k, coin=0; z<=$(expr $num_proc-1); z++ ))
-			do
-				if [ $jk -eq "${proc_order[$z]}" ];then
-					coin=1
-				fi
-			done
-		if [ $coin -eq 0 ];then
-			if [ ${T_ENTRADA[$jk]} -ge $max ];then
-				aux=$jk
-				max=${T_ENTRADA[$jk]}
-			fi
-		fi
-		done
-		proc_order[$k]=$aux
-	done
-}
 # Nos permite saber si el parámetro pasado es entero mayor que 0.
 mayor_cero() {
     [ "$1" -eq "$1" -a "$1" -gt "0" ] > /dev/null 2>&1  # En caso de error, sentencia falsa (Compara variables como enteros)
@@ -610,16 +582,11 @@ algoritmo() {
 	procesos_colaauxiliar=`expr 0` 	# Número de procesos en la cola auxiliar
 	cadena="| "					 	# Cadena que guarda el gráfico de la solución
 	contador=0
-	num=0							#Proceso actual
-	Orden
 
 	# Mientras los procesos terminados < procesos totales
 	while [ $procesos_terminados -lt $num_proc ]
 	do
-        if [ $num -eq $num_proc ];then
-        	num=0
-        fi
-        proc_actual=${proc_order[$num]}					# Inicialmente se ejecuta el P0
+        proc_actual=0							# Inicialmente se ejecuta el P0
 
         while [ $proc_actual -lt $num_proc ]	# Recorremos los procesos
         do
@@ -797,7 +764,7 @@ algoritmo() {
 			# Si el actual = temporal -> no se terminó de ejecutar ningun proceso de la cola auxiliar
 			if [ "$proc_actual" -eq "$proc_temporal" ]
 				then
-            	let num=num+1 # Aumento del índice del proceso ejecutandose actualmente
+            	let proc_actual=proc_actual+1 # Aumento del índice del proceso ejecutandose actualmente
             else
 				proc_actual=$proc_temporal # El siguiente proceso será el que tocaba ahora
 			fi

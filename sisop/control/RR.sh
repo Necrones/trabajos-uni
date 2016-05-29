@@ -573,21 +573,9 @@ while [ $e -eq 0 ];do
 				fi
 				exe=0
 			fi
-			if [ "${proc_exe[$z]}" -eq 0 ] || [ "${proc_arr[$z]}" -gt $clock ];then 
+			if [ "${proc_exe[$z]}" -eq 0 ] || [ "${proc_stop[$z]}" -eq 1 ] || [ "${proc_arr[$z]}" -gt $clock ];then 
 				#El proceso esta parado, terminado o aun no ha llegado
 				let position=position+1
-				z=${proc_order[$position]}
-			elif [ "${proc_stop[$z]}" -eq 1 ];then
-				z=${proc_order[$position]}
-				if [ $cola -eq $z ];then
-					if [ $mem_aux -ge ${proc_mem[$z]} ];then
-						i=1
-					else						
-						let position=position+1
-					fi
-				else
-					let position=position+1
-				fi
 				z=${proc_order[$position]}
 			else
 				i=1
