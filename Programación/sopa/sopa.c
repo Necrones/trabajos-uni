@@ -54,12 +54,15 @@ void    juego(int[DIM][DIM], Palabra[N_TEMA][N_PAL],
 	      char[N_TEMA][TEMATAM]);
 void    minuscula(int[DIM][DIM], int, int, int, int, int);
 bool    rango(int, int, int);
-void    salidaPal(char[TCHAR]);
+void    salidaPal(Palabra *);
 void    Int2Str(int, char[]);
-//Variable global
+void    cargar(void);
+//Variables global
 unsigned int seed;		//Semilla
 int main() {
   seed = time(NULL);
+  printf("%d", seed);
+  cargar();
   srand(seed);
   //srand(22);                  //Cruce en coches y colores
   int     sopa[DIM][DIM];
@@ -90,6 +93,24 @@ int main() {
 int clean_stdin() {
   while(getchar() != '\n') ;
   return 1;
+}
+
+/**
+ *Nombre: cargar
+ *Description: Leer del usuario una semilla concreta
+ *@author: Luis Pedrosa Ruiz y JoseluCross
+ *date: 12/04/2016
+ *@version: 1.0
+ */
+void cargar() {
+  int     tecla;
+  printf
+      ("Puede cargar una semilla anterior para recuperar las mismas posiciones\nPulsa espacio para introducirlo, cualquier otra para continuar");
+  tecla = getchar();
+  if(tecla == ESP) {
+    printf("Introduce una semilla nueva: ");
+    introduceNum(&seed);
+  }
 }
 
 /**
@@ -666,7 +687,7 @@ void coincidePal(int matrix[DIM][DIM],
        && palabras[i].columna_final == fC) {
       rec = true;
       find[i] = true;
-      salidaPal(palabras[i].palabra);
+      salidaPal(&palabras[i]);
     }
   }
   if(rec) {
@@ -758,13 +779,22 @@ void minuscula(int m[DIM][DIM], int iF, int iC, int fF, int fC, int dir) {
  *@author: JoseluCross
  *@date: 28/05/2016
  */
-void salidaPal(char pal[TCHAR]) {
-  char    fecha[8];
-  Int2Str(seed, fecha);
+void salidaPal(Palabra * pal) {
+  char    semilla[11];
+  char    nombre[18];
+  strcpy(nombre, "Salida-");
+  Int2Str(seed, semilla);
+  strcat(nombre, semilla);
   FILE   *salida;
-  salida = fopen(fecha, "w");
-  fprintf(salida, "%s\n", pal);
-  fclose(salida);
+  salida = fopen(nombre, "w");
+  if(salida == NULL) {
+    printf("Error al guardar el valor");
+  } else {
+    fprintf(salida, "Palabra: %s, Coordenas iniciales - %d   %d  Coordenadas finales - %d   %d",
+	    (*pal).palabra, (*pal).fila_inicio, (*pal).columna_inicio,
+	    (*pal).fila_final, (*pal).columna_final);
+    fclose(salida);
+  }
 }
 
  /**
@@ -775,33 +805,44 @@ void salidaPal(char pal[TCHAR]) {
   *author: JoseluCross
   *@date: 28/05/2016
   */
-void Int2Str(int num, char cad[8]) {
+void Int2Str(int num, char cad[11]) {
   int     aux;
   int     i;
-  for(i = 8 - 1; i >= 0; --i) {
+  cad[11] = '\0';
+  for(i = 10; i >= 0; --i) {
     aux = num % 10;
     num = num / 10;
     switch (aux) {
       case 0:
 	cad[i] = '0';
+	break;
       case 1:
 	cad[i] = '1';
+	break;
       case 2:
 	cad[i] = '2';
+	break;
       case 3:
 	cad[i] = '3';
+	break;
       case 4:
 	cad[i] = '4';
+	break;
       case 5:
 	cad[i] = '5';
+	break;
       case 6:
 	cad[i] = '6';
+	break;
       case 7:
 	cad[i] = '7';
+	break;
       case 8:
 	cad[i] = '8';
+	break;
       case 9:
 	cad[i] = '9';
+	break;
     }
   }
 }

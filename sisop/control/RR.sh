@@ -67,15 +67,15 @@ function SinRepetir {
 function Informacion {
 	Orden
 	if [ $auto != "c" ];then
-		echo " --------------------------------------------------------------- "
-		echo "|    Proceso    |    Llegada    |     Ráfaga    |    Memoria    |"
+		echo " ----------------------------------------------- "
+		echo "|    Proceso    |    Llegada    |     Ráfaga    |"
 	fi
 	for (( y=0; y<$i; y++))
 	do
 		l=${proc_order[$y]}
 		if [ $auto != "c" ];then
-			echo " --------------------------------------------------------------- "
-			echo "|	${proc_name[$l]}	|	${proc_arr[$l]}	|	${proc_exe[$l]}	|	${proc_mem[$l]}	|"
+			echo " ----------------------------------------------- "
+			echo "|	${proc_name[$l]}	|	${proc_arr[$l]}	|	${proc_exe[$l]}	|"
 		fi
 	done
 	echo " --------------------------------------------------------------- "
@@ -83,15 +83,15 @@ function Informacion {
 #Función InformacionPrint guarda en un fichero la informacion
 function InformacionPrint {
 	echo "Los datos de los procesos son los siguientes" >> informe.txt
-	echo " --------------------------------------------------------------- "  >> informe.txt
-	echo "|    Proceso    |    Llegada    |     Ráfaga    |    Memoria    |"  >> informe.txt
+	echo " ----------------------------------------------- "  >> informe.txt
+	echo "|    Proceso    |    Llegada    |     Ráfaga    |"  >> informe.txt
 		for (( y=0; y<$proc; y++))
 	do
 		l=${proc_order[$y]}
-		echo " --------------------------------------------------------------- "  >> informe.txt
-		echo "|	${proc_name[$l]}	|	${proc_arr[$l]}	|	${proc_exe[$l]}	|	${proc_mem[$l]}	|"  >> informe.txt
+		echo " ----------------------------------------------- "  >> informe.txt
+		echo "|	${proc_name[$l]}	|	${proc_arr[$l]}	|	${proc_exe[$l]}	|"  >> informe.txt
 	done
-	echo " --------------------------------------------------------------- "  >> informe.txt
+	echo " ----------------------------------------------- "  >> informe.txt
 }
 #Función Fichero, lee datos de un fichero
 function Fichero {
@@ -118,7 +118,6 @@ function Fichero {
 			proc_name[$r]=$(echo $y | cut -f1 -d";")
 			proc_arr[$r]=$(echo $y | cut -f2 -d";")
 			proc_exe[$r]=$(echo $y | cut -f3 -d";")
-			proc_mem[$r]=$(echo $y | cut -f4 -d";")
 			let r=r+1
 		esac
 		let x=x+1
@@ -151,145 +150,6 @@ function media() {
 	media=$(expr $media / $tot)
 	return $media
 }
-#Función OcuMem; llena la memoria del proceso pasado por parámetro. $1  nombre de proceso, $2 origen $3 fin $4 identificador vectorial del proceso
-function OcuMem() {
-	for (( y=$2; y<=$3; y++ ))
-	do
-		mem[$y]=$1
-		mem_dir[$y]=$4
-	done
-}
-#Función DesOcuMem; libera la memoria de un determinado sitio. $1 origen $2 final
-function DesOcuMem() {
-	for (( y=$1; y <= $2; y++ ))
-	do
-		mem[$y]=${Li}
-		mem_dir[$y]=-1
-	done
-}
-#Función PartFree; calcula las distintas particiones libres, su tamaño y su posición
-function PartFree {
-	for (( y=0; y<$MAX ; y++ ))
-	do
-		partition[$y]=0
-	done
-	part=0
-	h=0
-	for (( y=0; y<${#mem[@]}; y++ ))
-	do
-		value=${mem[$y]}
-		if [ $value == $Li ];then
-			if [ $h -eq 0 ];then
-				part_init[$part]=$y
-				h=1
-			fi
-			let partition[$part]=partition[$part]+1
-		else
-			if [ $h -eq 1 ];then
-				h=0
-				let part=part+1
-			fi
-		fi
-	done
-}
-#Función AsignaMem; asigna la memoria a los procesos
-function AsignaMem() {
-	auxiliar=0
-	reubic=1
-	for (( alpha=0; alpha<$proc; alpha++ ))
-	do
-		zed=${proc_order[$alpha]}
-		if [ $1 -ge "${proc_arr[$zed]}" ];then
-			if [ $mem_aux -lt ${proc_mem[$zed]} ];then
-				if [ ${proc_stop[$zed]} -eq 0 ];then
-					if [ $cola -eq $zed ]  2> /dev/null ;then
-						if [ $auto != "c" ];then
-							echo "El proceso ${proc_name[$zed]} necesita mas memoria de la disponible actualmente, se ejecutará más adelante"
-						fi
-						echo "El proceso ${proc_name[$zed]} necesita mas memoria de la disponible actualmente, se ejecutará más adelante" >> informe.txt
-						#Bloqueamos la cola
-						cola=$zed
-						for (( beta=$alpha; beta<$proc; beta++))
-						do
-							st=${proc_order[$beta]}
-							proc_stop[$st]=1
-						done
-					fi
-				fi
-			else
-				if [ $cola -eq $zed ] 2> /dev/null;then
-					PartFree
-					memoriaLibre=$MAX
-					#Ahora debo buscar la particion de memoria que menos esté ocupada 
-					for (( ex=0; ex<=$part; ex++ ))
-					do
-						if [ ${proc_mem[$zed]} -le ${partition[$ex]} ];then
-							if [ ${partition[$ex]} -lt $memoriaLibre ];then
-								memoriaLibre=${partition[$ex]}
-								proc_memI[$zed]=${part_init[$ex]}
-								reubic=0
-							fi
-						fi
-					done
-					if [ $reubic -eq 1 ];then
-						reubicar
-						proc_memI[$zed]=$?
-					fi
-					let proc_memF[$zed]=proc_memI[$zed]+proc_mem[$zed]
-					let proc_memF[$zed]=proc_memF[$zed]-1
-					OcuMem ${proc_name[$zed]} ${proc_memI[$zed]} ${proc_memF[$zed]} $zed		
-					auxiliar=1
-					#Desbloqueamos la cola
-					for (( beta=$alpha; beta<$proc; beta++))
-						do
-							st=${proc_order[$beta]}
-							proc_stop[$st]=0
-						done
-					let mem_aux=mem_aux-proc_mem[$zed]
-					next=$(expr $alpha + 1)
-					cola=${proc_order[$next]}
-					if [ $auto != "c" ];then
-						echo -e "${yellow}El proceso ${proc_name[$zed]} ha entrado en memoria${NC}"
-					fi
-					echo "El proceso ${proc_name[$zed]} ha entrado en memoria" >> informe.txt
-				fi
-			fi
-		fi
-		reubic=1
-	done
-}
-#Funcion reubicar; reubica la memoria desplazandola hacia la izquierda todos los programas
-function reubicar {
-	before=0
-	local aux
-	local aux2=0
-	local ret
-	for (( w=0; w<$mem_total; w++))
-	do
-		if [ ${mem_dir[$w]} -eq -1 -a $before -eq 0 ];then
-				before=1
-				aux_init=$w
-		elif [ $before -eq 1 -a ${mem_dir[$w]} -ne -1 ];then
-				aux=${mem_dir[$w]}
-				aux2=1
-				DesOcuMem ${proc_memI[$aux]} ${proc_memF[$aux]}
-				proc_memI[$aux]=$aux_init
-				let proc_memF[$aux]=proc_memI[$aux]+proc_mem[$aux]
-				let proc_memF[$aux]=proc_memF[$aux]-1
-				OcuMem ${proc_name[$aux]} ${proc_memI[$aux]} ${proc_memF[$aux]} $aux
-				before=0
-				w=proc_memF[$aux]
-		fi
-	done
-	if [ $aux2 -eq 1 ];then
-		if [ $auto != "c" ];then
-			echo -e "${inverted}La memoria se ha reubicado${NC}"
-		fi
-		echo "La memoria se ha reubicado" >> informe.txt
-	fi
-	let ret=${proc_memF[$aux]}+1
-	return $ret
-}
 #Función SiNo; comprueba si se ha medito un si o un no
 function SiNo(){
 	local j=0
@@ -301,18 +161,16 @@ function SiNo(){
 #Función Estado: dice para la ráfaga acual los datos actuales de los procesos
 function Estado {
 	local restante
-	local memIni
-	local memFin
 	if [ $auto != "c" ];then
 		echo ""	
 		echo -e "${coffe}Al final de la ejecución de este tiempo los datos son:${NC}"
-		echo " ------------------------------------------------------------------------------------------------------------------------------- "
-		echo "|    Procesos   |     Tiempo esp acumulado      |      Ejecución restante       |    Memoria    |  Pos mem ini  |  Pos mem fin  |"
+		echo " ------------------------------------------------------------------------------- "
+		echo "|    Procesos   |     Tiempo esp acumulado      |      Ejecución restante       |"
 	fi
 	echo "" >> informe.txt
 	echo "Al final de la ejecución de este tiempo los datos son:" >> informe.txt
-	echo " ------------------------------------------------------------------------------------------------------------------------------- " >> informe.txt
-	echo "|    Procesos   |     Tiempo esp acumulado      |      Ejecución restante       |    Memoria    |  Pos mem ini  |  Pos mem fin  |" >> informe.txt
+	echo " ------------------------------------------------------------------------------- " >> informe.txt
+	echo "|    Procesos   |     Tiempo esp acumulado      |      Ejecución restante       |" >> informe.txt
 	for (( p=0; p<$proc;p++ ))
 	do
 		pp=${proc_order[$p]}
@@ -321,27 +179,17 @@ function Estado {
 		else
 			restante=${proc_exe[$pp]}
 		fi
-		if [ ${proc_memI[$pp]} = "-1" ] 2> /dev/null;then
-			memIni="NA"
-			memFin="NA"
-		elif [ ${proc_memI[$pp]} = "-2" ] 2> /dev/null ;then
-			memIni="END"
-			memFin="END"
-		else
-			memIni=${proc_memI[$pp]}
-			memFin=${proc_memF[$pp]}
-		fi
 		if [ $auto != "c" ];then
-			echo " ------------------------------------------------------------------------------------------------------------------------------- " 
-			echo "|	${proc_name[$pp]}	|		${proc_waitA[$pp]}		|		$restante		|	${proc_mem[$pp]}	|	$memIni	|	$memFin	|"
+			echo " ------------------------------------------------------------------------------- "
+			echo "|	${proc_name[$pp]}	|		${proc_waitA[$pp]}		|		$restante		|"
 		fi
-		echo " ------------------------------------------------------------------------------------------------------------------------------- " >>informe.txt
-		echo "|	${proc_name[$pp]}	|		${proc_waitA[$pp]}		|		$restante		|	${proc_mem[$pp]}	|	$memIni	|	$memFin	|" >>informe.txt
+		echo " ------------------------------------------------------------------------------- " >>informe.txt
+		echo "|	${proc_name[$pp]}	|		${proc_waitA[$pp]}		|		$restante		|" >>informe.txt
 	done
 	if [ $auto != "c" ];then
-		echo " ------------------------------------------------------------------------------------------------------------------------------- "
+		echo " ------------------------------------------------------------------------------- "
 	fi
-	echo " ------------------------------------------------------------------------------------------------------------------------------- " >>informe.txt
+	echo " ------------------------------------------------------------------------------- " >>informe.txt
 }
 ##Comienzo del programa
 clear
@@ -349,7 +197,7 @@ clear
 echo " -------------------------------------------------------------------------------------------------- "
 echo "|		Práctica de Control - Sistemas Operativos - Grado en Ingeniería Informática	   |"
 echo "|                                               					       	   |"
-echo "|		   Round Robin con particiones dinámicas ajustada al mejor y reubicable	    	   |"
+echo "|					      Round Robin 				    	   |"
 echo "|                                                                                                  |"
 echo "|					    Programado por:					   |"
 echo "|			     José Luis Garrido Labrador <jgl0062@alu.ubu.es>			   |"
@@ -362,7 +210,7 @@ echo " -------------------------------------------------------------------------
 echo " -------------------------------------------------------------------------------------------------- "  > informe.txt
 echo "|		Práctica de Control - Sistemas Operativos - Grado en Ingeniería Informática	   |" >> informe.txt
 echo "|                                               					       	   |"  >> informe.txt
-echo "|		   Round Robin con particiones dinámicas ajustada al mejor y reubicable	    	   |"  >> informe.txt
+echo "|						   Round Robin 			    	   |"  >> informe.txt
 echo "|                                                                                                  |"  >> informe.txt
 echo "|					    Programado por:					   |"  >> informe.txt
 echo "|			     José Luis Garrido Labrador <jgl0062@alu.ubu.es>			   |"  >> informe.txt
@@ -391,16 +239,6 @@ if [ $manu = "s" -o $manu = "S" ];then
 		fi
 	done
 	echo "El quantum escogido es $quantum" >> informe.txt
-	j=0
-	while [ $j -eq 0 ] 2> /dev/null ;do
-		read -p "Introduzca al cantidad de memoria (MB): " mem_aux
-		if [ \( $mem_aux -ge 0 \) -a \( $? -eq 0 \) ] 2> /dev/null;then
-			j=1
-		else
-			echo "Dato incorrecto"
-		fi
-	
-	done
 fi
 j=0
 while [ $j -eq 0 ]
@@ -421,13 +259,11 @@ done
 proc_name={} #Nombre de cada proceso
 proc_arr={} #Turno de llegada del proceso
 proc_exe={} #Tiempo de ejecución o ráfaga; se reducirá según el quantum
-proc_mem={} #Memoria que necesita cada proceso
 proc_order={} #Orden de la lista
 proc_stop={} #Procesos que no pueden ejecutarse porque no tienen memoria (1 = parado, 0 no parado)
 clear
 i=1
 t=0
-mem_total=$mem_aux
 if [ $manu = "S" ] 2>/dev/null || [ $manu = "s" ] 2>/dev/null;then
 	while [ $t -eq 0 ];do
 		j=0
@@ -468,16 +304,7 @@ if [ $manu = "S" ] 2>/dev/null || [ $manu = "s" ] 2>/dev/null;then
 		done
 		j=0
 		while [ $j -eq 0 ];do
-			read -p "Introduzca la memoria (MB) que necesita ${proc_name[$(expr $i-1)]}: " proc_mem[$(expr $i-1)]
-			if [ "${proc_mem[$(expr $i-1)]}" -le $mem_total -a "${proc_mem[$(expr $i-1)]}" -gt 0 ] 2> /dev/null ;then
-				j=1
-			else
-				echo "Dato incorrecto"
-			fi
-		done
-		j=0
-		while [ $j -eq 0 ];do
-			read -p "¿Quiere incluir más procesos [S]i,[n]o" p
+			read -p "¿Quiere incluir más procesos [S]i,[n]o " p
 			if [ -z $p ] 2> /dev/null;then
 				p="s"
 				j=1
@@ -505,48 +332,20 @@ else
 	Informacion
 fi
 InformacionPrint
-mem_total=$mem_aux
 if [ $auto != "c" ];then
 	read -p "Pulse cualquier tecla para ver la secuencia de procesos"
 fi
 #Declaro las ultimas variables
-declare mem[$mem_aux] #Memoria de tamaño 1 MB por palabra
-for (( y=0; y<$mem_aux; y++ ))
-do
-	mem[$y]=${Li} #Inicializo la memoria a libre
-done
 declare proc_waitA[$proc] #Tiempo de espera acumulado
 declare proc_waitR[$proc] #Tiempo de espera real
-declare proc_memI[$proc]  #Palabra inicial
-declare proc_memF[$proc]  #Palabra final
-for (( y=0; y<$proc; y++ ))
-do
-	proc_memI[$y]="-1"
-done
-declare partition[$MAX]	  #Tamaño de las distintas particiones libres
-declare proc_arr_aux[$proc] #Momento en el que el proceso puede ocupar memoria
-for (( y=0; y<$proc; y++ ))
-do
-	proc_arr_aux[$y]=${proc_arr[$y]}
-done
 min=${proc_order[0]}
 clock=${proc_arr[$min]}	#Ráfaga actual
 for (( i=0; i<$proc; i++ ))
 do
 	proc_waitA[$i]=$clock
 done
-for (( y=0; y<$proc; y++ ))
-do
-	proc_stop[$y]=0
-done
-declare mem_dir[$mem_aux]
-for (( y=0; y<$mem_aux; y++ ))
-do
-	mem_dir[$y]=-1
-done
 declare proc_ret[$proc] #Tiempo de retorno
 declare proc_retR[$proc] #Tiempo que ha estado el proceso desde entró hasta que terminó
-declare mem_print[$proc] #Memoria que se guardará en el fichero (sin colores)
 end=0 #Procesos terminados
 e=0 #e=0 aun no ha terminado, e=1 ya se terminó
 j=0
@@ -573,8 +372,8 @@ while [ $e -eq 0 ];do
 				fi
 				exe=0
 			fi
-			if [ "${proc_exe[$z]}" -eq 0 ] || [ "${proc_stop[$z]}" -eq 1 ] || [ "${proc_arr[$z]}" -gt $clock ];then 
-				#El proceso esta parado, terminado o aun no ha llegado
+			if [ "${proc_exe[$z]}" -eq 0 ] || [ "${proc_arr[$z]}" -gt $clock ];then 
+				#El proceso esta terminado o aun no ha llegado
 				let position=position+1
 				z=${proc_order[$position]}
 			else
@@ -587,7 +386,6 @@ while [ $e -eq 0 ];do
 	fi
 	echo "" >> informe.txt
 	echo "Ráfaga $clock" >> informe.txt
-	AsignaMem $clock
 	if [ $quantum_aux -eq $quantum ] && [ $end -ne $proc ];then #Cambio de contexto
 		clock_time=$clock
 		if [ $auto != "c" ];then
@@ -608,7 +406,7 @@ while [ $e -eq 0 ];do
 		quantum_aux=0
 		fin=1
 		mot=1
-		if [ $auto = "c" ];then
+		if [ $auto != "c" ];then
 			echo "El proceso ${proc_name[$z]} termina en esta ráfaga"
 		fi
 		echo "El proceso ${proc_name[$z]} termina en esta ráfaga" >> informe.txt
@@ -622,42 +420,12 @@ while [ $e -eq 0 ];do
 		else
 			mot=0
 		fi
-		echo -e "${cyan_back}|${proc_name[$z]}($clock_time,${proc_exe[$z]})|${NC}"
+		if [ $auto != "c" ];then
+			echo -e "${cyan_back}|${proc_name[$z]}($clock_time,${proc_exe[$z]})|${NC}"
+		fi
 		echo "|${proc_name[$z]}($clock_time,${proc_exe[$z]})|" >> informe.txt
 		let position=position+1
 		quantum_aux=$quantum
-	fi
-	#Si el proceso se ha terminado
-	if [ $fin -eq 1 ];then
-    	let mem_aux=mem_aux+proc_mem[$z]
-    	DesOcuMem ${proc_memI[$z]} ${proc_memF[$z]}
-    	proc_memI[$z]="-2"
-		let end=end+1
-		if [ $auto != "c" ];then
-			echo -e "${blue}El proceso ${proc_name[$z]} retorna al final de la ráfaga ${proc_ret[$z]}, la memoria asignada fue liberada${NC}"
-		fi
-		echo "El proceso ${proc_name[$z]} retorna al final de la ráfaga ${proc_ret[$z]}, la memoria asignada fue liberada" >> informe.txt
-		auxiliar=1
-		fin=0
-	fi
-	if [ $auxiliar -eq 1 ];then
-		if [ $auto != "c" ];then
-			echo -e "${purple}Memoria libre actual $mem_aux MB${NC}"
-			echo -e "${gree}Distribución actual de la memoria${NC}"
-			echo -e "${mem[@]}"
-		fi
-		echo "Memoria libre actual $mem_aux MB$" >> informe.txt
-		echo "Distribución actual de la memoria" >> informe.txt
-		for (( jk=0; jk<$mem_total; jk++ ))
-		do
-			if [ ${mem[$jk]} = $Li ];then
-				mem_print[$jk]="Li"
-			else
-				mem_print[$jk]=${mem[$jk]}
-			fi
-		done
-		echo "${mem_print[@]}" >> informe.txt
-		auxiliar=0
 	fi
 	Estado
 	if [ $auto = "a" ];then

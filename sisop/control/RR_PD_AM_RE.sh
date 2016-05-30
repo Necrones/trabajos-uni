@@ -620,7 +620,7 @@ while [ $e -eq 0 ];do
 		quantum_aux=0
 		fin=1
 		mot=1
-		if [ $auto = "c" ];then
+		if [ $auto != "c" ];then
 			echo "El proceso ${proc_name[$z]} termina en esta ráfaga"
 		fi
 		echo "El proceso ${proc_name[$z]} termina en esta ráfaga" >> informe.txt
@@ -634,7 +634,9 @@ while [ $e -eq 0 ];do
 		else
 			mot=0
 		fi
-		echo -e "${cyan_back}|${proc_name[$z]}($clock_time,${proc_exe[$z]})|${NC}"
+		if [ $auto != "c" ];then
+			echo -e "${cyan_back}|${proc_name[$z]}($clock_time,${proc_exe[$z]})|${NC}"
+		fi
 		echo "|${proc_name[$z]}($clock_time,${proc_exe[$z]})|" >> informe.txt
 		let position=position+1
 		quantum_aux=$quantum
