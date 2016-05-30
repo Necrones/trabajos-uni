@@ -49,9 +49,9 @@ int     buscaAleatorio(int, int);
 bool    esPosibleColocarPalabra(int[DIM][DIM], Palabra, int, int);
 void    introduceNum(int *);
 void    coincidePal(int[DIM][DIM], Palabra[N_PAL], int,
-		    int, int, int, bool[N_PAL]);
+		    int, int, int, bool[N_PAL],FILE *);
 void    juego(int[DIM][DIM], Palabra[N_TEMA][N_PAL],
-	      char[N_TEMA][TEMATAM]);
+	      char[N_TEMA][TEMATAM],FILE *);
 void    minuscula(int[DIM][DIM], int, int, int, int, int);
 bool    rango(int, int, int);
 void    salidaPal(Palabra *);
@@ -61,7 +61,6 @@ void    cargar(void);
 unsigned int seed;		//Semilla
 int main() {
   seed = time(NULL);
-  printf("%d", seed);
   cargar();
   srand(seed);
   //srand(22);                  //Cruce en coches y colores
@@ -69,15 +68,22 @@ int main() {
   Palabra temas[N_TEMA][N_PAL];
   char    tema[N_TEMA][TEMATAM];
   FILE   *fil;
+  FILE   *sal;
   fil = fopen("sopa.txt", "r");
-  if(fil == NULL) {
+  char    semilla[11];
+  char    nombre[18];
+  strcpy(nombre, "Salida-");
+  Int2Str(seed, semilla);
+  strcat(nombre, semilla);
+  sal = fopen(nombre, "w");
+  if(fil == NULL || sal == NULL) {
     printf
-	("El fichero sopa.txt no se ha podido abrir, comprueba que está en el mismo directorio que sopa\n");
+	("Error al leer sopa.txt o escribir %s\n",nombre);
   } else {
     rellenaTemas(temas, fil, tema);
     fclose(fil);
     system("clear");
-    juego(sopa, temas, tema);
+    juego(sopa, temas, tema,sal);
   }
   return 0;
 }
@@ -123,7 +129,7 @@ void cargar() {
   *@date: 26/04/2016
   */
 void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
-	   char te[N_TEMA][TEMATAM]) {
+	   char te[N_TEMA][TEMATAM],FILE *salida) {
   int     ini_fila, ini_col, fin_fila, fin_col;	//Coordenadas
   bool    palEncontrada[N_PAL];
   int     i;			//Contador
@@ -161,7 +167,7 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
 	} while(rango(1, DIM, fin_col));
 	system("clear");
 	coincidePal(matriz, themes[tema], ini_fila - 1, ini_col - 1,
-		    fin_fila - 1, fin_col - 1, palEncontrada);
+		    fin_fila - 1, fin_col - 1, palEncontrada,salida);
 	imprimirSopa(matriz);
 	for(i = 0, respuestas = 0; i < N_PAL; ++i) {
 	  if(palEncontrada[i] == true) {
@@ -677,7 +683,7 @@ void introduceNum(int *num) {
   */
 void coincidePal(int matrix[DIM][DIM],
 		 Palabra palabras[N_PAL],
-		 int iF, int iC, int fF, int fC, bool find[N_PAL]) {
+		 int iF, int iC, int fF, int fC, bool find[N_PAL],FILE *salida) {
   int     i;			//Contadores y variables auxiliares
   bool    rec = false;		// norec = true;  //Variables de conrol
   //char    pal[TCHAR];
@@ -687,7 +693,7 @@ void coincidePal(int matrix[DIM][DIM],
        && palabras[i].columna_final == fC) {
       rec = true;
       find[i] = true;
-      salidaPal(&palabras[i]);
+      salidaPal(&palabras[i], salida);
     }
   }
   if(rec) {
@@ -779,23 +785,11 @@ void minuscula(int m[DIM][DIM], int iF, int iC, int fF, int fC, int dir) {
  *@author: JoseluCross
  *@date: 28/05/2016
  */
-void salidaPal(Palabra * pal) {
-  char    semilla[11];
-  char    nombre[18];
-  strcpy(nombre, "Salida-");
-  Int2Str(seed, semilla);
-  strcat(nombre, semilla);
-  FILE   *salida;
-  salida = fopen(nombre, "w");
-  if(salida == NULL) {
-    printf("Error al guardar el valor");
-  } else {
-    fprintf(salida, "Palabra: %s, Coordenas iniciales - %d   %d  Coordenadas finales - %d   %d",
+void salidaPal(Palabra * pal, FILE *salida) {
+  fprintf(salida, "Palabra: %s, Coordenas iniciales - %d   %d  Coordenadas finales - %d   %d",
 	    (*pal).palabra, (*pal).fila_inicio, (*pal).columna_inicio,
 	    (*pal).fila_final, (*pal).columna_final);
-    fclose(salida);
   }
-}
 
  /**
   *Title: Int2Str
