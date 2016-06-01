@@ -1,11 +1,11 @@
 /**
- *Title: Sopa de letras
- *Description: Hace una sopa de letras con varios temas
- *@Author: Luis Pedrosa Ruiz y José Luis Garrido Labrador (JoseluCross)
- *@organization: UBU
- *@Version: 2.0.0
- *@Date: 05/04/2016
- */
+*Title: Sopa de letras
+*Description: Hace una sopa de letras con varios temas
+*@Author: Luis Pedrosa Ruiz y José Luis Garrido Labrador (JoseluCross)
+*@organization: UBU
+*@Version: 2.0.0
+*@Date: 05/04/2016
+*/
 //Librerías
 #include <stdio.h>
 #include <string.h>
@@ -49,10 +49,10 @@ void    rellenaMatriz(int[DIM][DIM]);
 int     buscaAleatorio(int, int);
 bool    esPosibleColocarPalabra(int[DIM][DIM], Palabra, int, int);
 void    introduceNum(int *);
-void    coincidePal(int[DIM][DIM], Palabra[N_PAL], int,
-		    int, int, int, bool[N_PAL], FILE *);
-void    juego(int[DIM][DIM], Palabra[N_TEMA][N_PAL],
-	      char[N_TEMA][TEMATAM], FILE *);
+void    coincidePal(int[DIM][DIM], Palabra[N_PAL], int, int, int, int,
+		    bool[N_PAL], FILE *);
+void    juego(int[DIM][DIM], Palabra[N_TEMA][N_PAL], char[N_TEMA][TEMATAM],
+	      FILE *);
 void    minuscula(int[DIM][DIM], int, int, int, int, int);
 bool    rango(int, int, int);
 void    salidaPal(Palabra *, FILE *);
@@ -65,75 +65,76 @@ int main() {
   cargar(&seed);
   srand(abs(seed));
   //srand(22);                  //Cruce en coches y colores
-  int     sopa[DIM][DIM];
-  Palabra temas[N_TEMA][N_PAL];
-  char    tema[N_TEMA][TEMATAM];
-  FILE   *fil;
-  FILE   *sal;
-  fil = fopen("sopa.txt", "r");
-  if(fil == NULL) {
-    printf("El archivo no se puede leer");
-  } else {
-    char    semilla[11];
-    char    nombre[18];
-    strcpy(nombre, "Salida-");
-    Int2Str(abs(seed), semilla);
-    strcat(nombre, semilla);
-    sal = fopen(nombre, "w");
-    if(sal == NULL) {
-      printf("Error al escribir %s\n", nombre);
+  if(seed != -1) {		//Se puĺsó un ESC
+    int     sopa[DIM][DIM];
+    Palabra temas[N_TEMA][N_PAL];
+    char    tema[N_TEMA][TEMATAM];
+    FILE   *fil;
+    FILE   *sal;
+    fil = fopen("sopa.txt", "r");
+    if(fil == NULL) {
+      printf("El archivo no se puede leer");
     } else {
-      rellenaTemas(temas, fil, tema);
+      char    semilla[11];
+      char    nombre[18];
+      strcpy(nombre, "Salida-");
+      Int2Str(abs(seed), semilla);
+      strcat(nombre, semilla);
+      sal = fopen(nombre, "w");
+      if(sal == NULL) {
+	printf("Error al escribir %s\n", nombre);
+      } else {
+	rellenaTemas(temas, fil, tema);
+	fclose(fil);
+	system("clear");
+	juego(sopa, temas, tema, sal);
+	fclose(sal);
+      }
       fclose(fil);
-      system("clear");
-      juego(sopa, temas, tema, sal);
-      fclose(sal);
     }
-    fclose(fil);
   }
   return 0;
 }
 
 /**
- *Nombre: clean_stdin
- *Description: Borra el buffer del teclado
- *@return: 1 si lo ha borrado
- *@author: Luis Pedrosa Ruiz y JoseluCross
- *date: 12/04/2016
- *@version: 1.0
- */
+*Nombre: clean_stdin
+*Description: Borra el buffer del teclado
+*@return: 1 si lo ha borrado
+*@author: Luis Pedrosa Ruiz y JoseluCross
+*date: 12/04/2016
+*@version: 1.0
+*/
 int clean_stdin() {
   while(getchar() != '\n') ;
   return 1;
 }
 
 /**
- *Nombre: cargar
- *Description: Leer del usuario una semilla concreta
- *@author: Luis Pedrosa Ruiz y JoseluCross
- *date: 12/04/2016
- *@version: 1.0
- */
+*Nombre: cargar
+*Description: Leer del usuario una semilla concreta
+*@author: Luis Pedrosa Ruiz y JoseluCross
+*date: 12/04/2016
+*@version: 1.0
+*/
 void cargar(unsigned int *semilla) {
-  int     tecla;
   printf
-      ("Puede cargar una semilla anterior para recuperar las mismas posiciones\nPulsa espacio para introducirlo, cualquier otra para continuar");
-  tecla = getchar();
-  if(tecla == ESP) {
+      ("Puede cargar una semilla anterior para recuperar las mismas posiciones\nPulsa espacio para introducirlo, cualquier otra para continuar ");
+  if(getchar() == ESP) {
+    clean_stdin();
     printf("Introduce una semilla nueva: ");
     introduceNum(semilla);
   }
 }
 
 /**
-  *Nombre: juego
-  *Descripción: ejecuta el juego de la sopa de letras
-  *@param matriz: sopa de letra
-  *@param themes: temas de la sopa
-  *@param te: matriz con los temas
-  *@author: Luis Pedrosa Ruiz y JoseluCross
-  *@date: 26/04/2016
-  */
+*Nombre: juego
+*Descripción: ejecuta el juego de la sopa de letras
+*@param matriz: sopa de letra
+*@param themes: temas de la sopa
+*@param te: matriz con los temas
+*@author: Luis Pedrosa Ruiz y JoseluCross
+*@date: 26/04/2016
+*/
 void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
 	   char te[N_TEMA][TEMATAM], FILE * salida) {
   int     ini_fila, ini_col, fin_fila, fin_col;	//Coordenadas
@@ -145,7 +146,7 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
   while(game) {
     //Iniciamos el juego
     tema = solicitaOpcionMenu(te);
-    if(tema != -1) {
+    if(tema != -1) {		//No se ha pulsado 0 o ESC
       crearSopa(matriz);
       colocaPalabras(matriz, themes[tema]);
       rellenaMatriz(matriz);
@@ -156,19 +157,25 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
       }
       do {
 	leeCoordenadas(&ini_fila, &fin_fila, &ini_col, &fin_col);
-	system("clear");
-	coincidePal(matriz, themes[tema], ini_fila - 1, ini_col - 1,
-		    fin_fila - 1, fin_col - 1, palEncontrada, salida);
-	imprimirSopa(matriz);
-	for(i = 0, respuestas = 0; i < N_PAL; ++i) {
-	  if(palEncontrada[i] == true) {
-	    ++respuestas;
+	//Se ha pulsado escape
+	if(ini_fila != -1 && fin_fila != -1 && ini_col != -1
+	   && fin_col != -1) {
+	  system("clear");
+	  coincidePal(matriz, themes[tema], ini_fila - 1, ini_col - 1,
+		      fin_fila - 1, fin_col - 1, palEncontrada, salida);
+	  imprimirSopa(matriz);
+	  for(i = 0, respuestas = 0; i < N_PAL; ++i) {
+	    if(palEncontrada[i] == true) {
+	      ++respuestas;
+	    }
 	  }
+	  if(respuestas == N_PAL) {
+	    victoria = true;
+	  }
+	  printf("Quedan %i palabras\n", N_PAL - respuestas);
+	} else {
+	  game = !game;
 	}
-	if(respuestas == N_PAL) {
-	  victoria = true;
-	}
-	printf("Quedan %i palabras\n", N_PAL - respuestas);
       }
       while(!victoria && game);
       if(game) {
@@ -191,45 +198,60 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
 }
 
 /**
- *Nombre: leeCoordenadas
- *Description: lee las cuatro coordenadas
- *@param fil_in: fila inicial 
- *@param fil_fin: fila final
- *@param col_in: columna inicial 
- *@param col_fin: columna final
- *@date: 31/05/2016
- *@version: 1.0
- */
+*Nombre: leeCoordenadas
+*Description: lee las cuatro coordenadas
+*@param fil_in: fila inicial
+*@param fil_fin: fila final
+*@param col_in: columna inicial
+*@param col_fin: columna final
+*@date: 31/05/2016
+*@version: 1.0
+*/
 void leeCoordenadas(int *fil_in, int *fil_fin, int *col_in, int *col_fin) {
+  bool    salida_escape = false;
   do {
     printf("Introduce la primera coordenada (fila): ");
     introduceNum(fil_in);
-  } while(rango(1, DIM, *fil_in));
-  do {
-    printf("Introduce la primera coordenada (columna): ");
-    introduceNum(col_in);
-  } while(rango(1, DIM, *col_in));
-  do {
-    printf("Introduce la segunda coordenada (fila): ");
-    introduceNum(fil_fin);
-  } while(rango(1, DIM, *fil_fin));
-  do {
-    printf("Introduce la segunda coordenada (columna): ");
-    introduceNum(col_fin);
-  } while(rango(1, DIM, *col_fin));
+    if(*fil_in == -1)
+      salida_escape = true;
+  } while(rango(1, DIM, *fil_in) && !salida_escape);
+  if(!salida_escape) {
+    do {
+      printf("Introduce la primera coordenada (columna): ");
+      introduceNum(col_in);
+      if(*col_in == -1)
+	salida_escape = true;
+    } while(rango(1, DIM, *col_in) && !salida_escape);
+  }
+  if(!salida_escape) {
+    do {
+      printf("Introduce la segunda coordenada (fila): ");
+      introduceNum(fil_fin);
+      if(*col_in == -1)
+	salida_escape = true;
+    } while(rango(1, DIM, *fil_fin) && !salida_escape);
+  }
+  if(!salida_escape) {
+    do {
+      printf("Introduce la segunda coordenada (columna): ");
+      introduceNum(col_fin);
+      if(*col_in == -1)
+	salida_escape = true;
+    } while(rango(1, DIM, *col_fin) && !salida_escape);
+  }
 
 }
 
 /**
- *Nombre: rango
- *Description: determina si un nº está entre un rango
- *@param min: valor mínimo 
- *@param max: valor maximo
- *@param value: valor que tiene que estar en el rango
- *@return 1 si está fuera del rango, 0 si esta dentro
- *@date: 25/05/2016
- *@version: 1.0
- */
+*Nombre: rango
+*Description: determina si un nº está entre un rango
+*@param min: valor mínimo
+*@param max: valor maximo
+*@param value: valor que tiene que estar en el rango
+*@return 1 si está fuera del rango, 0 si esta dentro
+*@date: 25/05/2016
+*@version: 1.0
+*/
 bool rango(int min, int max, int value) {
   bool    rang;
   if(value < min || value > max) {
@@ -242,14 +264,14 @@ bool rango(int min, int max, int value) {
 }
 
 /**
- *Nombre: solicitaOpcionMenu
- *Description: Muestra el menú
- *@param t: matriz con los temas
- *@return: opción elegida
- *@author: Luis Pedrosa Ruiz y JoseluCross
- *@date: 12/04/2016
- *@version: 1.0
- */
+*Nombre: solicitaOpcionMenu
+*Description: Muestra el menú
+*@param t: matriz con los temas
+*@return: opción elegida
+*@author: Luis Pedrosa Ruiz y JoseluCross
+*@date: 12/04/2016
+*@version: 1.0
+*/
 int solicitaOpcionMenu(char t[N_TEMA][TEMATAM]) {
   int     menu;
   bool    salida = false;
@@ -262,24 +284,29 @@ int solicitaOpcionMenu(char t[N_TEMA][TEMATAM]) {
     }
     printf("0 - Salir\n");
     introduceNum(&menu);
-    if(menu < 0 || menu > 5) {
-      printf("Valor incorrecto\n");
-      salida = false;
+    if(menu != -1) {
+      if(rango(1, 5, menu)) {
+	printf("Valor incorrecto\n");
+	salida = false;
+      } else {
+	salida = true;
+      }
     } else {
-      salida = true;
+      menu = 0;
+      salida = !salida;
     }
   } while(!salida);
   return menu - 1;
 }
 
 /**
- *Nombre: crearSopa
- *Description: Genera una matriz 25x25 llena de ceros
- *@param mat[DIM][DIM] - Matriz que contendrá la sopa
- *@author: Luis Pedrosa Ruiz y JoseluCross
- *@date: 05/04/2016
- *@version: 1.0
- */
+*Nombre: crearSopa
+*Description: Genera una matriz 25x25 llena de ceros
+*@param mat[DIM][DIM] - Matriz que contendrá la sopa
+*@author: Luis Pedrosa Ruiz y JoseluCross
+*@date: 05/04/2016
+*@version: 1.0
+*/
 void crearSopa(int mat[DIM][DIM]) {
   int     i, j;			//horizontal y vertical
   for(i = 0; i < DIM; i++) {
@@ -290,13 +317,13 @@ void crearSopa(int mat[DIM][DIM]) {
 }
 
 /**
- *Nombre: imprimirSopa
- *Description: Imprime la sopa de letras
- *@param sop[DIM][DIM] - Sopa de letras imprimida
- *@author: Luis Pedrosa Ruiz y JoseluCross
- *@date: 05/04/2016
- *@version: 1.0
- */
+*Nombre: imprimirSopa
+*Description: Imprime la sopa de letras
+*@param sop[DIM][DIM] - Sopa de letras imprimida
+*@author: Luis Pedrosa Ruiz y JoseluCross
+*@date: 05/04/2016
+*@version: 1.0
+*/
 void imprimirSopa(int sop[DIM][DIM]) {
   int     i, j;			//Horizontal y vertical
   //Se imprime la fila numeral superior
@@ -351,51 +378,50 @@ void imprimirSopa(int sop[DIM][DIM]) {
 }
 
 /**
- *Nombre: rellenaTemas
- *Description: asigna en una matriz las palabras
- *@param tem[N_TEMA][N_PAL] - registro donde se guardarán las palabras
- *@param f - archivo de origen de los datos
- *@param tema - matriz donde se guardarán los temas
- *@author: Luis Pedrosa Ruiz y JoseluCross
- *@date: 05/04/2016
- *@version: 1.0.0
- */
+*Nombre: rellenaTemas
+*Description: asigna en una matriz las palabras
+*@param tem[N_TEMA][N_PAL] - registro donde se guardarán las palabras
+*@param f - archivo de origen de los datos
+*@param tema - matriz donde se guardarán los temas
+*@author: Luis Pedrosa Ruiz y JoseluCross
+*@date: 05/04/2016
+*@version: 1.0.0
+*/
 void rellenaTemas(Palabra tem[N_TEMA][N_PAL], FILE * f,
 		  char tema[N_TEMA][TEMATAM]) {
   int     i;
   for(i = 0; i < N_TEMA; ++i) {
     fscanf(f, "%s", tema[i]);
     while(fgetc(f) != '\n') ;
-    fscanf(f, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%s",
+    fscanf(f, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%s\n",
 	   tem[i][0].palabra, tem[i][1].palabra, tem[i][2].palabra,
 	   tem[i][3].palabra, tem[i][4].palabra, tem[i][5].palabra,
 	   tem[i][6].palabra, tem[i][7].palabra);
-    while(fgetc(f) != '\n') ;
   }
 }
 
 /**
- *Nombre: buscaAleatorio
- *Description: Genera un aleatorio entre dos valores
- *@param max: valor máximo
- *@param min: valor mínimo
- *@return: número aleatorio
- *@author: Carlos Pardo
- *@date: 12/04/2016
- */
+*Nombre: buscaAleatorio
+*Description: Genera un aleatorio entre dos valores
+*@param max: valor máximo
+*@param min: valor mínimo
+*@return: número aleatorio
+*@author: Carlos Pardo
+*@date: 12/04/2016
+*/
 int buscaAleatorio(int min, int max) {
   return (rand() / (1.0 + RAND_MAX) * (1 + max - min) + min);
 }
 
 /**
- *Nombre: colocaPalabras
- *Description: colocamos las palabras en la matriz
- *@param sople: sopa de letras
- *@param palab: palabra del tema
- *@param te:   tema escogido
- *@author: Luis Pedrosa Ruiz y JoseluCross
- *@date: 12/04/2016
- */
+*Nombre: colocaPalabras
+*Description: colocamos las palabras en la matriz
+*@param sople: sopa de letras
+*@param palab: palabra del tema
+*@param te:   tema escogido
+*@author: Luis Pedrosa Ruiz y JoseluCross
+*@date: 12/04/2016
+*/
 void colocaPalabras(int sople[DIM][DIM], Palabra palab[N_PAL]) {
   int     i;
   for(i = 0; i < N_PAL; i++) {
@@ -405,14 +431,14 @@ void colocaPalabras(int sople[DIM][DIM], Palabra palab[N_PAL]) {
 }
 
 /**
- *Nombre: colocaPalabra
- *Description: coloca la palabra en la sopa
- *@param sopi: sopa de letra
- *@param pala: palabra
- *@param direccion: dirección de la palabra
- *@author: Luis Pedrosa Ruiz y JoseluCross
- *@date: 12/04/2016
- */
+*Nombre: colocaPalabra
+*Description: coloca la palabra en la sopa
+*@param sopi: sopa de letra
+*@param pala: palabra
+*@param direccion: dirección de la palabra
+*@author: Luis Pedrosa Ruiz y JoseluCross
+*@date: 12/04/2016
+*/
 void colocaPalabra(int sopi[DIM][DIM], Palabra * pala, int direccion) {
   int     fila, columna, i, j = 0, k;
   do {
@@ -504,17 +530,17 @@ void colocaPalabra(int sopi[DIM][DIM], Palabra * pala, int direccion) {
 }
 
 /**
- *Nombre: esPosibleColocarPalabra
- *Descripción: comprueba si se puede poner la palabra en la sopa
- *@param so: la sopa de letras
- *@param p: palabra que metemos
- *@param dir: dirección
- *@param col: columna de la matriz
- *@param fil: fila de la matriz
- *@return: 1 si cabe, 0 si no
- *@author: Luis Pedrosa Ruiz JoseluCross
- *@date: 12/04/2016
- */
+*Nombre: esPosibleColocarPalabra
+*Descripción: comprueba si se puede poner la palabra en la sopa
+*@param so: la sopa de letras
+*@param p: palabra que metemos
+*@param dir: dirección
+*@param col: columna de la matriz
+*@param fil: fila de la matriz
+*@return: 1 si cabe, 0 si no
+*@author: Luis Pedrosa Ruiz JoseluCross
+*@date: 12/04/2016
+*/
 bool esPosibleColocarPalabra(int so[DIM][DIM], Palabra p, int col, int fil) {
   bool    error = true;
   int     i, j, k;
@@ -576,8 +602,8 @@ bool esPosibleColocarPalabra(int so[DIM][DIM], Palabra p, int col, int fil) {
 	 || col + (int)strlen(p.palabra) > DIM) {
 	error = false;
       } else {
-	for(i = fil, j = col, k = 0;
-	    i <= fil + (int)strlen(p.palabra); i++, j++, k++) {
+	for(i = fil, j = col, k = 0; i <= fil + (int)strlen(p.palabra);
+	    i++, j++, k++) {
 	  if(so[i][j] != ZERO) {
 	    if(p.palabra[k] != so[i][j]) {
 	      error = false;
@@ -591,8 +617,8 @@ bool esPosibleColocarPalabra(int so[DIM][DIM], Palabra p, int col, int fil) {
 	 || col + (int)strlen(p.palabra) > DIM) {
 	error = false;
       } else {
-	for(i = fil, j = col, k = 0;
-	    i >= fil - (int)strlen(p.palabra); i--, j++, k++) {
+	for(i = fil, j = col, k = 0; i >= fil - (int)strlen(p.palabra);
+	    i--, j++, k++) {
 	  if(so[i][j] != ZERO) {
 	    if(p.palabra[k] != so[i][j]) {
 	      error = false;
@@ -606,8 +632,8 @@ bool esPosibleColocarPalabra(int so[DIM][DIM], Palabra p, int col, int fil) {
 	 || col - (int)strlen(p.palabra) < 0) {
 	error = false;
       } else {
-	for(i = fil, j = col, k = 0;
-	    i <= fil + (int)strlen(p.palabra); i++, j--, k++) {
+	for(i = fil, j = col, k = 0; i <= fil + (int)strlen(p.palabra);
+	    i++, j--, k++) {
 	  if(so[i][j] != ZERO) {
 	    if(p.palabra[k] != so[i][j]) {
 	      error = false;
@@ -621,8 +647,8 @@ bool esPosibleColocarPalabra(int so[DIM][DIM], Palabra p, int col, int fil) {
 	 || col - (int)strlen(p.palabra) < 0) {
 	error = false;
       } else {
-	for(i = fil, j = col, k = 0;
-	    i >= fil - (int)strlen(p.palabra); i--, j--, k++) {
+	for(i = fil, j = col, k = 0; i >= fil - (int)strlen(p.palabra);
+	    i--, j--, k++) {
 	  if(so[i][j] != ZERO) {
 	    if(p.palabra[k] != so[i][j]) {
 	      error = false;
@@ -636,12 +662,12 @@ bool esPosibleColocarPalabra(int so[DIM][DIM], Palabra p, int col, int fil) {
 }
 
 /**
- *Nombre: rellenaMatriz
- *Descripción: los "0" restantes se convierten en un caracter entre A y Z
- *@param sopaLetras: la sopa de letras
- *@author: JoseluCross y Luis Pedrosa Ruiz
- *@date: 23/04/2016
- */
+*Nombre: rellenaMatriz
+*Descripción: los "0" restantes se convierten en un caracter entre A y Z
+*@param sopaLetras: la sopa de letras
+*@author: JoseluCross y Luis Pedrosa Ruiz
+*@date: 23/04/2016
+*/
 void rellenaMatriz(int sopa[DIM][DIM]) {
   int     i, j;
   for(i = 0; i < DIM; i++) {
@@ -655,12 +681,12 @@ void rellenaMatriz(int sopa[DIM][DIM]) {
 }
 
 /**
-  *Nombre: introduceNum
-  *Description: Introduce un número a donde mande el puntero
-  *@param *num: número introducido
-  *@author: Luis Pedrosa Ruiz y JoseluCross
-  *@date: 26/04/2016
-  */
+*Nombre: introduceNum
+*Description: Introduce un número a donde mande el puntero
+*@param *num: número introducido
+*@author: Luis Pedrosa Ruiz y JoseluCross
+*@date: 26/04/2016
+*/
 void introduceNum(int *num) {
   char    c;
   bool    salida = false;
@@ -668,10 +694,11 @@ void introduceNum(int *num) {
     if(scanf("%d%c", num, &c) != 2 || c != '\n') {
       if(getchar() == ESC) {
 	printf("Has pulsado el escape, abortando");
-	exit(0);
+	salida = true;
+	*num = -1;
+      } else {
+	printf("Opción incorrecta. Introduzca un nuevo valor: ");
       }
-      printf("Num vale %d y c vale %d", *num, c);
-      printf("Opción incorrecta. Introduzca un nuevo valor: ");
       clean_stdin();
     } else {
       salida = true;
@@ -680,23 +707,21 @@ void introduceNum(int *num) {
 }
 
 /**
-  *Nombre: coincidePal
-  *Descripción: compara la cadena introducida por el usuario y compara con las cadenas
-  *@param: matrix - sopa de letras
-  *@param: palabras - matriz de las palabras por temas
-  *@param: t - tema
-  *@param: iF - coordenada fila inicial
-  *@param: iC - coordenada columna inicial
-  *@param: fF - coordenada fila final
-  *@param: fC - coordenada columna final
-  *@param: find - palabras encontradas
-  *@autor: Luis Pedrosa Ruiz y José Luis Garrido Labrador
-  *@date: 26/04/2016
-  */
-void coincidePal(int matrix[DIM][DIM],
-		 Palabra palabras[N_PAL],
-		 int iF, int iC, int fF, int fC, bool find[N_PAL],
-		 FILE * salida) {
+*Nombre: coincidePal
+*Descripción: compara la cadena introducida por el usuario y compara con las cadenas
+*@param: matrix - sopa de letras
+*@param: palabras - matriz de las palabras por temas
+*@param: t - tema
+*@param: iF - coordenada fila inicial
+*@param: iC - coordenada columna inicial
+*@param: fF - coordenada fila final
+*@param: fC - coordenada columna final
+*@param: find - palabras encontradas
+*@autor: Luis Pedrosa Ruiz y José Luis Garrido Labrador
+*@date: 26/04/2016
+*/
+void coincidePal(int matrix[DIM][DIM], Palabra palabras[N_PAL], int iF,
+		 int iC, int fF, int fC, bool find[N_PAL], FILE * salida) {
   int     i;			//Contadores y variables auxiliares
   bool    rec = false;		// norec = true;  //Variables de conrol
   //char    pal[TCHAR];
@@ -718,17 +743,17 @@ void coincidePal(int matrix[DIM][DIM],
 }
 
 /**
-  *Nombre: minuscula
-  *Descripción: convierte una sección de la matriz en minuscula
-  *@param: m - sopa de letras
-  *@param: iF - coordenada fila inicial
-  *@param: iC - coordenada columna inicial
-  *@param: fF - coordenada fila final
-  *@param: fC - coordenada columna final
-  *@param: dir - dirección
-  *@autor: Luis Pedrosa Ruiz y José Luis Garrido Labrador
-  *@date: 26/04/2016
-  */
+*Nombre: minuscula
+*Descripción: convierte una sección de la matriz en minuscula
+*@param: m - sopa de letras
+*@param: iF - coordenada fila inicial
+*@param: iC - coordenada columna inicial
+*@param: fF - coordenada fila final
+*@param: fC - coordenada columna final
+*@param: dir - dirección
+*@autor: Luis Pedrosa Ruiz y José Luis Garrido Labrador
+*@date: 26/04/2016
+*/
 void minuscula(int m[DIM][DIM], int iF, int iC, int fF, int fC, int dir) {
   int     i, j;
   switch (dir) {
@@ -792,12 +817,12 @@ void minuscula(int m[DIM][DIM], int iF, int iC, int fF, int fC, int dir) {
 }
 
 /**
- *Title: salida
- *Descripción: Crea un fichero de salida con las palabras encontradas
- *@param pal : palabra encontrada
- *@author: JoseluCross
- *@date: 28/05/2016
- */
+*Title: salida
+*Descripción: Crea un fichero de salida con las palabras encontradas
+*@param pal : palabra encontrada
+*@author: JoseluCross
+*@date: 28/05/2016
+*/
 void salidaPal(Palabra * pal, FILE * salida) {
   fprintf(salida,
 	  "Palabra: %s, Coordenas iniciales - %d   %d  Coordenadas finales - %d   %d",
@@ -805,14 +830,14 @@ void salidaPal(Palabra * pal, FILE * salida) {
 	  (*pal).fila_final, (*pal).columna_final);
 }
 
- /**
-  *Title: Int2Str
-  *Descripción: convierte un nº en una cadena
-  *@param num: número a convertir
-  *@param cad: cadena donde se va a poner
-  *author: JoseluCross
-  *@date: 28/05/2016
-  */
+/**
+*Title: Int2Str
+*Descripción: convierte un nº en una cadena
+*@param num: número a convertir
+*@param cad: cadena donde se va a poner
+*author: JoseluCross
+*@date: 28/05/2016
+*/
 void Int2Str(int num, char cad[11]) {
   int     aux;
   int     i;

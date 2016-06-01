@@ -78,7 +78,7 @@ function Informacion {
 			echo "|	${proc_name[$l]}	|	${proc_arr[$l]}	|	${proc_exe[$l]}	|"
 		fi
 	done
-	echo " --------------------------------------------------------------- "
+	echo " ----------------------------------------------- "
 }
 #Función InformacionPrint guarda en un fichero la informacion
 function InformacionPrint {
