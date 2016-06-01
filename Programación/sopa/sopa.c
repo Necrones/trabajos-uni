@@ -12,6 +12,7 @@
 #include <time.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <math.h>
 //Constantes
 #define DIM 15
 #define TCHAR 11
@@ -25,7 +26,7 @@
 #define ESP 32			//Espacio en ASCII
 #define DASH 45			//- en ASCII
 #define BARRA 124		//| en ASCII
-#define TEMATAM 9		//Tamaño máximo del tema
+#define TEMATAM 15		//Tamaño máximo del tema
 //Registros
 typedef struct {
   char    palabra[TCHAR];
@@ -49,20 +50,20 @@ int     buscaAleatorio(int, int);
 bool    esPosibleColocarPalabra(int[DIM][DIM], Palabra, int, int);
 void    introduceNum(int *);
 void    coincidePal(int[DIM][DIM], Palabra[N_PAL], int,
-		    int, int, int, bool[N_PAL],FILE *);
+		    int, int, int, bool[N_PAL], FILE *);
 void    juego(int[DIM][DIM], Palabra[N_TEMA][N_PAL],
-	      char[N_TEMA][TEMATAM],FILE *);
+	      char[N_TEMA][TEMATAM], FILE *);
 void    minuscula(int[DIM][DIM], int, int, int, int, int);
 bool    rango(int, int, int);
-void    salidaPal(Palabra *);
+void    salidaPal(Palabra *, FILE *);
 void    Int2Str(int, char[]);
-void    cargar(void);
-//Variables global
-unsigned int seed;		//Semilla
+void    cargar(unsigned int *);
+void    leeCoordenadas(int *, int *, int *, int *);
+
 int main() {
-  seed = time(NULL);
-  cargar();
-  srand(seed);
+  unsigned int seed = time(NULL);	//Semilla
+  cargar(&seed);
+  srand(abs(seed));
   //srand(22);                  //Cruce en coches y colores
   int     sopa[DIM][DIM];
   Palabra temas[N_TEMA][N_PAL];
@@ -70,20 +71,25 @@ int main() {
   FILE   *fil;
   FILE   *sal;
   fil = fopen("sopa.txt", "r");
-  char    semilla[11];
-  char    nombre[18];
-  strcpy(nombre, "Salida-");
-  Int2Str(seed, semilla);
-  strcat(nombre, semilla);
-  sal = fopen(nombre, "w");
-  if(fil == NULL || sal == NULL) {
-    printf
-	("Error al leer sopa.txt o escribir %s\n",nombre);
+  if(fil == NULL) {
+    printf("El archivo no se puede leer");
   } else {
-    rellenaTemas(temas, fil, tema);
+    char    semilla[11];
+    char    nombre[18];
+    strcpy(nombre, "Salida-");
+    Int2Str(abs(seed), semilla);
+    strcat(nombre, semilla);
+    sal = fopen(nombre, "w");
+    if(sal == NULL) {
+      printf("Error al escribir %s\n", nombre);
+    } else {
+      rellenaTemas(temas, fil, tema);
+      fclose(fil);
+      system("clear");
+      juego(sopa, temas, tema, sal);
+      fclose(sal);
+    }
     fclose(fil);
-    system("clear");
-    juego(sopa, temas, tema,sal);
   }
   return 0;
 }
@@ -108,14 +114,14 @@ int clean_stdin() {
  *date: 12/04/2016
  *@version: 1.0
  */
-void cargar() {
+void cargar(unsigned int *semilla) {
   int     tecla;
   printf
       ("Puede cargar una semilla anterior para recuperar las mismas posiciones\nPulsa espacio para introducirlo, cualquier otra para continuar");
   tecla = getchar();
   if(tecla == ESP) {
     printf("Introduce una semilla nueva: ");
-    introduceNum(&seed);
+    introduceNum(semilla);
   }
 }
 
@@ -129,12 +135,12 @@ void cargar() {
   *@date: 26/04/2016
   */
 void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
-	   char te[N_TEMA][TEMATAM],FILE *salida) {
+	   char te[N_TEMA][TEMATAM], FILE * salida) {
   int     ini_fila, ini_col, fin_fila, fin_col;	//Coordenadas
   bool    palEncontrada[N_PAL];
   int     i;			//Contador
   int     respuestas;
-  bool    victoria = false, game = true, salida;
+  bool    victoria = false, game = true;
   int     partida, tema;
   while(game) {
     //Iniciamos el juego
@@ -149,25 +155,10 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
 	palEncontrada[i] = false;
       }
       do {
-	do {
-	  printf("Introduce la primera coordenada (fila): ");
-	  introduceNum(&ini_fila);
-	} while(rango(1, DIM, ini_fila));
-	do {
-	  printf("Introduce la primera coordenada (columna): ");
-	  introduceNum(&ini_col);
-	} while(rango(1, DIM, ini_col));
-	do {
-	  printf("Introduce la segunda coordenada (fila): ");
-	  introduceNum(&fin_fila);
-	} while(rango(1, DIM, fin_fila));
-	do {
-	  printf("Introduce la segunda coordenada (columna): ");
-	  introduceNum(&fin_col);
-	} while(rango(1, DIM, fin_col));
+	leeCoordenadas(&ini_fila, &fin_fila, &ini_col, &fin_col);
 	system("clear");
 	coincidePal(matriz, themes[tema], ini_fila - 1, ini_col - 1,
-		    fin_fila - 1, fin_col - 1, palEncontrada,salida);
+		    fin_fila - 1, fin_col - 1, palEncontrada, salida);
 	imprimirSopa(matriz);
 	for(i = 0, respuestas = 0; i < N_PAL; ++i) {
 	  if(palEncontrada[i] == true) {
@@ -178,15 +169,6 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
 	  victoria = true;
 	}
 	printf("Quedan %i palabras\n", N_PAL - respuestas);
-	if(!victoria) {
-	  printf
-	      ("¿Quiere seguir jugando? - No (ESC) - Si (cualquier tecla): ");
-	  partida = getchar();
-	  if(partida == ESC) {
-	    printf("Gracias por jugar, vuelva cuando quiera\n");
-	    game = false;
-	  }
-	}
       }
       while(!victoria && game);
       if(game) {
@@ -198,11 +180,6 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
 	    printf("Adios\n");
 	    game = false;
 	  } else if(partida == ESP) {
-	    printf("1 - %s\n", te[0]);
-	    printf("2 - %s\n", te[1]);
-	    printf("3 - %s\n", te[2]);
-	    printf("4 - %s\n", te[3]);
-	    printf("5 - %s\n", te[4]);
 	    victoria = false;
 	  }
 	} while(partida != ESP && partida != ESC);
@@ -211,6 +188,36 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
       game = false;
     }
   }
+}
+
+/**
+ *Nombre: leeCoordenadas
+ *Description: lee las cuatro coordenadas
+ *@param fil_in: fila inicial 
+ *@param fil_fin: fila final
+ *@param col_in: columna inicial 
+ *@param col_fin: columna final
+ *@date: 31/05/2016
+ *@version: 1.0
+ */
+void leeCoordenadas(int *fil_in, int *fil_fin, int *col_in, int *col_fin) {
+  do {
+    printf("Introduce la primera coordenada (fila): ");
+    introduceNum(fil_in);
+  } while(rango(1, DIM, *fil_in));
+  do {
+    printf("Introduce la primera coordenada (columna): ");
+    introduceNum(col_in);
+  } while(rango(1, DIM, *col_in));
+  do {
+    printf("Introduce la segunda coordenada (fila): ");
+    introduceNum(fil_fin);
+  } while(rango(1, DIM, *fil_fin));
+  do {
+    printf("Introduce la segunda coordenada (columna): ");
+    introduceNum(col_fin);
+  } while(rango(1, DIM, *col_fin));
+
 }
 
 /**
@@ -659,6 +666,11 @@ void introduceNum(int *num) {
   bool    salida = false;
   do {
     if(scanf("%d%c", num, &c) != 2 || c != '\n') {
+      if(getchar() == ESC) {
+	printf("Has pulsado el escape, abortando");
+	exit(0);
+      }
+      printf("Num vale %d y c vale %d", *num, c);
       printf("Opción incorrecta. Introduzca un nuevo valor: ");
       clean_stdin();
     } else {
@@ -683,7 +695,8 @@ void introduceNum(int *num) {
   */
 void coincidePal(int matrix[DIM][DIM],
 		 Palabra palabras[N_PAL],
-		 int iF, int iC, int fF, int fC, bool find[N_PAL],FILE *salida) {
+		 int iF, int iC, int fF, int fC, bool find[N_PAL],
+		 FILE * salida) {
   int     i;			//Contadores y variables auxiliares
   bool    rec = false;		// norec = true;  //Variables de conrol
   //char    pal[TCHAR];
@@ -785,11 +798,12 @@ void minuscula(int m[DIM][DIM], int iF, int iC, int fF, int fC, int dir) {
  *@author: JoseluCross
  *@date: 28/05/2016
  */
-void salidaPal(Palabra * pal, FILE *salida) {
-  fprintf(salida, "Palabra: %s, Coordenas iniciales - %d   %d  Coordenadas finales - %d   %d",
-	    (*pal).palabra, (*pal).fila_inicio, (*pal).columna_inicio,
-	    (*pal).fila_final, (*pal).columna_final);
-  }
+void salidaPal(Palabra * pal, FILE * salida) {
+  fprintf(salida,
+	  "Palabra: %s, Coordenas iniciales - %d   %d  Coordenadas finales - %d   %d",
+	  (*pal).palabra, (*pal).fila_inicio, (*pal).columna_inicio,
+	  (*pal).fila_final, (*pal).columna_final);
+}
 
  /**
   *Title: Int2Str

@@ -350,7 +350,6 @@ end=0 #Procesos terminados
 e=0 #e=0 aun no ha terminado, e=1 ya se terminó
 j=0
 exe=0	#Ejecuciones que ha habido en una vuelta de lista
-quantum_aux=$quantum #Quantum del que se dispone
 position=0 #Posición del porceso que se debe ejecutar ahora
 fin=0
 mot=0
@@ -386,47 +385,35 @@ while [ $e -eq 0 ];do
 	fi
 	echo "" >> informe.txt
 	echo "Ráfaga $clock" >> informe.txt
-	if [ $quantum_aux -eq $quantum ] && [ $end -ne $proc ];then #Cambio de contexto
-		clock_time=$clock
-		if [ $auto != "c" ];then
-			echo -e "${blue}El proceso ${proc_name[$z]} entra ahora en el procesador${NC}"
-		fi
-		echo "El proceso ${proc_name[$z]} entra ahora en el procesador" >> informe.txt
-	fi
-	if [ $quantum_aux -gt 0 ] && [ $end -ne $proc ];then #Pasa un ciclo
-		let clock=clock+1
-		let quantum_aux=quantum_aux-1
-		proc_exe[$z]=$(expr ${proc_exe[$z]} - 1)
-		EspAcu 0
-		exe=1
-	fi
-	if [ "${proc_exe[$z]}" -eq 0 ] && [ $end -ne $proc ];then #El proceso termina en este tiempo
-		let proc_ret[$z]=$clock-1	#El momento de retorno será igual al momento de salida en el reloj (este aumento antes por lo que vamos hacia atras)		
-		let proc_retR[$z]=proc_ret[$z]-proc_arr[$z]
-		quantum_aux=0
-		fin=1
-		mot=1
-		if [ $auto != "c" ];then
-			echo "El proceso ${proc_name[$z]} termina en esta ráfaga"
-		fi
-		echo "El proceso ${proc_name[$z]} termina en esta ráfaga" >> informe.txt
-	fi
-	if [ $quantum_aux -eq 0 ] && [ $end -ne $proc ];then #Fin del uso de quantum del proceso
-		if [ $mot -eq 0 ];then
-			if [ $auto != "c" ];then
-				echo "El proceso ${proc_name[$z]} agota su quantum en este tiempo, ráfagas restantes: ${proc_exe[$z]}"
-			fi
-			echo "El proceso ${proc_name[$z]} agota su quantum en este tiempo, ráfagas restántes ${proc_exe[$z]}" >> informe.txt
-		else
-			mot=0
-		fi
-		if [ $auto != "c" ];then
-			echo -e "${cyan_back}|${proc_name[$z]}($clock_time,${proc_exe[$z]})|${NC}"
-		fi
-		echo "|${proc_name[$z]}($clock_time,${proc_exe[$z]})|" >> informe.txt
-		let position=position+1
-		quantum_aux=$quantum
-	fi
+	#Primera condición si la ejecución no es 0 (terminado), segunda si el momento de llegada es menor o igual al turno de reloj actual
+ 	if [ "${proc_arr[$z]}" -le $clock ];then 
+ 		if [ "${proc_exe[$z]}" -ne 0 ];then
+ 			if [ "${proc_exe[$z]}" -le $quantum ];then #El proceso termina en este tiempo
+ 				echo "${proc_name[$z]}($clock,0)"
+ 				echo "${proc_name[$z]}($clock,0)" >>informe.txt
+ 				let clock=clock+proc_exe[$z]
+ 				proc_ret[$z]=$clock	#El momento de retorno será igual al momento de salida en el reloj			
+ 				let proc_retR[$z]=proc_ret[$z]-proc_arr[$z]
+ 				let end=end+1
+ 				clock_time=${proc_exe[$z]} #Cuanto tiempo se ha estado ejecutando en este turno
+ 				EspAcu 0
+ 				proc_exe[$z]=0
+ 				let exe=exe+1
+ 			else 
+				let clock=clock+quantum
+				clock_time=$quantum #Cuanto tiempo se ha estado ejecutando en este turno
+				EspAcu 0
+ 				let proc_exe[$z]=proc_exe[$z]-quantum
+				let exe=exe+1
+ 				echo "${proc_name[$z]}($clock,${proc_exe[$z]})"
+ 				echo "${proc_name[$z]}($clock,${proc_exe[$z]})" >>informe.txt
+				let clock=clock+quantum
+				clock_time=$quantum #Cuanto tiempo se ha estado ejecutando en este turno
+				EspAcu 0				
+				let exe=exe+1			
+ 			fi
+ 		fi
+ 	fi
 	Estado
 	if [ $auto = "a" ];then
 		if [ $end -ne $proc ];then

@@ -1,5 +1,5 @@
-asesinos
-ezio,altair,connor,edward,desmond,pierre,jacob,aveline
+marcas
+orolivesur,cocacola,
 formas
 circulo,rombo,cuadrado,pentagono,rectangulo,trapecio,triangulo,elipse
 colores
