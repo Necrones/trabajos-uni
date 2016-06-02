@@ -139,10 +139,8 @@ function media() {
 	tot=0
 	for (( y=0; y<$proc; y++ ))
 	do
-		if [ "${proc_stop[$y]}" -eq 0 ] 2> /dev/null ;then
-			media=$(expr $media + ${array[$y]})
+			let media=media+array[$y]
 			let tot=tot+1
-		fi
 	done
 	media=$(expr $media / $tot)
 	return $media
@@ -626,7 +624,7 @@ while [ $e -eq 0 ];do
 			if [ $auto != "c" ];then
 				echo "El proceso ${proc_name[$z]} agota su quantum en este tiempo, ráfagas restantes: ${proc_exe[$z]}"
 			fi
-			echo "El proceso ${proc_name[$z]} agota su quantum en este tiempo, ráfagas restántes ${proc_exe[$z]}" >> informe.txt
+			echo "El proceso ${proc_name[$z]} agota su quantum en este tiempo, ráfagas restantes ${proc_exe[$z]}" >> informe.txt
 		else
 			mot=0
 		fi

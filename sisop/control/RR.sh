@@ -120,32 +120,28 @@ function Fichero {
 	done
 	proc=${#proc_name[@]}
 }
-#Función EspAcu; aumenta el tiempo de espera acumulado de cada proceso
-function EspAcu() {
-	for (( y=0; y<$proc; y++ ))
-	do
-		if [ "${proc_exe[$y]}" -ne 0 ];then
-			if [ $y -ne $z -o $1 -eq 1 ];then
-				let proc_waitA[$y]=proc_waitA[$y]+1
-			fi
-		fi
-	done
-}
-#Función media; calcula la media de valores de un vector
-function media() {
-	local array=("${!1}")
-	media=0
-	tot=0
-	for (( y=0; y<$proc; y++ ))
-	do
-		if [ "${proc_stop[$y]}" -eq 0 ] 2> /dev/null ;then
-			media=$(expr $media + ${array[$y]})
-			let tot=tot+1
-		fi
-	done
-	media=$(expr $media / $tot)
-	return $media
-}
+ #Función EspAcu; aumenta el tiempo de espera acumulado de cada proceso
+ function EspAcu() {
+ 	for (( y=0; y<$proc; y++ ))
+ 	do
+ 		if [ $y -ne $z -o $1 -eq 1 ] && [ "${proc_exe[$y]}" -ne 0 ];then
+ 			let proc_waitA[$y]=proc_waitA[$y]+aumento
+ 		fi
+ 	done
+ }
+ #Función media; calcula la media de valores de un vector
+ function media() {
+ 	local array=("${!1}")
+ 	media=0
+ 	local tot
+ 	tot=$proc
+ 	for (( y=0; y<$proc; y++ ))
+ 	do
+ 		let media=media+array[$y]
+ 	done
+  	media=$(expr $media / $tot)
+  	return $media
+  }
 #Función SiNo; comprueba si se ha medito un si o un no
 function SiNo(){
 	local j=0
@@ -159,12 +155,12 @@ function Estado {
 	local restante
 	if [ $auto != "c" ];then
 		echo ""	
-		echo -e "${coffe}Al final de la ejecución de este tiempo los datos son:${NC}"
+		echo -e "${coffe}Tras el último evento este es el resumen:${NC}"
 		echo " ------------------------------------------------------------------------------- "
 		echo "|    Procesos   |     Tiempo esp acumulado      |      Ejecución restante       |"
 	fi
 	echo "" >> informe.txt
-	echo "Al final de la ejecución de este tiempo los datos son:" >> informe.txt
+	echo "Tras el último evento este es el resumen" >> informe.txt
 	echo " ------------------------------------------------------------------------------- " >> informe.txt
 	echo "|    Procesos   |     Tiempo esp acumulado      |      Ejecución restante       |" >> informe.txt
 	for (( p=0; p<$proc;p++ ))
@@ -363,6 +359,8 @@ while [ $e -eq 0 ];do
 				z=${proc_order[$position]}
 				if [ $exe -eq 0 ];then
 					let clock=clock+1 #Si no ha habido ninguna ejecución en la lista anterior ir al siguiente turno
+					clock_time=1
+					aumento=1
 					EspAcu 1
 				fi
 				exe=0
@@ -376,40 +374,53 @@ while [ $e -eq 0 ];do
 			fi
 		done
 	fi
-	if [ $auto != "c" ];then
-		echo -e "${red}Ráfaga $clock${NC}"
-	fi
-	echo "" >> informe.txt
-	echo "Ráfaga $clock" >> informe.txt
 	#Primera condición si la ejecución no es 0 (terminado), segunda si el momento de llegada es menor o igual al turno de reloj actual
- 	if [ "${proc_arr[$z]}" -le $clock ];then 
- 		if [ "${proc_exe[$z]}" -ne 0 ];then
- 			if [ "${proc_exe[$z]}" -le $quantum ];then #El proceso termina en este tiempo
- 				echo "${proc_name[$z]}($clock,0)"
- 				echo "${proc_name[$z]}($clock,0)" >>informe.txt
- 				let clock=clock+proc_exe[$z]
- 				proc_ret[$z]=$clock	#El momento de retorno será igual al momento de salida en el reloj			
- 				let proc_retR[$z]=proc_ret[$z]-proc_arr[$z]
- 				let end=end+1
- 				clock_time=${proc_exe[$z]} #Cuanto tiempo se ha estado ejecutando en este turno
- 				EspAcu 0
- 				proc_exe[$z]=0
- 				let exe=exe+1
- 			else 
-				let clock=clock+quantum
-				clock_time=$quantum #Cuanto tiempo se ha estado ejecutando en este turno
-				EspAcu 0
- 				let proc_exe[$z]=proc_exe[$z]-quantum
-				let exe=exe+1
- 				echo "${proc_name[$z]}($clock,${proc_exe[$z]})"
- 				echo "${proc_name[$z]}($clock,${proc_exe[$z]})" >>informe.txt
-				let clock=clock+quantum
-				clock_time=$quantum #Cuanto tiempo se ha estado ejecutando en este turno
-				EspAcu 0				
-				let exe=exe+1			
- 			fi
- 		fi
- 	fi
+ 	if [ $end -ne $proc ];then #Cambio de contexto
+ 		quantum_aux=$quantum
+		clock_time=$clock
+		if [ $auto != "c" ];then
+			echo -e "${blue}El proceso ${proc_name[$z]} entra ahora en el procesador${NC}"
+		fi
+		echo "El proceso ${proc_name[$z]} entra ahora en el procesador" >> informe.txt
+	fi
+	if [ $quantum_aux -ge ${proc_exe[$z]} ];then #El proceso termina en este quantum
+		let clock=clock+proc_exe[$z]
+		let proc_ret[$z]=$clock-1	#El momento de retorno será igual al momento de salida en el reloj
+		let proc_retR[$z]=proc_ret[$z]-proc_arr[$z]
+		let quantum_aux=0
+		fin=1
+		mot=1
+		aumento=${proc_exe[$z]}
+		proc_exe[$z]=0
+		exe=1
+		let end=end+1
+		if [ $auto != "c" ];then
+			echo "El proceso ${proc_name[$z]} termina antes de agotar el quantum"
+		fi
+		echo "El proceso ${proc_name[$z]} termina antes de agotar el quantum" >> informe.txt
+	else #El proceso no termina en este tiempo
+		let clock=clock+quantum
+		aumento=$quantum
+		quantum_aux=0
+		let proc_exe[$z]=proc_exe[$z]-quantum
+		exe=1
+	fi
+	if [ $quantum_aux -eq 0 ] && [ $end -ne $proc ];then #Fin del uso de quantum del proceso
+		if [ $mot -eq 0 ];then
+			if [ $auto != "c" ];then
+				echo "El proceso ${proc_name[$z]} agota su quantum en este tiempo, ráfagas restantes: ${proc_exe[$z]}"
+			fi
+			echo "El proceso ${proc_name[$z]} agota su quantum en este tiempo, ráfagas restantes ${proc_exe[$z]}" >> informe.txt
+		else
+			mot=0
+		fi
+		if [ $auto != "c" ];then
+			echo -e "${cyan_back}|${proc_name[$z]}($clock_time,${proc_exe[$z]})|${NC}"
+		fi
+		echo "|${proc_name[$z]}($clock_time,${proc_exe[$z]})|" >> informe.txt
+	fi
+ 	let position=position+1
+ 	EspAcu 0
 	Estado
 	if [ $auto = "a" ];then
 		if [ $end -ne $proc ];then
@@ -420,15 +431,13 @@ while [ $e -eq 0 ];do
 		sleep 5
 	fi
 	if [ $end -eq $proc ];then #Si todos los procesos terminados son igual a los procesos introducidos
-			e=1
+		e=1
 	fi
 done
 #Damos valor a proc_waitR
 for (( y=0; y<$proc; y++ ))
 do
-	if [ "${proc_stop[$y]}" -eq 0 ] 2> /dev/null ;then
-		let proc_waitR[$y]=proc_waitA[$y]-proc_arr[$y]
-	fi
+	let proc_waitR[$y]=proc_waitA[$y]-proc_arr[$y]
 done
 if [ $auto != "c" ];then
 	read -p "Pulsa cualquier tecla para ver resumen."

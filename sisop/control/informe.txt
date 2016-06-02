@@ -11,4 +11,4 @@
 |				        CC-BY-SA (Documentación)				   |
 |					    GPLv3 (Código)					   |
  -------------------------------------------------------------------------------------------------- 
-El quantum escogido es 3
+El quantum escogido es 2
