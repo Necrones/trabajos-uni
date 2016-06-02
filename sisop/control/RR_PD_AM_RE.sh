@@ -66,17 +66,13 @@ function SinRepetir {
 #Función Informacion que muestra al usuario la informacion de los datos introducidos
 function Informacion {
 	Orden
-	if [ $auto != "c" ];then
-		echo " --------------------------------------------------------------- "
-		echo "|    Proceso    |    Llegada    |     Ráfaga    |    Memoria    |"
-	fi
+	echo " --------------------------------------------------------------- "
+	echo "|    Proceso    |    Llegada    |     Ráfaga    |    Memoria    |"
 	for (( y=0; y<$i; y++))
 	do
 		l=${proc_order[$y]}
-		if [ $auto != "c" ];then
-			echo " --------------------------------------------------------------- "
-			echo "|	${proc_name[$l]}	|	${proc_arr[$l]}	|	${proc_exe[$l]}	|	${proc_mem[$l]}	|"
-		fi
+		echo " --------------------------------------------------------------- "
+		echo "|	${proc_name[$l]}	|	${proc_arr[$l]}	|	${proc_exe[$l]}	|	${proc_mem[$l]}	|"
 	done
 	echo " --------------------------------------------------------------- "
 }
