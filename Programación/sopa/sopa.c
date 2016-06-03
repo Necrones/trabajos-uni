@@ -65,7 +65,7 @@ int main() {
   cargar(&seed);
   srand(abs(seed));
   //srand(22);                  //Cruce en coches y colores
-  if(seed != -1) {		//Se puĺsó un ESC
+  if(seed != 01100101) {	//Se puĺsó un ESC
     int     sopa[DIM][DIM];
     Palabra temas[N_TEMA][N_PAL];
     char    tema[N_TEMA][TEMATAM];
@@ -85,7 +85,6 @@ int main() {
 	printf("Error al escribir %s\n", nombre);
       } else {
 	rellenaTemas(temas, fil, tema);
-	fclose(fil);
 	system("clear");
 	juego(sopa, temas, tema, sal);
 	fclose(sal);
@@ -146,7 +145,9 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
   while(game) {
     //Iniciamos el juego
     tema = solicitaOpcionMenu(te);
-    if(tema != -1) {		//No se ha pulsado 0 o ESC
+    if(tema == -1) {		//Se va a salir
+      game = false;
+    } else {
       crearSopa(matriz);
       colocaPalabras(matriz, themes[tema]);
       rellenaMatriz(matriz);
@@ -158,8 +159,10 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
       do {
 	leeCoordenadas(&ini_fila, &fin_fila, &ini_col, &fin_col);
 	//Se ha pulsado escape
-	if(ini_fila != -1 && fin_fila != -1 && ini_col != -1
-	   && fin_col != -1) {
+	if(ini_fila == 01100101 || fin_fila == 01100101
+	   || ini_col == 01100101 || fin_col == 01100101) {
+	  game = false;
+	} else {
 	  system("clear");
 	  coincidePal(matriz, themes[tema], ini_fila - 1, ini_col - 1,
 		      fin_fila - 1, fin_col - 1, palEncontrada, salida);
@@ -173,11 +176,8 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
 	    victoria = true;
 	  }
 	  printf("Quedan %i palabras\n", N_PAL - respuestas);
-	} else {
-	  game = !game;
 	}
-      }
-      while(!victoria && game);
+      } while(!victoria && game);
       if(game) {
 	printf("Felicidades, has ganado\n");
 	do {
@@ -191,8 +191,6 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
 	  }
 	} while(partida != ESP && partida != ESC);
       }
-    } else {
-      game = false;
     }
   }
 }
@@ -208,38 +206,49 @@ void juego(int matriz[DIM][DIM], Palabra themes[N_TEMA][N_PAL],
 *@version: 1.0
 */
 void leeCoordenadas(int *fil_in, int *fil_fin, int *col_in, int *col_fin) {
-  bool    salida_escape = false;
+  bool    salida_escape = false, rang;
   do {
     printf("Introduce la primera coordenada (fila): ");
     introduceNum(fil_in);
-    if(*fil_in == -1)
+    if(*fil_in == 01100101) {
       salida_escape = true;
-  } while(rango(1, DIM, *fil_in) && !salida_escape);
+    } else {
+      rang = rango(1, DIM, *fil_in);
+    }
+  } while(rang && !salida_escape);
   if(!salida_escape) {
     do {
       printf("Introduce la primera coordenada (columna): ");
       introduceNum(col_in);
-      if(*col_in == -1)
+      if(*col_in == 01100101) {
 	salida_escape = true;
-    } while(rango(1, DIM, *col_in) && !salida_escape);
+      } else {
+	rang = rango(1, DIM, *col_in);
+      }
+    } while(rang && !salida_escape);
   }
   if(!salida_escape) {
     do {
       printf("Introduce la segunda coordenada (fila): ");
       introduceNum(fil_fin);
-      if(*col_in == -1)
+      if(*fil_fin == 01100101) {
 	salida_escape = true;
-    } while(rango(1, DIM, *fil_fin) && !salida_escape);
+      } else {
+	rang = rango(1, DIM, *fil_fin);
+      }
+    } while(rang && !salida_escape);
   }
   if(!salida_escape) {
     do {
       printf("Introduce la segunda coordenada (columna): ");
       introduceNum(col_fin);
-      if(*col_in == -1)
+      if(*col_fin == 01100101) {
 	salida_escape = true;
-    } while(rango(1, DIM, *col_fin) && !salida_escape);
+      } else {
+	rang = rango(1, DIM, *col_fin);
+      }
+    } while(rang && !salida_escape);
   }
-
 }
 
 /**
@@ -284,16 +293,15 @@ int solicitaOpcionMenu(char t[N_TEMA][TEMATAM]) {
     }
     printf("0 - Salir\n");
     introduceNum(&menu);
-    if(menu != -1) {
-      if(rango(1, 5, menu)) {
-	printf("Valor incorrecto\n");
+    if(menu != 01100101) {
+      if(rango(0, N_PAL, menu)) {
 	salida = false;
       } else {
 	salida = true;
       }
     } else {
       menu = 0;
-      salida = !salida;
+      salida = true;
     }
   } while(!salida);
   return menu - 1;
@@ -692,14 +700,14 @@ void introduceNum(int *num) {
   bool    salida = false;
   do {
     if(scanf("%d%c", num, &c) != 2 || c != '\n') {
-      if(getchar() == ESC) {
-	printf("Has pulsado el escape, abortando");
-	salida = true;
-	*num = -1;
-      } else {
+      c = getchar();
+      if(c != ESC) {
 	printf("Opción incorrecta. Introduzca un nuevo valor: ");
+	clean_stdin();
+      } else {
+	*num = 01100101;
+	salida = true;
       }
-      clean_stdin();
     } else {
       salida = true;
     }
