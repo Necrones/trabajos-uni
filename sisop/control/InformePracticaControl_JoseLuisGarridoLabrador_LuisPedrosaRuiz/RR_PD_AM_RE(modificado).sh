@@ -5,6 +5,13 @@
 #Description: Simulation of Round Robin Algorithm and memory management
 #Licence: CC-BY-SA (Documentation), GPLv3 (Source)
 
+#Truncado de la memoria
+#Aquí se guarda la variable que determina la cantidad de memoria que aparece en cada linea, por defecto 0 (sin truncamiento)
+memTruncada=$1
+if [ -z $memTruncada ];then
+	memTruncada=0
+fi
+
 #Variables globales de ayuda
 MAX=9999
 #Colores
@@ -23,6 +30,45 @@ NC='\e[0m' # No Color
 Li="${cyan}Li${NC}"
 
 ##Funciones
+#Funcion PrintMem; imprime la memoria
+function PrintMem {
+	for (( jk=0; jk<$mem_total; jk++ ))
+	do
+		if [ ${mem[$jk]} = $Li ];then
+			mem_print[$jk]="Li"
+		else
+			mem_print[$jk]=${mem[$jk]}
+		fi
+	done
+	if [ $auto != "c" ];then
+		echo -e "${purple}Memoria libre actual $mem_aux MB${NC}"
+		echo -e "${gree}Distribución actual de la memoria${NC}"
+	fi
+	echo "Memoria libre actual $mem_aux MB$" >> informe.txt
+	echo "Distribución actual de la memoria" >> informe.txt
+	if [ $memTruncada -eq 0 ] 2> /dev/null;then
+		if [ $auto != "c" ];then
+			echo -e "${mem[@]}"
+		fi	
+		echo "${mem_print[@]}" >> informe.txt
+		auxiliar=0	
+	else
+		auxiliarMemoria=0
+		for (( jk=0; jk<$mem_total; jk++ ))
+		do
+			if [ $auxiliarMemoria -eq $memTruncada ] 2> /dev/null;then
+				auxiliarMemoria=0
+				printf "\n"
+				printf "\n" >> informe.txt
+			fi
+			if [ $auto != "c" ];then
+				printf -- "%s " ${mem_print[$jk]}
+			fi
+			printf -- "%s " ${mem_print[$jk]} >> informe.txt
+			let auxiliarMemoria=auxiliarMemoria+1
+		done
+	fi
+}
 #Función Orden; ordena el vector arr según orden de menor a mayor
 #Creación de la lista según llegada
 function Orden {
@@ -292,7 +338,7 @@ function SiNo(){
 	fi
 	return $j
 }
-#Función Estado: dice para la ráfaga acual los datos actuales de los procesos
+#Función Estado: dice para el tiempo acual los datos actuales de los procesos
 function Estado {
 	local restante
 	local memIni
@@ -524,7 +570,7 @@ do
 	proc_arr_aux[$y]=${proc_arr[$y]}
 done
 min=${proc_order[0]}
-clock=${proc_arr[$min]}	#Ráfaga actual
+clock=${proc_arr[$min]}	#Tiempo actual actual
 for (( i=0; i<$proc; i++ ))
 do
 	proc_waitA[$i]=$clock
@@ -589,10 +635,10 @@ while [ $e -eq 0 ];do
 		done
 	fi
 	if [ $auto != "c" ];then
-		echo -e "${red}Ráfaga $clock${NC}"
+		echo -e "${red}Unidad de tiempo actual $clock${NC}"
 	fi
 	echo "" >> informe.txt
-	echo "Ráfaga $clock" >> informe.txt
+	echo "Unidad de tiempo actual $clock" >> informe.txt
 	AsignaMem $clock
 	if [ $quantum_aux -eq $quantum ] && [ $end -ne $proc ];then #Cambio de contexto
 		clock_time=$clock
@@ -649,23 +695,7 @@ while [ $e -eq 0 ];do
 		fin=0
 	fi
 	if [ $auxiliar -eq 1 ];then
-		if [ $auto != "c" ];then
-			echo -e "${purple}Memoria libre actual $mem_aux MB${NC}"
-			echo -e "${gree}Distribución actual de la memoria${NC}"
-			echo -e "${mem[@]}"
-		fi
-		echo "Memoria libre actual $mem_aux MB$" >> informe.txt
-		echo "Distribución actual de la memoria" >> informe.txt
-		for (( jk=0; jk<$mem_total; jk++ ))
-		do
-			if [ ${mem[$jk]} = $Li ];then
-				mem_print[$jk]="Li"
-			else
-				mem_print[$jk]=${mem[$jk]}
-			fi
-		done
-		echo "${mem_print[@]}" >> informe.txt
-		auxiliar=0
+		PrintMem
 	fi
 	Estado
 	if [ $auto = "a" ];then

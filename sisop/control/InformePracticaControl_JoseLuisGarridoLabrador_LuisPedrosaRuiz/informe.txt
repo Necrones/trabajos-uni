@@ -38,14 +38,14 @@ Los datos de los procesos son los siguientes
 |	p9	|	6	|	2	|	9	|
  --------------------------------------------------------------- 
 
-Ráfaga 0
+Unidad de tiempo actual 0
 El proceso p2 ha entrado en memoria
 El proceso p6 ha entrado en memoria
 El proceso p2 entra ahora en el procesador
 Memoria libre actual 50 MB$
 Distribución actual de la memoria
-p2 p2 p2 p2 p2 p2 p2 p2 p2 p2 p2 p2 p2 p2 p2 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li
-
+p2 p2 p2 p2 p2 p2 p2 p2 p2 p2 p2 p2 p2 p2 p2 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 
+Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li 
 Al final de la ejecución de este tiempo los datos son:
  ------------------------------------------------------------------------------------------------------------------------------- 
 |    Procesos   |     Tiempo esp acumulado      |      Ejecución restante       |    Memoria    |  Pos mem ini  |  Pos mem fin  |
@@ -71,15 +71,15 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		1		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 1
+Unidad de tiempo actual 1
 El proceso p3 ha entrado en memoria
 El proceso p2 termina en esta ráfaga
 |p2(0,0)|
 El proceso p2 retorna al final de la ráfaga 1, la memoria asignada fue liberada
 Memoria libre actual 40 MB$
 Distribución actual de la memoria
-Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li
-
+Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 p6 
+p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li 
 Al final de la ejecución de este tiempo los datos son:
  ------------------------------------------------------------------------------------------------------------------------------- 
 |    Procesos   |     Tiempo esp acumulado      |      Ejecución restante       |    Memoria    |  Pos mem ini  |  Pos mem fin  |
@@ -105,7 +105,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		2		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 2
+Unidad de tiempo actual 2
 El proceso p4 necesita mas memoria de la disponible actualmente, se ejecutará más adelante
 El proceso p6 entra ahora en el procesador
 
@@ -134,7 +134,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		3		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 3
+Unidad de tiempo actual 3
 
 Al final de la ejecución de este tiempo los datos son:
  ------------------------------------------------------------------------------------------------------------------------------- 
@@ -161,7 +161,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		4		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 4
+Unidad de tiempo actual 4
 El proceso p6 agota su quantum en este tiempo, ráfagas restantes 1
 |p6(2,1)|
 
@@ -190,7 +190,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		5		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 5
+Unidad de tiempo actual 5
 El proceso p3 entra ahora en el procesador
 
 Al final de la ejecución de este tiempo los datos son:
@@ -218,7 +218,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		6		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 6
+Unidad de tiempo actual 6
 
 Al final de la ejecución de este tiempo los datos son:
  ------------------------------------------------------------------------------------------------------------------------------- 
@@ -245,7 +245,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		7		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 7
+Unidad de tiempo actual 7
 El proceso p3 agota su quantum en este tiempo, ráfagas restantes 3
 |p3(5,3)|
 
@@ -274,15 +274,15 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		8		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 8
+Unidad de tiempo actual 8
 El proceso p6 entra ahora en el procesador
 El proceso p6 termina en esta ráfaga
 |p6(8,0)|
 El proceso p6 retorna al final de la ráfaga 8, la memoria asignada fue liberada
 Memoria libre actual 75 MB$
 Distribución actual de la memoria
-Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li
-
+Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li 
+p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li 
 Al final de la ejecución de este tiempo los datos son:
  ------------------------------------------------------------------------------------------------------------------------------- 
 |    Procesos   |     Tiempo esp acumulado      |      Ejecución restante       |    Memoria    |  Pos mem ini  |  Pos mem fin  |
@@ -308,15 +308,15 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		9		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 9
+Unidad de tiempo actual 9
 La memoria se ha reubicado
 El proceso p4 ha entrado en memoria
 El proceso p1 necesita mas memoria de la disponible actualmente, se ejecutará más adelante
 El proceso p3 entra ahora en el procesador
 Memoria libre actual 10 MB$
 Distribución actual de la memoria
-p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 Li Li Li Li Li Li Li Li Li Li
-
+p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p3 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 
+p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 Li Li Li Li Li Li Li Li Li Li 
 Al final de la ejecución de este tiempo los datos son:
  ------------------------------------------------------------------------------------------------------------------------------- 
 |    Procesos   |     Tiempo esp acumulado      |      Ejecución restante       |    Memoria    |  Pos mem ini  |  Pos mem fin  |
@@ -342,7 +342,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		10		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 10
+Unidad de tiempo actual 10
 
 Al final de la ejecución de este tiempo los datos son:
  ------------------------------------------------------------------------------------------------------------------------------- 
@@ -369,14 +369,14 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		11		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 11
+Unidad de tiempo actual 11
 El proceso p3 termina en esta ráfaga
 |p3(9,0)|
 El proceso p3 retorna al final de la ráfaga 11, la memoria asignada fue liberada
 Memoria libre actual 35 MB$
 Distribución actual de la memoria
-Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 Li Li Li Li Li Li Li Li Li Li
-
+Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 
+p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 Li Li Li Li Li Li Li Li Li Li 
 Al final de la ejecución de este tiempo los datos son:
  ------------------------------------------------------------------------------------------------------------------------------- 
 |    Procesos   |     Tiempo esp acumulado      |      Ejecución restante       |    Memoria    |  Pos mem ini  |  Pos mem fin  |
@@ -402,14 +402,14 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		12		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 12
+Unidad de tiempo actual 12
 El proceso p1 ha entrado en memoria
 El proceso p5 necesita mas memoria de la disponible actualmente, se ejecutará más adelante
 El proceso p4 entra ahora en el procesador
 Memoria libre actual 10 MB$
 Distribución actual de la memoria
-p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 Li Li Li Li Li Li Li Li Li Li
-
+p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p1 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 
+p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 Li Li Li Li Li Li Li Li Li Li 
 Al final de la ejecución de este tiempo los datos son:
  ------------------------------------------------------------------------------------------------------------------------------- 
 |    Procesos   |     Tiempo esp acumulado      |      Ejecución restante       |    Memoria    |  Pos mem ini  |  Pos mem fin  |
@@ -435,7 +435,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		13		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 13
+Unidad de tiempo actual 13
 
 Al final de la ejecución de este tiempo los datos son:
  ------------------------------------------------------------------------------------------------------------------------------- 
@@ -462,7 +462,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		14		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 14
+Unidad de tiempo actual 14
 El proceso p4 agota su quantum en este tiempo, ráfagas restantes 5
 |p4(12,5)|
 
@@ -491,7 +491,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		15		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 15
+Unidad de tiempo actual 15
 El proceso p1 entra ahora en el procesador
 
 Al final de la ejecución de este tiempo los datos son:
@@ -519,14 +519,14 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		16		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 16
+Unidad de tiempo actual 16
 El proceso p1 termina en esta ráfaga
 |p1(15,0)|
 El proceso p1 retorna al final de la ráfaga 16, la memoria asignada fue liberada
 Memoria libre actual 35 MB$
 Distribución actual de la memoria
-Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 Li Li Li Li Li Li Li Li Li Li
-
+Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 
+p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 Li Li Li Li Li Li Li Li Li Li 
 Al final de la ejecución de este tiempo los datos son:
  ------------------------------------------------------------------------------------------------------------------------------- 
 |    Procesos   |     Tiempo esp acumulado      |      Ejecución restante       |    Memoria    |  Pos mem ini  |  Pos mem fin  |
@@ -552,15 +552,15 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		17		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 17
+Unidad de tiempo actual 17
 El proceso p5 ha entrado en memoria
 El proceso p7 ha entrado en memoria
 El proceso p8 necesita mas memoria de la disponible actualmente, se ejecutará más adelante
 El proceso p5 entra ahora en el procesador
 Memoria libre actual 10 MB$
 Distribución actual de la memoria
-p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p7 p7 p7 p7 p7 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 Li Li Li Li Li Li Li Li Li Li
-
+p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p5 p7 p7 p7 p7 p7 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 
+p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 Li Li Li Li Li Li Li Li Li Li 
 Al final de la ejecución de este tiempo los datos son:
  ------------------------------------------------------------------------------------------------------------------------------- 
 |    Procesos   |     Tiempo esp acumulado      |      Ejecución restante       |    Memoria    |  Pos mem ini  |  Pos mem fin  |
@@ -586,7 +586,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		18		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 18
+Unidad de tiempo actual 18
 
 Al final de la ejecución de este tiempo los datos son:
  ------------------------------------------------------------------------------------------------------------------------------- 
@@ -613,7 +613,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		19		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 19
+Unidad de tiempo actual 19
 El proceso p5 agota su quantum en este tiempo, ráfagas restantes 1
 |p5(17,1)|
 
@@ -642,7 +642,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		20		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 20
+Unidad de tiempo actual 20
 El proceso p7 entra ahora en el procesador
 
 Al final de la ejecución de este tiempo los datos son:
@@ -670,7 +670,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		21		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 21
+Unidad de tiempo actual 21
 
 Al final de la ejecución de este tiempo los datos son:
  ------------------------------------------------------------------------------------------------------------------------------- 
@@ -697,7 +697,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		22		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 22
+Unidad de tiempo actual 22
 El proceso p7 agota su quantum en este tiempo, ráfagas restantes 1
 |p7(20,1)|
 
@@ -726,7 +726,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		23		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 23
+Unidad de tiempo actual 23
 El proceso p4 entra ahora en el procesador
 
 Al final de la ejecución de este tiempo los datos son:
@@ -754,7 +754,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		24		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 24
+Unidad de tiempo actual 24
 
 Al final de la ejecución de este tiempo los datos son:
  ------------------------------------------------------------------------------------------------------------------------------- 
@@ -781,7 +781,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		25		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 25
+Unidad de tiempo actual 25
 El proceso p4 agota su quantum en este tiempo, ráfagas restantes 2
 |p4(23,2)|
 
@@ -810,15 +810,15 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		26		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 26
+Unidad de tiempo actual 26
 El proceso p5 entra ahora en el procesador
 El proceso p5 termina en esta ráfaga
 |p5(26,0)|
 El proceso p5 retorna al final de la ráfaga 26, la memoria asignada fue liberada
 Memoria libre actual 30 MB$
 Distribución actual de la memoria
-Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li p7 p7 p7 p7 p7 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 Li Li Li Li Li Li Li Li Li Li
-
+Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li p7 p7 p7 p7 p7 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 
+p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 Li Li Li Li Li Li Li Li Li Li 
 Al final de la ejecución de este tiempo los datos son:
  ------------------------------------------------------------------------------------------------------------------------------- 
 |    Procesos   |     Tiempo esp acumulado      |      Ejecución restante       |    Memoria    |  Pos mem ini  |  Pos mem fin  |
@@ -844,7 +844,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		27		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 27
+Unidad de tiempo actual 27
 La memoria se ha reubicado
 El proceso p8 ha entrado en memoria
 El proceso p10 ha entrado en memoria
@@ -855,8 +855,8 @@ El proceso p7 termina en esta ráfaga
 El proceso p7 retorna al final de la ráfaga 27, la memoria asignada fue liberada
 Memoria libre actual 10 MB$
 Distribución actual de la memoria
-Li Li Li Li Li p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p10 p10 p10 Li Li Li Li Li
-
+Li Li Li Li Li p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 
+p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p10 p10 p10 Li Li Li Li Li 
 Al final de la ejecución de este tiempo los datos son:
  ------------------------------------------------------------------------------------------------------------------------------- 
 |    Procesos   |     Tiempo esp acumulado      |      Ejecución restante       |    Memoria    |  Pos mem ini  |  Pos mem fin  |
@@ -882,14 +882,14 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		28		|		2		|	9	|	NA	|	NA	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 28
+Unidad de tiempo actual 28
 La memoria se ha reubicado
 El proceso p9 ha entrado en memoria
 El proceso p8 entra ahora en el procesador
 Memoria libre actual 1 MB$
 Distribución actual de la memoria
-p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p10 p10 p10 p9 p9 p9 p9 p9 p9 p9 p9 p9 Li
-
+p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 
+p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p10 p10 p10 p9 p9 p9 p9 p9 p9 p9 p9 p9 Li 
 Al final de la ejecución de este tiempo los datos son:
  ------------------------------------------------------------------------------------------------------------------------------- 
 |    Procesos   |     Tiempo esp acumulado      |      Ejecución restante       |    Memoria    |  Pos mem ini  |  Pos mem fin  |
@@ -915,7 +915,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		29		|		2		|	9	|	90	|	98	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 29
+Unidad de tiempo actual 29
 
 Al final de la ejecución de este tiempo los datos son:
  ------------------------------------------------------------------------------------------------------------------------------- 
@@ -942,7 +942,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		30		|		2		|	9	|	90	|	98	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 30
+Unidad de tiempo actual 30
 El proceso p8 agota su quantum en este tiempo, ráfagas restantes 2
 |p8(28,2)|
 
@@ -971,15 +971,15 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		31		|		2		|	9	|	90	|	98	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 31
+Unidad de tiempo actual 31
 El proceso p10 entra ahora en el procesador
 El proceso p10 termina en esta ráfaga
 |p10(31,0)|
 El proceso p10 retorna al final de la ráfaga 31, la memoria asignada fue liberada
 Memoria libre actual 4 MB$
 Distribución actual de la memoria
-p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 Li Li Li p9 p9 p9 p9 p9 p9 p9 p9 p9 Li
-
+p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 
+p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 Li Li Li p9 p9 p9 p9 p9 p9 p9 p9 p9 Li 
 Al final de la ejecución de este tiempo los datos son:
  ------------------------------------------------------------------------------------------------------------------------------- 
 |    Procesos   |     Tiempo esp acumulado      |      Ejecución restante       |    Memoria    |  Pos mem ini  |  Pos mem fin  |
@@ -1005,7 +1005,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		32		|		2		|	9	|	90	|	98	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 32
+Unidad de tiempo actual 32
 El proceso p9 entra ahora en el procesador
 
 Al final de la ejecución de este tiempo los datos son:
@@ -1033,14 +1033,14 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		32		|		1		|	9	|	90	|	98	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 33
+Unidad de tiempo actual 33
 El proceso p9 termina en esta ráfaga
 |p9(32,0)|
 El proceso p9 retorna al final de la ráfaga 33, la memoria asignada fue liberada
 Memoria libre actual 13 MB$
 Distribución actual de la memoria
-p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 Li Li Li Li Li Li Li Li Li Li Li Li Li
-
+p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 
+p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p4 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 Li Li Li Li Li Li Li Li Li Li Li Li Li 
 Al final de la ejecución de este tiempo los datos son:
  ------------------------------------------------------------------------------------------------------------------------------- 
 |    Procesos   |     Tiempo esp acumulado      |      Ejecución restante       |    Memoria    |  Pos mem ini  |  Pos mem fin  |
@@ -1066,7 +1066,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		32		|		END		|	9	|	END	|	END	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 34
+Unidad de tiempo actual 34
 El proceso p4 entra ahora en el procesador
 
 Al final de la ejecución de este tiempo los datos son:
@@ -1094,14 +1094,14 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		32		|		END		|	9	|	END	|	END	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 35
+Unidad de tiempo actual 35
 El proceso p4 termina en esta ráfaga
 |p4(34,0)|
 El proceso p4 retorna al final de la ráfaga 35, la memoria asignada fue liberada
 Memoria libre actual 78 MB$
 Distribución actual de la memoria
-Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 Li Li Li Li Li Li Li Li Li Li Li Li Li
-
+Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li 
+Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 p8 Li Li Li Li Li Li Li Li Li Li Li Li Li 
 Al final de la ejecución de este tiempo los datos son:
  ------------------------------------------------------------------------------------------------------------------------------- 
 |    Procesos   |     Tiempo esp acumulado      |      Ejecución restante       |    Memoria    |  Pos mem ini  |  Pos mem fin  |
@@ -1127,7 +1127,7 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		32		|		END		|	9	|	END	|	END	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 36
+Unidad de tiempo actual 36
 El proceso p8 entra ahora en el procesador
 
 Al final de la ejecución de este tiempo los datos son:
@@ -1155,14 +1155,14 @@ Al final de la ejecución de este tiempo los datos son:
 |	p9	|		32		|		END		|	9	|	END	|	END	|
  ------------------------------------------------------------------------------------------------------------------------------- 
 
-Ráfaga 37
+Unidad de tiempo actual 37
 El proceso p8 termina en esta ráfaga
 |p8(36,0)|
 El proceso p8 retorna al final de la ráfaga 37, la memoria asignada fue liberada
 Memoria libre actual 100 MB$
 Distribución actual de la memoria
-Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li
-
+Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li 
+Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li Li 
 Al final de la ejecución de este tiempo los datos son:
  ------------------------------------------------------------------------------------------------------------------------------- 
 |    Procesos   |     Tiempo esp acumulado      |      Ejecución restante       |    Memoria    |  Pos mem ini  |  Pos mem fin  |

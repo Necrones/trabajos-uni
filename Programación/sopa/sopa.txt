@@ -1,11 +1,11 @@
-marcas
-orolivesur,cocacola,kitkat,windows,linux,samsung,loreal,gigabyte
-formas
-circulo,rombo,cuadrado,pentagono,rectangulo,trapecio,triangulo,elipse
-colores
-rojo,verde,amarillo,azul,magenta,naranja,marron,gris
-ciudades
-madrid,barcelona,bilbao,burgos,jaen,ferrol,zaragoza,cordoba
-paises
-inglaterra,argelia,italia,francia,cuba,ecuador,rusia,marruecos
+MARCAS
+OROLIVESUR,COCACOLA,KITKAT,WINDOWS,LINUX,SAMSUNG,LOREAL,GIGABYTE
+FORMAS
+CIRCULO,ROMBO,CUADRADO,PENTAGONO,CUBO,TRAPECIO,TRIANGULO,ELIPSE
+COLORES
+ROJO,VERDE,AMARILLO,AZUL,MAGENTA,NARANJA,MARRON,GRIS
+CIUDADES
+MADRID,BARCELONA,BILBAO,BURGOS,JAEN,FERROL,ZARAGOZA,CORDOBA
+PAISES
+INGLATERRA,ARGELIA,ITALIA,FRANCIA,CUBA,ECUADOR,RUSIA,MARRUECOS
 

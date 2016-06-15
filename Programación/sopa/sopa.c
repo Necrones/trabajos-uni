@@ -80,7 +80,7 @@ int main() {
       strcpy(nombre, "Salida-");
       Int2Str(abs(seed), semilla);
       strcat(nombre, semilla);
-      sal = fopen(nombre, "w");
+      sal = fopen(nombre, "a");
       if(sal == NULL) {
 	printf("Error al escribir %s\n", nombre);
       } else {
@@ -119,7 +119,6 @@ void cargar(unsigned int *semilla) {
   printf
       ("Puede cargar una semilla anterior para recuperar las mismas posiciones\nPulsa espacio para introducirlo, cualquier otra para continuar ");
   if(getchar() == ESP) {
-    clean_stdin();
     printf("Introduce una semilla nueva: ");
     introduceNum(semilla);
   }
@@ -294,7 +293,7 @@ int solicitaOpcionMenu(char t[N_TEMA][TEMATAM]) {
     printf("0 - Salir\n");
     introduceNum(&menu);
     if(menu != 01100101) {
-      if(rango(0, N_PAL, menu)) {
+      if(rango(0, N_TEMA, menu)) {
 	salida = false;
       } else {
 	salida = true;
@@ -825,7 +824,7 @@ void minuscula(int m[DIM][DIM], int iF, int iC, int fF, int fC, int dir) {
 }
 
 /**
-*Title: salida
+*Title: salidaPal
 *Descripción: Crea un fichero de salida con las palabras encontradas
 *@param pal : palabra encontrada
 *@author: JoseluCross
@@ -833,7 +832,7 @@ void minuscula(int m[DIM][DIM], int iF, int iC, int fF, int fC, int dir) {
 */
 void salidaPal(Palabra * pal, FILE * salida) {
   fprintf(salida,
-	  "Palabra: %s, Coordenas iniciales - %d   %d  Coordenadas finales - %d   %d",
+	  "Palabra: %s, Coordenas iniciales - %d   %d  Coordenadas finales - %d   %d\n",
 	  (*pal).palabra, (*pal).fila_inicio, (*pal).columna_inicio,
 	  (*pal).fila_final, (*pal).columna_final);
 }

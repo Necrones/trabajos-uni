@@ -1,0 +1,3 @@
+En la modificación se ha cambiado Ráfaga (al principio de cada tiempo) por Unidad de tiempo actual
+Si se pasa un parámetro numérico (si no es número será considerado 0) la memoria se dividirá (a nivel visual) en bloques de ese tamaño. Si el valor es 
+0 entonces se determina como que no hay división

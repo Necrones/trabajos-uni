@@ -1,9 +1,7 @@
 Trabajo realizado por José Luis Garrido Labrador (alias JoseluCross) y Luis Pedrosa Ruiz
 Forma parte de la asignatura PROGRAMACIÓN del segundo semestre del grado de Ingeniería Informática en la UBU
 En el comprimirdo (a parte de copias de seguridad) se encuentran un archivo de texto .c, un ejecutable y código objeto, un makefile,
-un pdf con diagrmas modulares y este README.
+un pdf con diagrmas modulares y este LEEME.
 Todo el contenido del programa se encuentra en el repositorio de GitHub https://github.com/Necrones/trabajos-uni.git
-Para hacer la tarea de debug y correción mas sencilla la función rellenaMatriz se ha modificado para que en vez de escribir caracteres aleatorios se escriban espacios 
-(existiendo la colocación aleatoria en un comentario). También se ha asignado la semilla aleatoria 22 en la que en el tema coches se cruzan PEUGEOT Y MERCEDES y en el 
-tema colores MAGENTA Y NARANJA.
+El fichero salida contine en su propio nombre la semilla utilizada para poder repetir una partida
 
