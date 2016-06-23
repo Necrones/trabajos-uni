@@ -1,3 +1,11 @@
 En la modificación se ha cambiado Ráfaga (al principio de cada tiempo) por Unidad de tiempo actual
-Si se pasa un parámetro numérico (si no es número será considerado 0) la memoria se dividirá (a nivel visual) en bloques de ese tamaño. Si el valor es 
-0 entonces se determina como que no hay división
+Si se pasa un parámetro numérico (si no es número será considerado 0) la memoria se dividirá (a nivel visual) en bloques de ese tamaño. Si el valor es 0 entonces se determina como que no hay división
+--Más modificaciones--
+La ultima entrada de datos se convierte en la entrada automática siguiente, si hay error se recargan los datos predeterminados (default.txt)
+El informe de ejecución contiene en el nombre la fecha y hora de ejecución para evitar sobreescribir
+En el informe de estado de cada tiempo incluye ahora el momento de llegada
+Los mensajes de error son redireccionados a la salida estandar de errores /dev/sterr, estarán de color rojo y la palabra "Error:"" dalante
+Se han cambiado o añadido colores, a saber:
+	La unidad de tiempo actual es ahora verde (antes rojo)
+	Las tablas tienen ahora el color cyan claro en los bordes
+	El texto	
