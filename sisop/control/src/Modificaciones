@@ -8,4 +8,5 @@ Los mensajes de error son redireccionados a la salida estandar de errores /dev/s
 Se han cambiado o añadido colores, a saber:
 	La unidad de tiempo actual es ahora verde (antes rojo)
 	Las tablas tienen ahora el color cyan claro en los bordes
-	El texto	
+La lista de los procesos ha sido mejorada y ya funciona correctamente el 100% de los casos
+Ya no se permite la introducción de nombres con espacios

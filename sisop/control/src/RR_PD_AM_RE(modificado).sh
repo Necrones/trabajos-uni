@@ -83,12 +83,12 @@ function Orden {
 	do
 		proc_order[$p]=-1
 	done
-	for (( k=$(expr $i-1); k>=0; k-- ))
+	for (( p=$(expr $i-1); p>=0; p-- ))
 	do
 		max=0
 		for (( jk=0; jk<$i; jk++ ))
 		do
-			for (( z=$k, coin=0; z<=$(expr $i-1); z++ ))
+			for (( z=$p, coin=0; z<=$(expr $i-1); z++ ))
 			do
 				if [ $jk -eq "${proc_order[$z]}" ];then
 					coin=1
@@ -101,12 +101,21 @@ function Orden {
 			fi
 		fi
 		done
-		proc_order[$k]=$aux
+		proc_order[$p]=$aux
 	done
 }
-#Función SinRepetir - comprueba si se ha puesto el mismo nombre antes
-function SinRepetir {
-	if [ $i -ne 1 ];then
+#Función CompNomb - comprueba que el nombre no tiene espacios ni se ha utilizado antes
+function CompNomb {
+	local j
+	local x=0
+	for j in ${proc_name[$(expr $i - 1)]}
+	do
+		let x++
+	done
+	if [ $x -ne 1 ];then #Si es distinto significa que el nombre tiene espacios
+		error=1
+	elif [ $i -ne 1 ];then #En caso de que no tenga espacios miramos a ver si no se ha repetido el nombre
+		#La comprobación solo se hace si no es el primer nombre
 		for ((z=0 ; z<$(expr $i-1) ; z++ ))
 		do
 			if [ "${proc_name[$(expr $i-1)]}" == "${proc_name[$z]}" ];then
@@ -303,7 +312,7 @@ function AsignaMem() {
 						proc_stop[$st]=0
 					done
 					let mem_aux=mem_aux-proc_mem[$zed]
-					next=$(expr $alpha + 1)
+					let next=alpha+1
 					cola=${proc_order[$next]}
 					if [ $auto != "c" ];then
 						echo -e "${yellow}El proceso ${proc_name[$zed]} ha entrado en memoria${NC}"
@@ -382,7 +391,6 @@ function lista {
 			esac
 		done
 	fi
-	echo "${list[@]}"
 }
 #Función Estado: dice para el tiempo acual los datos actuales de los procesos
 function Estado {
@@ -520,7 +528,7 @@ proc_name={} #Nombre de cada proceso
 proc_arr={} #Turno de llegada del proceso
 proc_exe={} #Tiempo de ejecución o ráfaga; se reducirá según el quantum
 proc_mem={} #Memoria que necesita cada proceso
-proc_order={} #Orden de la lista
+proc_order={} #Orden de llegada
 proc_stop={} #Procesos que no pueden ejecutarse porque no tienen memoria (1 = parado, 0 no parado)
 clear
 i=1
@@ -532,11 +540,11 @@ if [ $manu = "S" ] 2>/dev/null || [ $manu = "s" ] 2>/dev/null;then
 		while [ $j -eq 0 ];do
 			error=0
 			read -p "Introduzca el nombre del proceso $i (p$i): " proc_name[$(expr $i-1)]
-			SinRepetir
+			CompNomb
 			if [ -z "${proc_name[$(expr $i-1)]}" ] 2> /dev/null ;then
 				proc_name[$(expr $i-1)]="p$i"
 				error=0
-				SinRepetir
+				CompNomb
 				if [ $error -eq 0 ];then
 					j=1
 				fi			
@@ -649,7 +657,6 @@ done
 declare proc_ret[$proc] #Tiempo de retorno
 declare proc_retR[$proc] #Tiempo que ha estado el proceso desde entró hasta que terminó
 declare mem_print[$proc] #Memoria que se guardará en el fichero (sin colores)
-end=0 #Procesos terminados
 e=0 #e=0 aun no ha terminado, e=1 ya se terminó
 j=0
 exe=0	#Ejecuciones que ha habido en una vuelta de lista
@@ -668,21 +675,21 @@ while [ $e -eq 0 ];do
 	echo "Unidad de tiempo actual $clock" >> $output
 	AsignaMem $clock
 	z=${list[0]}
-	if [ $quantum_aux -eq $quantum ] && [ $end -ne $proc ];then #Cambio de contexto
+	if [ $quantum_aux -eq $quantum ] && [ $listTam -ne 0 ];then #Cambio de contexto
 		clock_time=$clock
 		if [ $auto != "c" ];then
 			echo -e "${blue}El proceso ${proc_name[$z]} entra ahora en el procesador${NC}"
 		fi
 		echo "El proceso ${proc_name[$z]} entra ahora en el procesador" >> $output
 	fi
-	if [ $quantum_aux -gt 0 ] && [ $end -ne $proc ];then #Pasa un ciclo
+	if [ $quantum_aux -gt 0 ] && [ $listTam -ne 0 ];then #Pasa un ciclo
 		let clock=clock+1
 		let quantum_aux=quantum_aux-1
 		proc_exe[$z]=$(expr ${proc_exe[$z]} - 1)
 		EspAcu 0
 		exe=1
 	fi
-	if [ "${proc_exe[$z]}" -eq 0 ] && [ $end -ne $proc ];then #El proceso termina en este tiempo
+	if [ "${proc_exe[$z]}" -eq 0 ] && [ $listTam -ne 0 ];then #El proceso termina en este tiempo
 		let proc_ret[$z]=$clock-1	#El momento de retorno será igual al momento de salida en el reloj (este aumento antes por lo que vamos hacia atras)		
 		let proc_retR[$z]=proc_ret[$z]-proc_arr[$z]
 		quantum_aux=0
@@ -693,7 +700,7 @@ while [ $e -eq 0 ];do
 		fi
 		echo "El proceso ${proc_name[$z]} termina en esta ráfaga" >> $output
 	fi
-	if [ $quantum_aux -eq 0 ] && [ $end -ne $proc ];then #Fin del uso de quantum del proceso
+	if [ $quantum_aux -eq 0 ] && [ $listTam -ne 0 ];then #Fin del uso de quantum del proceso
 		if [ $mot -eq 0 ];then
 			if [ $auto != "c" ];then
 				echo "El proceso ${proc_name[$z]} agota su quantum en este tiempo, ráfagas restantes: ${proc_exe[$z]}"
@@ -714,7 +721,6 @@ while [ $e -eq 0 ];do
     	let mem_aux=mem_aux+proc_mem[$z]
     	DesOcuMem ${proc_memI[$z]} ${proc_memF[$z]}
     	proc_memI[$z]="-2"
-		let end=end+1
 		if [ $auto != "c" ];then
 			echo -e "${blue}El proceso ${proc_name[$z]} retorna al final de la ráfaga ${proc_ret[$z]}, la memoria asignada fue liberada${NC}"
 		fi
@@ -727,14 +733,14 @@ while [ $e -eq 0 ];do
 	fi
 	Estado
 	if [ $auto = "a" ];then
-		if [ $end -ne $proc ];then
+		if [ $listTam -ne 0 ];then
 			echo ""
 			read -p "Pulse intro para continuar"
 		fi
 	elif [ $auto = "b" ];then
 		sleep 5
 	fi
-	if [ $end -eq $proc ];then #Si todos los procesos terminados son igual a los procesos introducidos
+	if [ $listTam -eq 0 ];then #Si todos los procesos terminados son igual a los procesos introducidos
 			e=1
 	fi
 done
