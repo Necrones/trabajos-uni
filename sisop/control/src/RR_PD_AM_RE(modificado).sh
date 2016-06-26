@@ -32,8 +32,8 @@ inverted='\e[7m'
 NC='\e[0m' # No Color
 Li="${cyan}Li${NC}"
 info="${minuscyan}|${NC}"
-#output="informe$(date +%d%m%y-%H%M).txt"
-output="informe.txt"
+output="informe$(date +%d%m%y-%H%M).txt"
+#output="informe.txt"
 
 ##Funciones
 #Funcion PrintMem; imprime la memoria
@@ -271,11 +271,6 @@ function AsignaMem() {
 						echo "El proceso ${proc_name[$zed]} necesita mas memoria de la disponible actualmente, se ejecutará más adelante" >> $output
 						#Bloqueamos la cola
 						cola=$zed
-						for (( beta=$alpha; beta<$proc; beta++))
-						do
-							st=${proc_order[$beta]}
-							proc_stop[$st]=1
-						done
 						salida=1
 					fi
 				fi
@@ -305,12 +300,7 @@ function AsignaMem() {
 					#Metemos el procenso en la cola de ejecución
 					list[$listTam]=$zed
 					let listTam++
-					#Desbloqueamos la cola
-					for (( beta=$alpha; beta<$proc; beta++))
-					do
-						st=${proc_order[$beta]}
-						proc_stop[$st]=0
-					done
+					let total++
 					let mem_aux=mem_aux-proc_mem[$zed]
 					let next=alpha+1
 					cola=${proc_order[$next]}
@@ -368,6 +358,7 @@ function SiNo(){
 function lista {
 	local cont
 	local aux
+	local fin
 	proceso=${list[0]}
 	#Cuando un proceso termina ya no vuelve a colocarse en la cola, y el tamaño de la cola se reduce
 	if [ ${proc_exe[$proceso]} -eq 0 ];then
@@ -433,7 +424,7 @@ function Estado {
 		echo "|	${proc_name[$pp]}	|	${proc_arr[$pp]}	|		${proc_waitA[$pp]}		|		$restante		|	${proc_mem[$pp]}	|	$memIni	|	$memFin	|" >>$output
 	done
 	if [ $auto != "c" ];then
-		echo " ----------------------------------------------------------------------------------------------------------------------------------------------- "
+		echo -e "${minuscyan} -----------------------------------------------------------------------------------------------------------------------------------------------${NC} "
 	fi
 	echo " ----------------------------------------------------------------------------------------------------------------------------------------------- " >>$output
 }
@@ -664,6 +655,7 @@ quantum_aux=$quantum #Quantum del que se dispone
 position=0 #Posición del porceso que se debe ejecutar ahora
 fin=0
 mot=0
+total=0 #Procesos introducidos a la memoria
 cola=${proc_order[0]}
 #Comienza el agoritmo a funcionar
 while [ $e -eq 0 ];do
@@ -683,9 +675,9 @@ while [ $e -eq 0 ];do
 		echo "El proceso ${proc_name[$z]} entra ahora en el procesador" >> $output
 	fi
 	if [ $quantum_aux -gt 0 ] && [ $listTam -ne 0 ];then #Pasa un ciclo
-		let clock=clock+1
+		let clock++
 		let quantum_aux=quantum_aux-1
-		proc_exe[$z]=$(expr ${proc_exe[$z]} - 1)
+		let proc_exe[$z]=proc_exe[$z]-1
 		EspAcu 0
 		exe=1
 	fi
@@ -740,8 +732,11 @@ while [ $e -eq 0 ];do
 	elif [ $auto = "b" ];then
 		sleep 5
 	fi
-	if [ $listTam -eq 0 ];then #Si todos los procesos terminados son igual a los procesos introducidos
+	if [ $listTam -eq 0 ] && [ $total -eq $proc ];then #Si todos los procesos fueron introducidos y ya se han ejecutado
 			e=1
+	elif [ $listTam -eq 0 ];then
+		let clock++
+		EspAcu 1
 	fi
 done
 #Damos valor a proc_waitR
@@ -773,7 +768,7 @@ do
 	echo "|	${proc_name[$y]}	|		${proc_waitA[$y]}		|		${proc_waitR[$y]}		|	${proc_ret[$y]}	|	${proc_retR[$y]}	|"  >> $output
 done
 if [ $auto != "c" ];then
-	echo " --------------------------------------------------------------------------------------------------------------- "
+	echo -e " ${minuscyan}---------------------------------------------------------------------------------------------------------------${NC} "
 fi
 echo " --------------------------------------------------------------------------------------------------------------- "  >> $output
 #Cálculo de valores medios
