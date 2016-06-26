@@ -464,7 +464,7 @@ echo " -------------------------------------------------------------------------
 read -p "Meter lo datos de manera manual? [s,n] " manu
 SiNo $manu
 while [ $? -eq 0 ];do
-	echo "Valor incorrecto"
+	err "Valor incorrecto"
 	read -p "Meter lo datos de manera manual? [s,n] " manu
 	SiNo $manu
 done
@@ -655,6 +655,7 @@ quantum_aux=$quantum #Quantum del que se dispone
 position=0 #Posición del porceso que se debe ejecutar ahora
 fin=0
 mot=0
+end=0 #Cantidad de procesos finalizados
 total=0 #Procesos introducidos a la memoria
 cola=${proc_order[0]}
 #Comienza el agoritmo a funcionar
@@ -687,6 +688,7 @@ while [ $e -eq 0 ];do
 		quantum_aux=0
 		fin=1
 		mot=1
+		let end++
 		if [ $auto != "c" ];then
 			echo "El proceso ${proc_name[$z]} termina en esta ráfaga"
 		fi
@@ -725,7 +727,7 @@ while [ $e -eq 0 ];do
 	fi
 	Estado
 	if [ $auto = "a" ];then
-		if [ $listTam -ne 0 ];then
+		if [ $exe -eq 1 -a $end -ne $proc ];then
 			echo ""
 			read -p "Pulse intro para continuar"
 		fi
@@ -734,9 +736,11 @@ while [ $e -eq 0 ];do
 	fi
 	if [ $listTam -eq 0 ] && [ $total -eq $proc ];then #Si todos los procesos fueron introducidos y ya se han ejecutado
 			e=1
-	elif [ $listTam -eq 0 ];then
+	elif [ $listTam -eq 0 ] && [ $exe -eq 0 ];then
 		let clock++
 		EspAcu 1
+	else
+		exe=0
 	fi
 done
 #Damos valor a proc_waitR
